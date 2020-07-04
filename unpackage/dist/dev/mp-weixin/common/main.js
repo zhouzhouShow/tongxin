@@ -9,6 +9,7 @@
 "use strict";
 /* WEBPACK VAR INJECTION */(function(createApp) {__webpack_require__(/*! uni-pages */ 4);var _vue = _interopRequireDefault(__webpack_require__(/*! vue */ 2));
 var _App = _interopRequireDefault(__webpack_require__(/*! ./App */ 5));
+var _store = _interopRequireDefault(__webpack_require__(/*! ./store */ 54));
 var _request = _interopRequireDefault(__webpack_require__(/*! ./api/request.js */ 38));
 var _tools = _interopRequireDefault(__webpack_require__(/*! ./utils/tools.js */ 41));
 var _systemInfo = _interopRequireDefault(__webpack_require__(/*! ./utils/systemInfo.js */ 42));
@@ -22,7 +23,7 @@ _vue.default.config.productionTip = false;
 
 _App.default.mpType = 'app';
 
-_vue.default.prototype.$store = store;
+_vue.default.prototype.$store = _store.default;
 _vue.default.prototype.$api = _api.default;
 _vue.default.prototype.$request = _request.default;
 _vue.default.prototype.$tools = _tools.default;

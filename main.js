@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App'
+import store from './store'
 import request from './api/request.js'
 import tools from './utils/tools.js'
 import systemInfo from './utils/systemInfo.js'
