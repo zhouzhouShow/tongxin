@@ -7764,6 +7764,1598 @@ function normalizeComponent (
 }
 
 
+/***/ }),
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */,
+/* 20 */,
+/* 21 */,
+/* 22 */,
+/* 23 */,
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */,
+/* 31 */,
+/* 32 */,
+/* 33 */,
+/* 34 */,
+/* 35 */,
+/* 36 */,
+/* 37 */,
+/* 38 */
+/*!***************************************************!*\
+  !*** E:/work/project/tongxin_mini/api/request.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _request = _interopRequireDefault(__webpack_require__(/*! ../js_sdk/jamling-request/j-request/request.js */ 39));
+var _config2 = _interopRequireDefault(__webpack_require__(/*! ./config.js */ 40));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+
+_request.default.setConfig({
+  baseUrl: _config2.default.baseUrl,
+  contentType: _config2.default.contentType,
+  debug: false });
+
+
+// 请求拦截
+_request.default.interceptor.request = function (config) {
+  // 给data添加全局请求参数token 开发时写死
+  var token = uni.getStorageSync("token") || '';
+  // let token = 'MTU3NjkwMzQ4Nn6Le2eGiYB1';
+  if (!config.data.token) {
+    config.data.token = token;
+  }
+  // 给header添加全局请求参数token
+  if (!config.header.token) {
+
+
+  } // config.header.token = 'my_token'
+  // config.header.token = 'MTU3NjM5NDA3OX6hj2KFr4h1'
+  // 添加一个自定义的参数，默认异常请求都弹出一个toast提示
+  if (config.toastError === undefined) {config.toastError = true;
+  }
+  return config;
+};
+
+// 全局的业务拦截
+_request.default.interceptor.response = function (res, config) {
+  if (res.status === 1) {
+    res.success = true;
+    // return res;
+  } else if (res.status === 0) {
+    uni.showToast({
+      title: res.msg,
+      duration: 2000,
+      icon: 'none' });
+
+    // token失效，需要重新登录
+    // uni.navigateTo({
+    //     url: '/pages/loign/login'
+    // })
+  }
+  return res;
+};
+
+
+// 全局的错误异常处理
+_request.default.interceptor.fail = function (res, config) {
+  var ret = res;
+  var msg = '';
+  if (res.statusCode === 200) {// 业务错误
+    msg = res.data.msg;
+    ret = res.data;
+  } else if (res.statusCode > 0) {// HTTP错误
+    msg = '服务器异常[' + res.statusCode + ']';
+  } else {// 其它错误
+    msg = res.errMsg;
+  }
+  if (config.toastError) {
+    if (res.statusCode != 404) {
+      uni.showToast({
+        title: msg,
+        duration: 2000,
+        icon: 'none' });
+
+    } else {
+      console.log(msg);
+    }
+  }
+  // if (config.toastError) {
+  // 	uni.showToast({
+  // 		title: msg,
+  // 		duration: 2000,
+  // 		icon: 'none'
+  // 	})
+  // }
+  return ret;
+};var _default =
+
+_request.default;exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+/* 39 */
+/*!********************************************************************************!*\
+  !*** E:/work/project/tongxin_mini/js_sdk/jamling-request/j-request/request.js ***!
+  \********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {/**
+ * A Request useing App network request design {@link http://ext.dcloud.net.cn/plugin?id=709}
+ * @author Jamling <li.jamling@gmail.com>
+ * @version 1.0.1
+ * 
+ **/
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function ownKeys(object, enumerableOnly) {var keys = Object.keys(object);if (Object.getOwnPropertySymbols) {var symbols = Object.getOwnPropertySymbols(object);if (enumerableOnly) symbols = symbols.filter(function (sym) {return Object.getOwnPropertyDescriptor(object, sym).enumerable;});keys.push.apply(keys, symbols);}return keys;}function _objectSpread(target) {for (var i = 1; i < arguments.length; i++) {var source = arguments[i] != null ? arguments[i] : {};if (i % 2) {ownKeys(Object(source), true).forEach(function (key) {_defineProperty(target, key, source[key]);});} else if (Object.getOwnPropertyDescriptors) {Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));} else {ownKeys(Object(source)).forEach(function (key) {Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));});}}return target;}function _classCallCheck(instance, Constructor) {if (!(instance instanceof Constructor)) {throw new TypeError("Cannot call a class as a function");}}function _defineProperties(target, props) {for (var i = 0; i < props.length; i++) {var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);}}function _createClass(Constructor, protoProps, staticProps) {if (protoProps) _defineProperties(Constructor.prototype, protoProps);if (staticProps) _defineProperties(Constructor, staticProps);return Constructor;}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var
+Request = /*#__PURE__*/function () {function Request() {_classCallCheck(this, Request);_defineProperty(this, "config",
+
+
+
+
+
+
+
+    {
+      /*返回默认为res.data*/
+      baseUrl: '',
+      //method: 'GET',
+      //contentType: 'json',
+      business: 'data'
+      //dataType: 'json',
+      //encoding: 'UTF-8',
+      // skipInterceptorResponse: false,
+      // slashAbsoluteUrl: true,
+      // debug: false,
+      // loadingTip: undefined,
+      // loadingDuration: 500,
+      // responseType: 'text'
+    });_defineProperty(this, "interceptor",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    {
+      /**
+       * @description define the interceptor before request
+       * @param {function} 
+       */
+      request: undefined,
+      response: undefined,
+      fail: undefined });_defineProperty(this, "_success",
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    function (that, _config, res, resolve, reject) {
+      if (res.statusCode >= 200 && res.statusCode <= 302) {// http ok
+        var result = res.data; // 全局的拦截器
+        var parseFileJson = _config.contentType === 'file' && typeof result === 'string' && (_config.dataType ===
+        undefined || _config.dataType === 'json');
+        if (parseFileJson) {
+          result = JSON.parse(res.data);
+        }
+        var skip = _config.skipInterceptorResponse;
+        if (that.interceptor.response && typeof that.interceptor.response === 'function' && !skip) {
+          // TODO 对于某些特殊接口，比如访问其它系统，全局拦截器可能不适合
+          // 这种情况下，要根据_config在全局拦截器中将其它系统的返回适配为本系统的业务对象
+          result = that.interceptor.response(result, _config);
+        }
+        if (skip || result.success) {// 接口调用业务成功
+          var _data = _config.business ? result[_config.business] : result;
+          if (_config.debug) {
+            console.log('response success: ', _data);
+          }
+          _config.success ? _config.success(_data) : resolve(_data);
+          return;
+        }
+      }
+      that._fail(that, _config, res, resolve, reject);
+    });_defineProperty(this, "_fail",
+
+    function (that, _config, res, resolve, reject) {
+      if (_config.debug) {
+        console.error('response failure: ', res);
+      }
+      if (res.errMsg === 'request:fail abort') {
+        return;
+      }
+      var result = res;
+      if (that.interceptor.fail && typeof that.interceptor.fail === 'function') {
+        result = that.interceptor.fail(res, _config);
+      }
+      _config.fail ? _config.fail(result) : reject(result);
+    });_defineProperty(this, "_prepare",
+
+    function (that, _config) {var obj = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      obj.startTime = Date.now();
+      if (_config.loadingTip) {
+        uni.showLoading({
+          title: _config.loadingTip });
+
+      }
+      if (_config.contentType === 'file') {
+        if (_config.formData === undefined || _config.formData === null) {
+          _config.formData = _config.data;
+          delete _config.data;
+        }
+        delete _config.header['Content-Type'];
+        delete _config.header['Referer'];
+        _config.method = 'POST';
+      }
+      if (_config.debug) {
+        console.log('request: ', _config);
+      }
+    });_defineProperty(this, "_complete",
+
+    function (that, _config, res) {var obj = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+      obj.endTime = Date.now();
+      if (_config.debug) {
+        console.log('request completed in ' + (obj.endTime - obj.startTime) + ' ms');
+      }
+      if (_config.loadingTip) {
+        var diff = obj.endTime - obj.startTime;
+        var duration = _config.loadingDuration || 500;
+        if (diff < duration) {
+          diff = duration - diff;
+        } else {
+          diff = 0;
+        }
+
+        setTimeout(function () {
+          uni.hideLoading();
+        }, diff);
+      }
+    });}_createClass(Request, [{ key: "setConfig", /**
+                                                    * @description set default request options
+                                                    * @param {Object} config - the default options
+                                                    * @param {string} config.baseUrl baseUrl - the base url
+                                                    * @param {boolean} config.debug debug - enable debug to log
+                                                    */value: function setConfig(config) {this.config = Object.assign(this.config, config);} }, { key: "request", value: function request() {var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};var that = this;if (options.data === undefined) {options.data = {};}if (options.header === undefined) {options.header = {};}var _options = Object.assign({}, this.config, options);_options = Object.assign(options, _options);_options.url = Request.getUrl(_options);if (!_options.header['Content-Type']) {_options.header['Content-Type'] = Request.getContentType(_options);}var _config = _options;if (that.interceptor.request && typeof that.interceptor.request === 'function') {_config = that.interceptor.request(_options);}var task = undefined;var promise = new Promise(function (resolve, reject) {var extras = {};that._prepare(that, _config, extras); // let cancel = (_config) => {
+        //     that._fail(that, _config, {
+        //         errMsg: 'request:canceled',
+        //         statusCode: -1
+        //     }, resolve, reject)
+        //     next = false
+        // }
+        if (_config.contentType === 'file') {task = uni.uploadFile(_objectSpread({}, _config, { success: function success(res) {that._success(that, _config, res, resolve, reject);}, fail: function fail(res) {that._fail(that, _config, res, resolve, reject);}, complete: function complete(res) {that._complete(that, _config, res, extras);} }));if (_config.progress && typeof _config.progress === 'function') {task.onProgressUpdate(function (_res) {_config.progress(_res, task);});}} else {task = uni.request(_objectSpread({}, _config, { success: function success(res) {that._success(that, _config, res, resolve, reject);}, fail: function fail(res) {that._fail(that, _config, res, resolve, reject);}, complete: function complete(res) {that._complete(that, _config, res, extras);} }));}});if (_config.success || _config.fail || _config.complete) {return task;}return promise;} /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @method
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @description execute a get request
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {Object} options - 参数选项
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {string} options.url - 请求地址
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {string} [options.method=GET] - 请求方法 GET|POST
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {string} [options.contentType=json] - 请求类型，为json(默认)，form
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {Object} [options.data] - 请求参数
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {string} [options.encoding] - 请求编码，默认为utf-8
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {string} [options.dataType] - 如果设为 json（默认），会尝试对返回的数据做一次 JSON.parse
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {string} [options.business] - 接口响应的业务数据对象字段名，默认为data，如果返回整个业务对象，则需要设置为undefined
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {string} [options.skipInterceptorResponse] - 是否跳过响应过滤器，如需跳过，请置true
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {string} [options.slashAbsoluteUrl] - 是否视以/开头的url为绝对地址，默认为false，此设置仅当初步判断url为非绝对地址时有效
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {string} [options.loadingTip] - 是否在请求前显示文字为参数值的loading提示，如果是，会在请求结束后自动关闭loading提示
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @param {string} [options.loadingDuration] - 设置loadingTip时的最小loading显示时间
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @return {Promise} promise
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @example
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * $request.get({
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              url: 'foo/bar',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              data: {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  param1: value1
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @see {@link https://uniapp.dcloud.io/api/request/request}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */ }, { key: "get", value: function get() {var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};options.method = 'GET';return this.request(options);} /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @method
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @description execute a post request
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {Object} options - 参数选项
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {string} options.url - 请求地址
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {string} [options.method=POST] - 请求方法 GET|POST
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {string} [options.contentType=json] - 请求类型，为json(默认)，form
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {Object} [options.data] - 请求参数
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {string} [options.encoding] - 请求编码，默认为utf-8
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {string} [options.dataType] - 如果设为 json（默认），会尝试对返回的数据做一次 JSON.parse
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {string} [options.business] - 接口响应的业务数据对象字段名，默认为data，如果返回整个业务对象，则需要设置为undefined
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {string} [options.skipInterceptorResponse] - 是否跳过响应过滤器，如需跳过，请置true
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {string} [options.slashAbsoluteUrl] - 是否视以/开头的url为绝对地址，默认为false，此设置仅当初步判断url为非绝对地址时有效
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {string} [options.loadingTip] - 是否在请求前显示文字为参数值的loading提示，如果是，会在请求结束后自动关闭loading提示
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @param {string} [options.loadingDuration] - 设置loadingTip时的最小loading显示时间
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @return {Promise} promise
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * @example
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     * $request.post({
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        url: 'foo/bar',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        data: {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            param1: value1
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    * @see {@link https://uniapp.dcloud.io/api/request/request}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    */ }, { key: "post", value: function post() {var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};options.method = 'POST';return this.request(options);} /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @method
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @description execute a get request
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {Object} options - 参数选项
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {string} options.url - 请求地址
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {string} [options.method=GET] - 请求方法 GET|POST
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {string} [options.contentType=json] - 请求类型，为json(默认)，form
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {Object} [options.data] - 请求参数
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {string} [options.encoding] - 请求编码，默认为utf-8
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {string} [options.dataType] - 如果设为 json（默认），会尝试对返回的数据做一次 JSON.parse
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {string} [options.business] - 接口响应的业务数据对象字段名，默认为data，如果返回整个业务对象，则需要设置为undefined
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {string} [options.skipInterceptorResponse] - 是否跳过响应过滤器，如需跳过，请置true
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {string} [options.slashAbsoluteUrl] - 是否视以/开头的url为绝对地址，默认为false，此设置仅当初步判断url为非绝对地址时有效
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {string} [options.loadingTip] - 是否在请求前显示文字为参数值的loading提示，如果是，会在请求结束后自动关闭loading提示
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @param {string} [options.loadingDuration] - 设置loadingTip时的最小loading显示时间
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @return {Promise} promise
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * @example
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              * $request.upload({
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 url: 'foo/bar',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 filePath: res.tempFilePaths[0];
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 data: {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     param1: value1
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 }
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             })
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             * @see {@link https://uniapp.dcloud.io/api/request/network-file}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             */ }, { key: "upload", value: function upload() {var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};options.method = 'POST';options.contentType = 'file';return this.request(options);} }], [{ key: "posUrl", value: function posUrl(url) {/* 判断url是否为绝对路径 */return /(http|https):\/\/([\w.]+\/?)\S*/.test(url);} }, { key: "getUrl", value: function getUrl(config) {var url = config.url || '';var abs = Request.posUrl(url);if (!abs) {var f = config.slashAbsoluteUrl;if (f) {abs = /^\/([\w.]+\/?)\S*/.test(url);}}return abs ? url : config.baseUrl + url;} }, { key: "getContentType", value: function getContentType(config) {var type = config.contentType || 'json';var charset = config.encoding || 'UTF-8';if (type === 'json') {return 'application/json;charset=' + charset;} else if (type === 'form') {return 'application/x-www-form-urlencoded;charset=' + charset;} else if (type === 'file') {return 'multipart/form-data;charset=' + charset;} else if (type === 'text') {return 'text/plain;charset=' + charset;} else if (type === 'html') {return 'text/html;charset=' + charset;} else {throw new Error('unsupported content type : ' + type);}} /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          * @property {Object} interceptor 拦截器
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          *  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          */ }]);return Request;}(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */var request = new Request(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @module {Request} request
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */var _default = request;exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+/* 40 */
+/*!**************************************************!*\
+  !*** E:/work/project/tongxin_mini/api/config.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _default = {
+  baseUrl: 'https://fapi.flan1688.com',
+  contentType: 'form' };exports.default = _default;
+
+/***/ }),
+/* 41 */
+/*!***************************************************!*\
+  !*** E:/work/project/tongxin_mini/utils/tools.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0; /**
+                                                                                                      * 获取图片信息
+                                                                                                      * @returns {Promise<any>}
+                                                                                                      */
+function getImgInfo(src) {var fun = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+  uni.getImageInfo({
+    src: src,
+    success: function success(res) {
+      fun(res);
+    } });
+
+}
+
+/**
+   * 获取用户授权信息
+   * @returns {Promise<any>}
+   */
+function auth(str) {
+  return new Promise(function (resolve, reject) {
+    var key = 'scope.' + str;
+    uni.getSetting({
+      success: function success(res) {
+        if (res.authSetting[key]) {
+          // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      } });
+
+  });
+}
+
+function updataApp() {//版本更新
+  if (uni.canIUse('getUpdateManager')) {
+    var updateManager = uni.getUpdateManager();
+    updateManager.onCheckForUpdate(function (res) {
+      if (res.hasUpdate) {// 请求完新版本信息的回调
+        updateManager.onUpdateReady(function () {
+          uni.showModal({
+            title: '更新提示',
+            content: '新版本已经准备好，是否重启应用？',
+            success: function success(res) {
+              if (res.confirm) {// 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+                updateManager.applyUpdate();
+              }
+            } });
+
+        });
+        updateManager.onUpdateFailed(function () {
+          uni.showModal({ // 新的版本下载失败
+            title: '已经有新版本了哟~',
+            content: '新版本已经上线啦~，请您删除当前小程序，重新搜索打开哟~' });
+
+        });
+      }
+    });
+  } else {
+    uni.showModal({ // 如果希望用户在最新版本的客户端上体验您的小程序，可以这样子提示
+      title: '提示',
+      content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。' });
+
+  }
+}var _default =
+{
+  updataApp: updataApp,
+  getImgInfo: getImgInfo,
+  auth: auth };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+/* 42 */
+/*!********************************************************!*\
+  !*** E:/work/project/tongxin_mini/utils/systemInfo.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var systemInfo = {
+  width: 0,
+  height: 0,
+  isGet: false,
+  windowWidth: 0,
+  getData: function getData() {
+    var that = this;
+    uni.getSystemInfo({
+      success: function success(res) {
+        // console.log(res);
+        that.isGet = true;
+        that.width = 750;
+        that.windowWidth = res.windowWidth;
+        that.height = res.windowHeight * (750 / res.windowWidth); //px转rpx
+      } });
+
+  } };var _default =
+
+
+
+systemInfo;exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+/* 43 */
+/*!*************************************************!*\
+  !*** E:/work/project/tongxin_mini/utils/tip.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;function _classCallCheck(instance, Constructor) {if (!(instance instanceof Constructor)) {throw new TypeError("Cannot call a class as a function");}}function _defineProperties(target, props) {for (var i = 0; i < props.length; i++) {var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);}}function _createClass(Constructor, protoProps, staticProps) {if (protoProps) _defineProperties(Constructor.prototype, protoProps);if (staticProps) _defineProperties(Constructor, staticProps);return Constructor;} /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   * 提示与加载工具类
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   */var
+Tips = /*#__PURE__*/function () {
+  function Tips() {_classCallCheck(this, Tips);
+    this.isLoading = false;
+  }
+
+  /**
+     * 弹出加载提示
+     */_createClass(Tips, null, [{ key: "loading", value: function loading()
+    {var title = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "正在加载";
+      if (Tips.isLoading) {
+        return;
+      }
+      Tips.isLoading = true;
+      uni.showLoading({
+        title: title,
+        mask: true });
+
+    }
+
+    /**
+       * 加载完毕
+       */ }, { key: "loaded", value: function loaded()
+    {
+      if (Tips.isLoading) {
+        setTimeout(function () {
+          Tips.isLoading = false;
+          uni.hideLoading();
+        }, 300);
+      }
+    } }, { key: "toast", value: function toast(
+
+    msg) {
+      uni.showToast({
+        title: msg,
+        duration: 2000,
+        icon: 'none' });
+
+    }
+
+    /**
+       * 模态弹窗
+       */ }, { key: "modal", value: function modal(
+    content) {var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '提示';
+      return new Promise(function (resolve, reject) {
+        uni.showModal({
+          title: title,
+          content: content,
+          success: function success(res) {
+            if (res.confirm) {
+              resolve();
+            } else if (res.cancel) {
+              reject();
+            }
+          } });
+
+      });
+
+    } }]);return Tips;}();
+
+
+/**
+                            * 静态变量，是否加载中
+                            */exports.default = Tips;
+Tips.isLoading = false;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+/* 44 */
+/*!***********************************************!*\
+  !*** E:/work/project/tongxin_mini/api/api.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _config = _interopRequireDefault(__webpack_require__(/*! ./config */ 40));
+var _xApi = _interopRequireDefault(__webpack_require__(/*! ./xApi.js */ 45));
+var _yApi = _interopRequireDefault(__webpack_require__(/*! ./yApi.js */ 46));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+
+var host = _config.default.baseUrl;
+
+var api = {
+  uploadImg: "".concat(host, "/Api/Common/upload_image"), //上传图片接口
+  getCenterIndex: "".concat(host, "/Api/User/index"), // 个人中心首页
+  myAssets: "".concat(host, "/api/User/capital"), // 我的资产
+  myCommission: "".concat(host, "/Api/user/myCommission"), // 我的佣金
+  commissionAccount: "".concat(host, "/Api/user/commissionAccount"), // 订单佣金流水
+  userComssion: "".concat(host, "/Api/user/userComssion"), // 用户佣金统计
+  couponlist: "".concat(host, "/Api/User/couponlist"), // 优惠券列表
+  withdraw: "".concat(host, "/Api/User/withdraw"), // 提现
+  recharge: "".concat(host, "/Api/WxJsApi/recharge"), // 充值
+  rechargeVip: "".concat(host, "/Api/WxJsApi/rechargeVip"), // 充值vip
+  editInfo: "".concat(host, "/Api/User/edit"), // 修改个人信息
+  getAccountLogList: "".concat(host, "/Api/User/accountLogList"), // 流水记录
+  getAccountTypeList: "".concat(host, "/Api/User/accountTypeList"), // 流水分类
+  addressList: "".concat(host, "/api/order/addressList"), // 用户地址
+  addressDetai: "".concat(host, "/Api/Order/addressDetai"), // 地址详情
+  addressDel: "".concat(host, "/Api/Order/addressDel"), // 删除地址
+  addressDefault: "".concat(host, "/Api/Order/addressDefault"), // 默认地址
+  addressEdit: "".concat(host, "/Api/Order/addressEdit"), // 地址编辑
+  addressSetDefault: "".concat(host, "/Api/Order/addressSetDefault"), // 设置默认地址
+  wechatPay: "".concat(host, "/Api/WxJsPay/getJsApiData"), // 调起微信支付
+  collection: "".concat(host, "/Api/User/collection"), // 我的收藏
+  comment: "".concat(host, "/Api/User/comment"), // 我的评论
+  addDebunk: "".concat(host, "/Api/user/addDebunk"), // 我要吐槽
+  problem: "".concat(host, "/Api/User/problem"), // 留言页面数据获取
+  myOrder: "".concat(host, "/Api/Order/xcxMyOrder"), // 我的订单
+  getRegionData: "".concat(host, "/api/index/area"), // 获取省市区联动数据
+  orderdetail: "".concat(host, "/Api/Order/xcxOrderdetail"), // 订单详情
+  keyWordSearch: "".concat(host, "/Api/index/keyWordSearch"), // 关键词搜索
+  getLogistics: "".concat(host, "/Api/Order/getLogistics"), // 获取物流信息
+  goods_comment: "".concat(host, "/Api/Order/goods_comment"), // 商品评论
+  look_goods_comment: "".concat(host, "/Api/Order/look_goods_comment"), // 查看口碑
+  getUserDetailInfo: "".concat(host, "/Api/user/detail"), // 获取用户信息
+  getOrderList: "".concat(host, "/Api/XcxReturnGood/orderlist"), // 订单列表
+  getRetCartNum: "".concat(host, "/Api/XcxReturnGood/retCartnum"), // 退货框总数
+  getRetOrderList: "".concat(host, "/Api/XcxReturnGood/retOrderlist"), // 退货列表
+  getRetGoodInfo: "".concat(host, "/Api/XcxReturnGood/retGoodinfo"), // 退货商品详情
+  addRetCart: "".concat(host, "/Api/XcxReturnGood/addRetCart"), // 保存需要退货的
+  cancelApplyRet: "".concat(host, "/Api/XcxReturnGood/del_cart"), //  删除选中商品/取消申请
+  addRetOrder: "".concat(host, "/Api/XcxReturnGood/addRetOrder"), //  确认提交申请退货
+  preferential: "".concat(host, "/Api/user/preferential"), //  会员节省详情
+  retOrderdetail: "".concat(host, "/Api/XcxReturnGood/retOrderdetail"), //  退货详情
+  changeOrderStatus: "".concat(host, "/Api/Order/changeOrderStatus"), // 修改订单状态
+  add_cart: "".concat(host, "/api/cart/add_cart"), // 2.4 添加进货车
+  getJsApiData: "".concat(host, "/Api/WxJsApi/getJsApiData"), // 调起微信支付
+  pay: "".concat(host, "/Api/Order/pay_xcx"), // 去支付
+  orderBegin: "".concat(host, "/Api/Order/orderBegin_xcx"), // 支付开始
+  getVipList: "".concat(host, "/Api/user/getVipList"), // 会员等级信息
+  cancelRetOrder: "".concat(host, "/Api/XcxReturnGood/cancelRetOrder"), // 取消退货（不是取消申请退货）
+  getSalesmanInfo: "".concat(host, "/Api/user/customerService"), // 专属业务员
+  getUserinfo: "".concat(host, "/Api/user/getUserinfo"), // 用户信息
+  userSalseCode: "".concat(host, "/Api/WeChat/userSalseCode"), // 用户分销二维码
+  saveRetExpress: "".concat(host, "/Api/XcxReturnGood/retExpress"), // 保存快递单号
+  add_collection_pp: "".concat(host, "/api/brand/add_collection"), // 收藏品牌
+  add_collection_sp: "".concat(host, "/api/cart/add_collection"), // 收藏商品
+  delMyfeet: "".concat(host, "/Api/user/delMyfeet"), // 删除我的足迹
+  refundRate: "".concat(host, "/Api/user/refundRate"), // 退货率
+
+
+  getTestToken: "".concat(host, "/api/WeChat/getTestToken") // 用户user_id换取token
+};
+
+
+Object.assign(api, _xApi.default);
+Object.assign(api, _yApi.default);var _default =
+
+api;exports.default = _default;
+
+/***/ }),
+/* 45 */
+/*!************************************************!*\
+  !*** E:/work/project/tongxin_mini/api/xApi.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _config = _interopRequireDefault(__webpack_require__(/*! ./config */ 40));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+
+var host = _config.default.baseUrl;
+
+var xApi = {
+
+  category: "".concat(host, "/api/index/xcxcategory"),
+  categoryBanner: "".concat(host, "/api/index/banner") };var _default =
+
+
+
+xApi;exports.default = _default;
+
+/***/ }),
+/* 46 */
+/*!************************************************!*\
+  !*** E:/work/project/tongxin_mini/api/yApi.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _config = _interopRequireDefault(__webpack_require__(/*! ./config */ 40));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+
+var host = _config.default.baseUrl;
+
+var yApi = {
+
+  wxloginXcx: "".concat(host, "/Api/WeChat/wxlogin_xcx"), //小程序登录
+  getUserinfo: "".concat(host, "/Api/user/getUserinfo"), //用户信息
+  updateUserinfo: "".concat(host, "/Api/WeChat/updateUserinfo"), //更新用户信息
+  getCodeProduct: "".concat(host, "/Api/goods/getCodeProduct"), //二维码置换商品id
+
+  banner: "".concat(host, "/api/index/banner"), //banner列表
+  hotSearch: "".concat(host, "/api/index/hot_search"), //热门搜索
+  xcxhome: "".concat(host, "/api/index/xcxhome"), //小程序首页
+  keyWordSearch: "".concat(host, "/Api/index/keyWordSearch"), //关键词搜索 可能喜欢
+
+  newprocudt_xcx: "".concat(host, "/api/index/newprocudte_xcx"), //刚刚上新页面接口
+  newprocudt: "".concat(host, "/api/index/newprocudt"), //刚刚上新
+  preprocudt: "".concat(host, "/api/index/preprocudt"), //即将到货
+  comingGoods: "".concat(host, "/Api/Index/comingGoods"), //即将上新
+  quickWare: "".concat(host, "/api/index/quickWare"), //快速补货
+
+  limitTimearr: "".concat(host, "/Api/index/timearr"), //秒杀时间数组
+  limitprocudt: "".concat(host, "/api/index/limitprocudt"), //限时秒杀
+
+  barndsIndex: "".concat(host, "/api/brand/brands_index"), //品牌馆
+  collecBrands: "".concat(host, "/api/brand/add_collection"), //收藏品牌
+  brandInfo: "".concat(host, "/api/brand/brandinfo"), //品牌详情
+  brandGoodlist: "".concat(host, "/api/brand/goodlist"), //品牌商品列表
+
+  concatCategory: "".concat(host, "/api/index/concat"), //代卖分类
+  conlist: "".concat(host, "/api/index/conlist"), //代卖tab列表
+  concatGoodlist: "".concat(host, "/api/index/goodlist"), //分类商品
+  concatBrands: "".concat(host, "/api/brand/brands"), //品牌列表
+
+  goodsDetail: "".concat(host, "/api/goods/goods"), //商品详情
+  recommendationBrand: "".concat(host, "/Api/brand/recommendation_brand"), //推荐品牌
+  goodsStock: "".concat(host, "/api/goods/goodsstock"), //商品库存
+  goodsCollection: "".concat(host, "/api/cart/add_collection"), //收藏商品
+  addToCart: "".concat(host, "/api/cart/add_cart"), //添加进货车
+  cartNum: "".concat(host, "/api/cart/cart_num"), //购物车数量
+  // xcxCart:`${host}/api/cart/xcxCart`,                    //进货车列表
+  delCart: "".concat(host, "/api/cart/del_cart"), //删除购物车
+  checkStock: "".concat(host, "/api/goods/checkStock"), //检测库存是否缺货
+
+  goBuy: "".concat(host, "/Api/Order/goBuy"), //结算
+  orderBegin: "".concat(host, "/Api/Order/orderBegin_xcx"), //支付开始
+  orderPay: "".concat(host, "/Api/Order/pay_xcx"), //去支付
+  wePay: "".concat(host, "/Api/WxJsApi/getJsApiData"), //调起微信支付
+  orderInfo: "".concat(host, "/Api/order/orderInfo"), //确认订单详情
+
+  serviceCenter: "".concat(host, "/Api/Article/serviceCenter"), //客服中心常见问题
+
+  xcxCart: "".concat(host, "/api/cart/xcxCart_test") //进货车列表测试
+};var _default =
+
+
+yApi;exports.default = _default;
+
+/***/ }),
+/* 47 */
+/*!***************************************************!*\
+  !*** E:/work/project/tongxin_mini/utils/index.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! ../api/api */ 44));
+var _request = _interopRequireDefault(__webpack_require__(/*! ../js_sdk/jamling-request/j-request/request.js */ 39));
+var _login = _interopRequireDefault(__webpack_require__(/*! @/utils/login.js */ 48));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+
+/**
+                                                                                                                                                                * 微信支付
+                                                                                                                                                                */
+function wepay(data) {
+  return new Promise(function (resolve, reject) {
+    uni.requestPayment({
+      provider: 'wxpay',
+      timeStamp: data.timeStamp,
+      nonceStr: data.nonceStr,
+      package: data.package,
+      signType: data.signType,
+      paySign: data.paySign,
+      success: function success(res) {
+        // console.log('wepaysuccess:' + JSON.stringify(res));
+        resolve();
+      },
+      fail: function fail(err) {
+        // console.log('wepayfail:' + JSON.stringify(err));
+        reject();
+      } });
+
+  });
+}
+
+/**
+   * 数据处理优化，选取渲染的数据
+   */
+function simplifyArticleList(list, arr) {
+  var obj = {};
+  arr.forEach(function (val) {
+    obj[val] = '';
+  });
+  return list.map(function (item) {
+    var obj2 = Object.create(obj);
+    for (var i in obj) {
+      obj2[i] = item[i];
+    }
+    return obj2;
+  });
+}
+
+
+function chooseImg() {var count = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+  return new Promise(function (resolve, reject) {
+    uni.chooseImage({
+      count: count,
+      sizeType: ['compressed', 'original'],
+      success: function success(res) {
+        resolve(res);
+      },
+      fail: function fail(err) {
+        reject(err);
+      } });
+
+  });
+}
+
+function uploadFile(path) {var title = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '上传中';
+  return new Promise(function (resolve, reject) {
+    uni.showLoading({
+      title: title,
+      mask: true });
+
+    uni.uploadFile({
+      url: _api.default.uploadImg,
+      filePath: path,
+      name: 'file',
+      formData: {
+        token: uni.getStorageSync('token') },
+
+      success: function success(res) {
+        resolve(res);
+      },
+      fail: function fail(err) {
+        reject(err);
+      },
+      complete: function complete() {
+        uni.hideLoading();
+      } });
+
+  });
+}
+
+var regYear = new RegExp("(y+)", "i");
+
+function formatTime(timestamp, format) {
+  if (!format) {
+    format = "yyyy-MM-dd hh:mm:ss";
+  }
+  timestamp = parseInt(timestamp);
+  var realDate = new Date(timestamp);
+
+  function timeFormat(num) {
+    return num < 10 ? '0' + num : num;
+  }
+
+  var date = [
+  ["M+", timeFormat(realDate.getMonth() + 1)],
+  ["d+", timeFormat(realDate.getDate())],
+  ["h+", timeFormat(realDate.getHours())],
+  ["m+", timeFormat(realDate.getMinutes())],
+  ["s+", timeFormat(realDate.getSeconds())],
+  ["q+", Math.floor((realDate.getMonth() + 3) / 3)],
+  ["S+", realDate.getMilliseconds()]];
+
+  var reg1 = regYear.exec(format);
+  // console.log(reg1[0]);
+  if (reg1) {
+
+    format = format.replace(reg1[1], (realDate.getFullYear() + '').substring(4 - reg1[1].length));
+  }
+  for (var i = 0; i < date.length; i++) {
+    var k = date[i][0];
+    var v = date[i][1];
+
+    var reg2 = new RegExp("(" + k + ")").exec(format);
+    if (reg2) {
+      format = format.replace(reg2[1], reg2[1].length == 1 ?
+      v : ("00" + v).substring(("" + v).length));
+
+    }
+  }
+  return format;
+}
+
+/**
+   * 时间搓转倒计时时间
+   */
+
+function countdownTime(timestamp, format) {
+  if (!format) {
+    format = "yyyy-MM-dd hh:mm:ss";
+  }
+  timestamp = parseInt(timestamp + 946656000000);
+  // 946656000000  2000/1/1 00:.00:00
+  var realDate = new Date(timestamp);
+
+  function timeFormat(num) {
+    return num < 10 ? '0' + num : num;
+  }
+
+  var date = [
+  ["M+", timeFormat(realDate.getMonth())],
+  ["d+", timeFormat(realDate.getDate() - 1)],
+  ["h+", timeFormat(realDate.getHours())],
+  ["m+", timeFormat(realDate.getMinutes())],
+  ["s+", timeFormat(realDate.getSeconds())],
+  ["q+", Math.floor((realDate.getMonth() + 3) / 3)],
+  ["S+", realDate.getMilliseconds()]];
+
+  var reg1 = regYear.exec(format);
+  if (reg1) {
+
+    format = format.replace(reg1[1], (realDate.getFullYear() - 2000 + '').substring(4 - reg1[1].length));
+  }
+  for (var i = 0; i < date.length; i++) {
+    var k = date[i][0];
+    var v = date[i][1];
+    var reg2 = new RegExp("(" + k + ")").exec(format);
+    if (reg2) {
+      format = format.replace(reg2[1], reg2[1].length == 1 ?
+      v : ("00" + v).substring(("" + v).length));
+
+    }
+  }
+  return format;
+}
+
+/**
+   * 设置标题
+   */
+function setTitle(title) {
+  uni.setNavigationBarTitle({
+    title: title });
+
+}
+
+/**
+   * 分享
+   */
+function onShareAppMessage(title, path, callback, imageUrl) {
+  return {
+    title: title,
+    path: path,
+    imageUrl: imageUrl || '',
+    success: function success(res) {
+      console.log("转发成功！");
+      if (!res.shareTickets) {
+        //分享到个人
+        console.log("shareFriendSuccess!");
+        callback && callback();
+        // api.shareFriend().then(() => {
+        // 	console.warn("shareFriendSuccess!");
+        // 	//执行转发成功以后的回调函数
+        // 	callback && callback();
+        // });
+      } else {
+        //分享到群
+        console.log("groupShareSuccess!");
+        callback && callback();
+      }
+    },
+    fail: function fail(res) {
+      console.log("转发失败！");
+    } };
+
+}
+
+/**
+   * 更新用户信息
+   */
+function updateUserinfo(user) {
+  return new Promise(function (resolve, reject) {
+    _login.default.weLogin().then(function (code) {
+      _login.default.login(code);
+      uni.getUserInfo({
+        provider: 'weixin',
+        success: function success(infoRes) {
+          _request.default.post({
+            url: _api.default.updateUserinfo,
+            data: {
+              wxname: infoRes.userInfo.nickName,
+              headimg: infoRes.userInfo.avatarUrl,
+              gender: infoRes.userInfo.gender,
+              mobile: infoRes.userInfo.mobile || '',
+              iv: encodeURIComponent(infoRes.iv),
+              encryptedData: infoRes.encryptedData } }).
+
+          then(function () {
+            resolve(true);
+          }).catch(function () {
+            resolve(false);
+          });
+        } });
+
+    });
+  });
+}
+/**
+   * 保存图片
+   */
+function saveImgToPhotosAlbum(imgUrl) {var text = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '如需保存，请点击二维码授权';
+  // var imgSrc = "https://xcx.yuanpincang.com/uploads/bb/1.png"
+  var imgSrc = imgUrl;
+  uni.showLoading({
+    title: '正在保存',
+    icon: 'none' });
+
+  uni.downloadFile({
+    url: imgSrc,
+    success: function success(res) {
+      // console.log(res);
+      //图片保存到本地
+      uni.saveImageToPhotosAlbum({
+        filePath: res.tempFilePath,
+        success: function success(data) {
+          uni.hideLoading();
+          uni.showToast({
+            title: '保存成功',
+            icon: 'success',
+            duration: 2000 });
+
+        },
+        fail: function fail(err) {
+          console.log(err);
+          uni.hideLoading();
+          if (err.errMsg === "saveImageToPhotosAlbum:fail auth deny") {
+            uni.showToast({
+              title: text,
+              icon: "none" });
+
+          }
+        },
+        complete: function complete(res) {
+          // console.log(res);
+        } });
+
+    },
+    fail: function fail(err) {
+      uni.hideLoading();
+    } });
+
+};
+/**
+    * 打开设置 设置图片权限
+    */
+function stopWxCodeImgPopup(wxCodeImg) {
+  uni.getSetting({
+    success: function success(res) {
+      if (!res.authSetting['scope.writePhotosAlbum']) {
+        uni.openSetting({
+          success: function success(settingdata) {
+            // console.log(settingdata)
+            if (settingdata.authSetting['scope.writePhotosAlbum']) {
+              saveImgToPhotosAlbum(wxCodeImg);
+            } else {
+              console.log('获取权限失败');
+            }
+          } });
+
+      }
+    } });
+
+};
+//二维码id置换商品id
+function code2goods(id) {
+  return new Promise(function (resolve, reject) {
+    _request.default.post({
+      url: _api.default.getCodeProduct,
+      data: {
+        errcode_id: id } }).
+
+    then(function (res) {
+      resolve(res);
+    }).catch(function (err) {
+      reject(err);
+    });
+  });
+}
+
+function makePhone(phone) {
+  uni.makePhoneCall({
+    phoneNumber: phone });
+
+}
+
+//获取待付款订单数量
+function setCenterTabBarBadge() {
+  _request.default.post({
+    url: _api.default.myOrder,
+    data: {
+      statu_stype: 1,
+      page: 1,
+      pageSize: 1 } }).
+
+  then(function (res) {
+    if (res.total == 0) {
+      uni.removeTabBarBadge({
+        index: 4 });
+
+    } else {
+      uni.setTabBarBadge({
+        index: 4,
+        text: res.total.toString() });
+
+    }
+
+  }).catch(function (err) {});
+
+}
+
+function getTestToken() {
+  _request.default.post({
+    url: _api.default.getTestToken,
+    data: {
+      user_id: '11993' } }).
+
+  then(function (res) {}).
+  catch(function (err) {});
+}var _default =
+
+
+
+{
+  wepay: wepay,
+  simplifyArticleList: simplifyArticleList,
+  chooseImg: chooseImg,
+  uploadFile: uploadFile,
+  formatTime: formatTime,
+  setTitle: setTitle,
+  countdownTime: countdownTime,
+  onShareAppMessage: onShareAppMessage,
+  updateUserinfo: updateUserinfo,
+  saveImgToPhotosAlbum: saveImgToPhotosAlbum,
+  stopWxCodeImgPopup: stopWxCodeImgPopup,
+  code2goods: code2goods,
+  makePhone: makePhone,
+  setCenterTabBarBadge: setCenterTabBarBadge,
+  getTestToken: getTestToken };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+/* 48 */
+/*!***************************************************!*\
+  !*** E:/work/project/tongxin_mini/utils/login.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _api = _interopRequireDefault(__webpack_require__(/*! ../api/api */ 44));
+var _request = _interopRequireDefault(__webpack_require__(/*! ../js_sdk/jamling-request/j-request/request.js */ 39));
+var _tip = _interopRequireDefault(__webpack_require__(/*! ./tip.js */ 43));
+var _logicIntercept = _interopRequireDefault(__webpack_require__(/*! ./logicIntercept.js */ 49));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+
+/**
+                                                                                                                                                                            * 检查session是否失效
+                                                                                                                                                                            */
+
+var token = uni.getStorageSync('token');
+
+function checkSession() {
+  return new Promise(function (resolve, reject) {
+    uni.checkSession({
+      success: function success() {
+        console.log('状态未过期');
+        //未过期
+        resolve(1);
+      },
+      fail: function fail() {
+        console.log('状态已过期');
+        //已过期
+        resolve(0);
+      } });
+
+  }).catch(function (res) {
+    _tip.default.toast(res.errMsg || '验证session失效');
+  });
+}
+
+/**
+   * 微信登录
+   */
+function weLogin() {
+  return new Promise(function (resolve, reject) {
+    uni.login({
+      success: function success(res) {
+        if (res.code) {
+          var code = res.code;
+          resolve(code);
+        } else {
+          _tip.default.toast('微信登录失败~~');
+        }
+      } });
+
+  });
+}
+
+/**
+   * 后台登录
+   */
+function login(code) {var refreeid = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+  return new Promise(function (resolve, reject) {
+    _request.default.post({
+      url: _api.default.wxloginXcx,
+      data: {
+        code: code,
+        refreeid: refreeid } }).
+
+    then(function (res) {
+      uni.setStorageSync('token', res.token);
+      MineIndex();
+      resolve(res.token);
+    }).catch(function () {
+      reject(res);
+    });
+  });
+}
+
+/**
+   * 用户信息获取
+   */
+function MineIndex(errFun) {
+  _request.default.post({
+    url: _api.default.getUserinfo }).
+  then(function (res) {
+    _logicIntercept.default.setUserStatus(res);
+  }).catch(function (err) {
+    // 判断登录失败
+    if (err.status == 401) {
+      if (errFun) {
+        _tip.default.loading('重新登录');
+        errFun();
+      }
+    }
+  });
+}var _default =
+
+{
+  checkSession: checkSession,
+  weLogin: weLogin,
+  login: login,
+  MineIndex: MineIndex };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
+/***/ }),
+/* 49 */
+/*!************************************************************!*\
+  !*** E:/work/project/tongxin_mini/utils/logicIntercept.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var logicIntercept = {
+
+  //登录逻辑权限判断
+  isLogin: true,
+  interceptLoginFunList: [],
+  loginCallback: function loginCallback(fun) {
+    if (this.isLogin) {
+      fun();
+    } else {
+      this.interceptLoginFunList.push(fun);
+    }
+  },
+  setLoginStatus: function setLoginStatus() {var type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+    this.isLogin = type;
+    if (type) {
+      if (this.interceptLoginFunList.length > 0) {
+        this.interceptLoginFunList.forEach(function (val) {
+          val();
+        });
+        this.interceptLoginFunList = [];
+      }
+    }
+  },
+  // 个人信息权限判断
+  isRefreshUserDetail: false,
+  userDetail: {},
+  interceptUserFunList: [],
+  getUserDetail: function getUserDetail(fun) {
+    if (this.isRefreshUserDetail) {
+      fun();
+    } else {
+      this.interceptUserFunList.push(fun);
+    }
+  },
+  setUserStatus: function setUserStatus(userDetail) {var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+    this.userDetail = JSON.parse(JSON.stringify(userDetail)),
+    this.isRefreshUserDetail = type;
+    if (this.interceptUserFunList.length > 0) {
+      this.interceptUserFunList.forEach(function (val) {
+        val();
+      });
+      this.interceptUserFunList = [];
+    }
+  } };var _default =
+
+
+logicIntercept;exports.default = _default;
+
+/***/ }),
+/* 50 */
+/*!**************************************************!*\
+  !*** E:/work/project/tongxin_mini/utils/tags.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var tags = {
+  indexTabTag: '',
+  helpBuyTabTag: '' };var _default =
+
+
+tags;exports.default = _default;
+
+/***/ }),
+/* 51 */
+/*!***************************************************!*\
+  !*** E:/work/project/tongxin_mini/utils/shake.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var shakeScroll = {
+  isShake: true,
+  lastFun: '',
+  setShake: function setShake(fun) {var _this = this;
+    if (this.isShake) {
+      this.isShake = false;
+      fun();
+      setTimeout(function () {
+        _this.isShake = true;
+        //   if(this.lastFun!=''){
+        //     this.lastFun();
+        //   }
+      }, 300);
+    } else {
+      this.lastFun = fun;
+    }
+  } };var _default =
+
+
+shakeScroll;exports.default = _default;
+
+/***/ }),
+/* 52 */
+/*!********************************************************!*\
+  !*** E:/work/project/tongxin_mini/utils/swiperLink.js ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;var _tags = _interopRequireDefault(__webpack_require__(/*! @/utils/tags.js */ 50));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}
+
+var swiperLink = {
+  tabList: [
+  '/pages/index/index',
+  '/pages/category/category',
+  '/pages/helpBuy/helpBuy/helpBuy',
+  '/pages/cart/cart',
+  '/pages/center/user/user'],
+
+  linkTo: function linkTo(link) {
+    var arr = link.split('?');
+    var path = arr[0] || '';
+    var query = arr[1] || '';
+    if (this.tabList.indexOf(path) == -1) {
+      uni.navigateTo({
+        url: link });
+
+    } else {
+      if (path == '/pages/index/index' && query != '') {
+        var q = query.split('=');
+        _tags.default.indexTabTag = q[1];
+        uni.reLaunch({
+          url: path });
+
+      } else if (path == '/pages/helpBuy/helpBuy/helpBuy' && query != '') {
+        var q = query.split('=');
+        _tags.default.helpBuyTabTag = q[1];
+        uni.reLaunch({
+          url: path });
+
+      } else {
+        uni.reLaunch({
+          url: link });
+
+      }
+    }
+  } };var _default =
+
+
+swiperLink;exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
+
 /***/ })
 ]]);
 //# sourceMappingURL=../../.sourcemap/mp-weixin/common/vendor.js.map
