@@ -169,15 +169,15 @@ export default {
 
     &.uni-custom {
       & .uni-popup__wrapper-box {
-        padding: 30upx;
+        // padding: 30upx;
         background: #fff;
       }
 
       &.center {
         & .uni-popup__wrapper-box {
           position: relative;
-          max-width: 80%;
-          max-height: 80%;
+          max-width: 100%;
+          max-height: 100%;
           overflow-y: scroll;
         }
       }

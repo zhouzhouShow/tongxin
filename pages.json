@@ -37,6 +37,10 @@
             "path" : "pages/good/goodDetail",
             "style" : {}
         }
+	    ,{
+            "path" : "pages/seeding/productDetail",
+            "style" : {}
+        }
     ],
 	"tabBar": {
 		"color": "#C0C4CC",
