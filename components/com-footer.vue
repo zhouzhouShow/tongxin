@@ -3,25 +3,14 @@
 		<view v-for="(item,index) in tabList" :key="index" :class="{'tab-ac':tabIdx == index}" @click.stop="navToTabPage(index)">
 			<image :src="tabIdx == index?item.imgAc:item.imgDefault" mode="scaleToFill"></image>
 			<text>{{item.title}}</text>
-			<view class="angle-box" v-if="index == 4">
-				<angle :value="centerAngle" background="#FE2E2E" height="34rpx" padding="0 8rpx" fontSize="24rpx" borderRadius="17rpx"></angle>
-			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-	import angle from '@/components/angle.vue'
 	export default {
-		components: {
-			angle
-		},
 		props: {
 			tabIdx: {
-				type: Number,
-				default: 0
-			},
-			centerAngle: {
 				type: Number,
 				default: 0
 			}
@@ -29,36 +18,32 @@
 		data() {
 			return {
 				tabList: [{
-						title: '首页',
-						imgDefault: '/static/tab-home.png',
-						imgAc: '/static/tab-home-current.png',
-						path: '/pages/index/index'
+						"path": "/pages/index/index",
+						"imgDefault": "/static/images/index-footer.png",
+						"imgAc": "/static/images/index-active-footer.png",
+						"title": "首页"
 					},
 					{
-						title: '分类',
-						imgDefault: '/static/tab-cate.png',
-						imgAc: '/static/tab-cate-current.png',
-						path: '/pages/category/category'
+						"path": "/pages/seeding/seeding",
+						"imgDefault": "/static/images/shopper-footer.png",
+						"imgAc": "/static/images/shopper-active-footer.png",
+						"title": "种草"
 					},
 					{
-						title: '代卖',
-						imgDefault: '/static/tab-help.png',
-						imgAc: '/static/tab-help-current.png',
-						path: '/pages/helpBuy/helpBuy/helpBuy'
+						"path": "/pages/shopCart/shopCart",
+						"imgDefault": "/static/images/shopcart-footer.png",
+						"imgAc": "/static/images/shopcart-active-footer.png",
+						"title": "购物车"
 					},
+				
 					{
-						title: '进货车',
-						imgDefault: '/static/tab-cart.png',
-						imgAc: '/static/tab-cart-current.png',
-						path: '/pages/cart/cart'
-					},
-					{
-						title: '我的',
-						imgDefault: '/static/tab-my.png',
-						imgAc: '/static/tab-my-current.png',
-						path: '/pages/center/user/user'
+						"path": "/pages/center/center",
+						"imgDefault": "/static/images/me-footer.png",
+						"imgAc": "/static/images/me-active-footer.png",
+						"title": "我的"
 					}
 				],
+				
 			}
 		},
 		methods: {
@@ -75,7 +60,7 @@
 
 <style lang="scss" scoped>
 	.com-footer-container {
-		height: 94rpx;
+		height: 98rpx;
 		width: 100%;
 		position: fixed;
 		left: 0;
@@ -89,7 +74,7 @@
 		box-sizing: border-box;
 
 		&>view {
-			width: 20%;
+			width: 25%;
 			height: 100%;
 			display: flex;
 			align-items: center;

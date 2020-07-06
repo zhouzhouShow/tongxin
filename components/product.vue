@@ -1,250 +1,289 @@
+<!--产品组件-->
 <template>
-	<view>
-		<view class="product-container" :class="'item-'+item.id" @click.stop="navToDetailPage(item.id)" v-if="type != 'isCollect'">
-			<view class="product-img-box">
-				<center-img v-if="show" :src="isWill?item.img:item.pic_urls[0]" :parentsWidth="360" :parentsHeight="480"></center-img>
-				<image v-if="item.stocksnum<=0" class="sale-over" src="/static/sale-over.png" mode="widthFix"></image>
-				<image v-if="item.video_url" class="video-img" src="/static/play-btn.png" mode="widthFix"></image>
-				<view class="last-sales-return-time clamp" v-if="type=='helpBuy'">
-					<text>最晚退货时间：{{item.last_return_time}}</text>
-				</view>
-			</view>
-			<view class="product-content" v-if="!isWill">
-				<view class="product-price">
-					<!-- <text>{{level == 13?'加盟代理':'PLUS会员'}}</text> -->
-					<text>加盟代理</text>
-					<text>¥{{ item.lastmoney?item.lastmoney:item.price_sale }}</text>
-				</view>
-				<view class="product-code-collect">
-					<text class="product-code">{{item.code}}</text>
-					<view class="product-collect">
-						<image src="/static/icon/icon_collect.png" mode=""></image>
-						<text>{{ item.viewnum }}</text>
-					</view>
-				</view>
-				<view class="product-title clamp">{{ item.title }}</view>
-				<view class="product-time" v-if="type=='centerList'">上次进货：7月1日</view>
-				<view class="product-activity" v-if="type=='helpBuy'">{{item.activity}}</view>
-			</view>
-			<!-- //即将上新 -->
-			<view class="product-is-will" v-if="isWill"><text>款号:{{item.code}}</text></view>
-		</view>
-		
-		<view class="product-container" :class="'item-'+item.id" v-if="type == 'isCollect'">
-			<view class="product-img-box">
-				<center-img v-if="show" :src="item.pic_urls[0]" :parentsWidth="360" :parentsHeight="480"></center-img>
-				<image v-if="item.stocksnum<=0" class="sale-over" src="/static/sale-over.png" mode="widthFix"></image>
-				<view class="last-sales-return-time clamp" v-if="type=='helpBuy'">
-					<text>最晚退货时间：{{item.last_return_time}}</text>
-				</view>
-			</view>
-			<view class="product-content" v-if="!isWill">
-				<view class="product-price">
-					<text>{{level == 13?'加盟价':'PLUS会员'}}</text>
-					<text>¥{{ item.lastmoney?item.lastmoney:item.price_sale }}</text>
-				</view>
-				<view class="product-code-collect">
-					<text class="product-code">{{item.code}}</text>
-					<view class="product-collect">
-						<image src="/static/icon/icon_collect.png" mode=""></image>
-						<text>{{ item.viewnum }}</text>
-					</view>
-				</view>
-				<view class="product-title clamp">{{ item.title }}</view>
-				<view class="product-time" v-if="type=='centerList'">上次进货：7月1日</view>
-				<view class="product-activity" v-if="type=='helpBuy'">{{item.activity}}</view>
-			</view>
-			<!-- //即将上新 -->
-			<view class="product-is-will" v-if="isWill"><text>款号:{{item.code}}</text></view>
-		</view>
-	</view>
-	
+  <div class="product1-goods-item"
+       v-if="product.title"
+       @click="goProductDetail()">
+    <div class="good-show">
+      <img mode="aspectFill" :lazy-load="true" class="good-show-img" v-if="product.pic_urls && product.pic_urls[0]"
+           :src="product.pic_urls || product.pic_urls[0]"/>
+			<!-- <img v-if="!hasVideo" class="video-icon" mode="aspectFill" :lazy-load="true" src="../static/images/play-btn.png"> -->
+      <img mode="aspectFill"
+           src="http://fulanpifa.oss-cn-shenzhen.aliyuncs.com/uploads/20180904/7f8cd2124f0a791b1e6626bce0e299d9.gif"
+           v-else>
+  
+      <div class="video-icon" v-if="product.video_url">
+        <img class="video-play-icon" src="../static/images/play-btn.png" alt="">
+      </div>
+    </div>
+    <div class="good-content">
+      <div class="good-desc">
+        <div class="good-desc-part1">
+					<span class="p-box"><span class="p-icon">¥</span>88</span>
+					<span class="mark-price">¥188</span>
+        </div>
+				<div class="like">
+					<image src="../static/images/icon/icon_clear.png" mode=""></image>
+					1000
+				</div>
+      </div>
+			<div class="good-title clamp">{{product.title}}</div>
+    </div>
+  </div>
 </template>
-
 <script>
-	let observer = null;
-	export default {
-		props: {
-			item: {
-				type: Object
-			},
-			isWill: {
-				type: Boolean,
-				default: false
-			},
-			type: {
-				type: String,
-				default: ''
+  export default {
+    name: 'product',
+    props: {
+      'product': {
+        type: Object,
+        default() {
+          return {}
+        }
+      },
+      "isBargains": {
+        type: Boolean,
+        default: false
+      },
+      'isLimit': {
+        type: Boolean,
+        default: false
+      },
+      'isClickable': {
+        type: Boolean,
+        default: true
+      },
+      'type': {
+        type: Number,
+        default: 0
+      },
+			hasVideo:{
+				type:Boolean,
+				default:false
 			}
-		},
-		data() {
-			return {
-				show: false,
-			}
-		},
-		computed:{
-			level(){
-				return this.$intercept.userDetail.level;
-			}
-		},
-		methods: {
-			//详情页
-			navToDetailPage(id) {
-				if (this.isWill) {
-					return;
-				}
-				this.$shake.setShake(()=>{
-					uni.navigateTo({
-						url: `/pages/shopkeeper/product/product?id=${id}`
-					})
-				})
-			}
-		},
-		mounted() {
-			this.$nextTick(() => {
-				var that = this;
-				observer = uni.createIntersectionObserver(this);
-				observer.relativeToViewport({
-					bottom: 20
-				}).observe('.item-' + that.item.id, (res) => {
-					if (res.intersectionRatio > 0) {
-						that.show = true;
-					}
-				})
-			})
-			// this.$intercept.getUserDetail(() => {
-			// 	this.level = 
-			// 	console.log(this.level )
-			// })
-		},
-		beforeDestroy() {
-			if (observer) {
-				observer.disconnect()
-			}
-		}
-	};
+    },
+    data() {
+      return {
+        deadline: this.$props.product.limit_deadline,
+        timer: null,
+        yuan: 0,
+        fen: '00',
+        // isSale:true,
+      }
+    },
+    computed: {
+      formateDeadline() {
+        let leftTime = this.deadline * 1000; //计算剩余的毫秒数
+        let days = parseInt(leftTime / 1000 / 60 / 60 / 24, 10); //计算剩余的天数
+        let hours = parseInt(leftTime / 1000 / 60 / 60 % 24, 10); //计算剩余的小时
+        let minutes = parseInt(leftTime / 1000 / 60 % 60, 10);//计算剩余的分钟
+        let seconds = parseInt(leftTime / 1000 % 60, 10);//计算剩余的秒数
+        days = this.checkTime(days);
+        hours = this.checkTime(hours);
+        minutes = this.checkTime(minutes);
+        seconds = this.checkTime(seconds);
+        return days + "天" + hours + "时" + minutes + "分" + seconds + "秒";
+      },
+      onePrice(){
+        if(this.product.price_sale){
+          return  Number(Number((this.product.price_sale/this.product.sku_num)*this.diamondVip/100).toFixed(1)).toFixed(2) //价格 / 一手件 * 钻石折扣 / 100
+        }
+      },
+      diamondVip(){
+        // console.log('折扣',this.$store.state.vipDiscounts)
+        return this.$store.state.vipDiscounts
+      }
+    },
+    methods: {
+      checkTime(number) { //将0-9的数字前面加上0，例1变为01
+        if (number < 10) {
+          number = "0" + number;
+        }
+        return number;
+      },
+      goProductDetail() {
+        if (this.isClickable) {
+          var id = this.product.id;
+          var sku = this.product.sku || "";
+          uni.navigateTo({
+            url: '/pages/good/goodDetail?id='+id+'&sku='+sku,
+          })
+        }
+      },
+    },
+    mounted() {
+      if (this.deadline) {
+        this.timer = setInterval(() => {
+          this.deadline = this.deadline - 1
+          if (this.deadline <= 0) {
+            clearInterval(this.timer)
+            this.timer = null
+          }
+        }, 1000)
+      }
+      // this.detail = JSON.parse(JSON.stringify(this.product));
+      var price = this.product.price_limit ? this.product.price_limit : this.product.price_sale;
+      if(price){
+        var tempstr = price.split(".");
+        this.yuan = tempstr[0];
+        this.fen = tempstr[1] ? tempstr[1] : '';
+      }
+    },
+    destroyed() {
+      clearInterval(this.timer)
+      this.timer = null
+    }
+  }
 </script>
 
 <style lang="scss" scoped>
-	.product-container {
-		width: 360rpx;
-		background: #fff;
-		border-radius: 4rpx;
-		overflow: hidden;
-	}
-
-	.product-img-box {
-		width: 360rpx;
-		height: 480rpx;
-		position: relative;
-	}
-
-	.last-sales-return-time {
-		position: absolute;
-		left: 0;
-		bottom: 0;
-		width: 100%;
-		height: 60rpx;
-		background: rgba(0, 0, 0, .5);
-		color: #fff;
-		font-size: 24rpx;
-		font-weight: 400;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0 20rpx;
-		box-sizing: border-box;
-		z-index: 100;
-	}
-
-	.product-content {
-		height: 196rpx;
-		display: flex;
-		flex-direction: column;
-		padding: 0 20rpx;
-		padding-top: 10rpx;
-		box-sizing: border-box;
-	}
-
-	.product-price {
-		display: flex;
-		align-items: center;
-		margin-bottom: 10rpx;
-
-		text:first-child {
-			width: 120rpx;
-			height: 38rpx;
-			line-height: 38rpx;
-			background: $base-color;
-			border-radius: 4rpx;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			font-size: 22rpx;
-			color: #fff;
-			margin-right: 10rpx;
-		}
-
-		text:last-child {
-			font-size: 34rpx;
-			font-weight: 500;
-			color: $font-black;
-		}
-	}
-
-	.product-code-collect {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		font-size: 22rpx;
-		line-height: 22rpx;
-		color: $font-color-code;
-		margin-bottom: 18rpx;
-
-		view {
-			align-items: center;
-			display: flex;
-
-			image {
-				width: 24rpx;
-				height: 21rpx;
-				margin-right: 6rpx;
+  .product1-goods-item {
+    border-radius: rpx(8);
+    overflow: hidden;
+    background: #fff;
+    position: relative;
+    border:1px solid #eee;
+    padding-bottom:20rpx;
+    .good-show {
+      /*padding-bottom: 100%;*/
+      overflow: hidden;
+      position: relative;
+			padding:10rpx 10rpx 0;
+			.video-icon{
+				position: absolute;
+				bottom: 10rpx;
+				right:10rpx;
+				width:80rpx;
+				height: 80rpx;
 			}
-		}
-	}
-
-	.product-title {
-		font-size: 26rpx;
-		color: $font-color-dark;
-		margin-bottom: 18rpx;
-		line-height: 26rpx;
-	}
-
-	.product-time {
-		font-size: 24rpx;
-		line-height: 24rpx;
-		color: $base-color;
-	}
-
-	.product-activity {
-		font-size: 22rpx;
-		color: $font-color-light;
-		border: 1px solid $font-color-light;
-		height: 34rpx;
-		line-height: 22rpx;
-		display: inline-flex;
-		align-self: flex-start;
-		align-items: center;
-		padding: 0 10rpx;
-		border-radius: 2rpx;
-	}
-
-	.product-is-will {
-		height: 66rpx;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-size: 28rpx;
-		color: $font-color-base;
-	}
+      .good-show-img {
+				border-radius:8rpx;
+        height: 325rpx;
+        width: 325rpx;
+        vertical-align: middle;
+      }
+    }
+    .good-tag {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 50;
+      width: rpx(84);
+      height: rpx(84);
+    }
+    .saleout {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 49;
+      background: rgba(0, 0, 0, .2);
+      border-top-left-radius: rpx(10);
+      border-top-right-radius: rpx(10);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .saleout-icon {
+        width: rpx(186);
+        height: rpx(186);
+      }
+    }
+    .video-icon {
+      position: absolute;
+      width: rpx(80);
+      height: rpx(80);
+      right: rpx(12);
+      bottom: rpx(10);
+      z-index: 41;
+      background: rgba(0, 0, 0, .2);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .video-play-icon {
+        width: rpx(80);
+        height: rpx(80);
+      }
+    }
+    .saleout-img {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      z-index: 2;
+      background: #A0A0A0;
+      opacity: 0.57;
+      top: 0;
+      img {
+        width: rpx(184);
+        height: rpx(184);
+        border-radius: 50%;
+        background: #515151;
+        opacity: 1;
+      }
+    }
+    .good-content {
+      padding: rpx(8) 20rpx ;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .good-title {
+        margin:20rpx 0 0;
+				padding-left:20rpx;
+        font-size: rpx(26);
+        color: #3F3F3F;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        text-align: left;
+        // display: -webkit-box;
+        // -webkit-box-orient: vertical;
+        // -webkit-line-clamp: 2;
+        overflow: hidden;
+      }
+			.good-desc {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 20rpx 20rpx 0;
+			  .good-desc-part1 {
+			    display: flex;
+			    align-items: center;
+			
+					font-weight:500;
+					color:#999999;
+					.p-box{
+						color: #F22631;
+						font-size:40rpx;
+						.p-icon{
+							font-size:24rpx;	
+						}
+					}
+					.mark-price{
+						margin-left:20rpx;
+						font-size:24rpx;
+						text-decoration:line-through;
+					}
+			  }
+				.like{
+					image{
+						width:20rpx;
+						height:18rpx;
+					}
+					font-size:24rpx;
+					font-weight:400;
+					color:rgba(153,153,153,1);
+				}
+			  .marketBox {
+			    font-size: rpx(22);
+			    color: #BABABA;
+			    text-decoration: line-through;
+			  }
+			  
+			}
+    }
+    
+  }
 </style>

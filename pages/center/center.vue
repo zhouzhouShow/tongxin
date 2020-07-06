@@ -1,6 +1,6 @@
 <template>
 	<view>
-		
+		123213
 	</view>
 </template>
 

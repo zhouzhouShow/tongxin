@@ -5,7 +5,7 @@
 				<image class="logo-icon" src="@/static/images/icon/logo-icon.png" mode=""></image>
 				<view class="search-input-container">
 					<view class="search-icon">
-						<img style="width:31rpx;height:31rpx;display:block;" src="@/static/images/icon/search.png">
+						<img style="" src="@/static/images/icon/search.png">
 					</view>
 					<text>在童心优选中选择</text>
 				</view>
@@ -19,7 +19,6 @@
 					<text class="item">婴童会场</text>
 				</view>
 			</view>
-
 			<view class="swiper-display-area">
 				<swiper v-if="banner.length>0" interval="3000" autoplay=true duration="500" circular=true>
 					<view v-for="(item,index) in banner" :key="index" @click="toBrandDetail(item.ad_link)">
@@ -32,21 +31,88 @@
 			</view>
 			<view class="icons-list-container">
 				<image class="bg" src="../../static/images/icon/nav-bg.png" mode=""></image>
-				<div class="icon-item" @click="nav(item.link)"  v-for="(item,index) in listItem" :key="index">
-					<div class="icon-img">
-						<img :src="item.img">
+				<view class="icons-box">
+					<div class="icon-item" @click="nav(item.link)"  v-for="(item,index) in listItem" :key="index">
+						<div class="icon-img">
+							<img :src="item.img">
+						</div>
+						<div class="icon-title">{{item.title}}</div>
 					</div>
-					<div class="icon-title">{{item.title}}</div>
-				</div>
+				</view>
 			
 			</view>
-			<view class=""></view>
 		</view>
+		<view class="miaosha">
+			<view class="title">
+				<image src="../../static/images/index/index_icon_1.png" mode=""></image>
+				<text class="text">新品秒杀榜</text>
+			</view>
+			<view class="miaosha-good">
+				<!-- <scroll-view scroll-x="true" style="height:300rpx"> -->
+						<view class="item" v-for="item in miaoshaList" :key="item">
+							<view class="img-box">
+								<image class="good-img" src="../../static/images/index/index_icon_1.png" mode=""></image>
+								<view class="time">距结束02:02:02</view>
+							</view>
+							<view class="price-box">
+								<text class="n-price">¥199.9</text>
+								<text class="o-price">¥199.9</text>
+							</view>
+							<view class="getNum">
+								<image src="../../static/images/index/zhuan.png" ></image>
+								¥3.9
+							</view>
+						</view>
+				<!-- </scroll-view> -->
+			
+			</view>
+			
+		
+		</view>
+		<view class="special">
+			<view class="title">
+				<image src="../../static/images/index/index_icon_2.png" mode=""></image>
+				<text class="text">必逛专题</text>
+			</view>
+			<view class="content">
+				<image src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200629/b68cb24fca8464dbaf34c8c74d2a0b0d.jpg" mode="aspectFill"></image>
+				<view class="special-good">
+					<view class="item" v-for="item in specialList" :key="item">
+						<view class="img-box">
+							<image class="good-img" src="../../static/images/icon/nav-item-3.png" mode=""></image>
+							<view class="getMoney">
+								<view class="position">
+									<image class="bg" src="../../static/images/index/kz_bg.png" mode=""></image>
+									<view class="tip-text">
+										<text >可赚</text>
+										<text class="num">10.59</text>
+									</view>
+								</view>
+							</view>
+						</view>
+						<view class="good-name">草莓短袖女童连衣裙adfsadgasd宝宝夏装纯棉</view>
+						<view class="price-box">
+							<text class="n-price">¥199.9</text>
+							<text class="o-price">¥199.9</text>
+						</view>
+			
+					</view>
+				</view>
+			</view>
+		</view>
+		<backTop @click="scrollTop" ref="backTop" :isBackTop='isBackTop'></backTop>
+		<comfooter :tabIdx="0" :centerAngle="payAngle"></comfooter>
 	</view>
 </template>
 
 <script>
+	import backTop from '@/components/backTop.vue'
+	import comfooter from'@/components/com-footer.vue'
 	export default {
+		components:{
+			backTop,
+			comfooter
+		},
 		data() {
 			return {
 				title: 'Hello',
@@ -69,19 +135,233 @@
 					img: require("@/static/images/icon/nav-item-4.png"),
 					title: '新品上架',
 					link: ''
-				}]
+				}],
+				miaoshaList:[1,2,3,4,5,5],
+				specialList:[1,2,3],
+				isBackTop:false
 			}
 		},
 		onLoad() {
 
 		},
+		onPageScroll(e) {
+			if (this.sTimer) {
+				clearTimeout(this.sTimer)
+			}
+			this.sTimer = setTimeout(() => {
+				if (e.scrollTop > 200) {
+					this.isBackTop = true
+				} else {
+					this.isBackTop = false
+				}
+			}, 300)
+		
+		},
 		methods: {
-
+			toBrandDetail (){
+				console.log(123)
+				uni.navigateTo({
+					url:'pages/search/search'
+				})
+			},
+			nav(){
+				uni.navigateTo({
+					url:'pages/search/search'
+				})
+			},
+			scrollTop() {
+				this.$refs['backTop'].backTop()
+			},
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
+	.special{
+		padding-top: 50rpx;
+		margin-bottom:40rpx;
+		.title{
+			text-align: center;
+			font-size:36rpx;
+			font-weight:bold;
+			color:rgba(51,51,51,1);
+			margin-bottom: 40rpx;
+			image{
+				width: 42rpx;
+				height: 40rpx;
+				margin-right: 18rpx;
+				vertical-align: text-top;
+			}
+		}
+		.content{
+			padding:0 30rpx;
+			.banner{
+				height: 330rpx;
+				margin-bottom: 20rpx;
+			}
+			.special-good{
+				display: flex;
+				justify-content: space-between;
+			}
+			.item{
+				display: flex;
+				flex-direction: column;
+				margin-right: 18rpx;
+				width: 218rpx;
+				.img-box{
+					position: relative;
+					margin-bottom: 20rpx;
+					.good-img{
+						width: 218rpx;
+						height: 218rpx;
+					}
+					.getMoney{
+						position: absolute;
+						bottom: 0;
+						left:0;
+						height: 68rpx;
+						width: 67rpx;
+						.position{
+							position: relative;
+							font-size:20rpx;
+							font-weight:400;
+							color:rgba(255,255,255,1);
+							text-align: center;
+							.bg{
+								position: absolute;
+								left:0;
+								top:0;
+								width: 68rpx;
+								height: 68rpx;
+								z-index: 1;
+							}
+							view.tip-text{
+								z-index: 2;
+								position: absolute;
+								left:0;
+								top:0;
+								display: flex;
+								flex-direction: column;
+								justify-content: center;
+								// align-items: center;
+								width: 68rpx;
+								height: 68rpx;
+							}
+						}
+					}
+				}
+				.good-name{
+					margin-bottom: 20rpx;
+					width:190rpx;
+					font-size:24rpx;
+					font-weight:400;
+					color:rgba(51,51,51,1);
+					line-height:30rpx;
+					text-overflow: ellipsis;
+					display: -webkit-box;
+					overflow: hidden;
+					-webkit-line-clamp: 2;
+					-webkit-box-orient: vertical;
+				}
+				.price-box{
+					display: flex;
+					justify-content: space-between;
+					font-weight:500;
+					color:rgba(242,39,50,1);
+					line-height:36rpx;
+					margin-bottom: 10rpx;
+					.n-price{
+						font-size:30rpx;
+					}
+					.o-price{
+						font-size:26rpx;
+						color: #999999;
+						text-decoration: line-through;
+					}
+				}
+				
+			}
+		}
+	}
+	.miaosha{
+		background:linear-gradient(to bottom, #fbe1e7 0%,#fff 50%,#fff 100%);
+		padding-top: 45rpx;
+		.title{
+			text-align: center;
+			font-size:36rpx;
+			font-weight:bold;
+			color:rgba(51,51,51,1);
+			margin-bottom: 40rpx;
+			image{
+				width: 42rpx;
+				height: 40rpx;
+				margin-right: 18rpx;
+				vertical-align: text-top;
+			}
+		}
+		.miaosha-good{
+			padding-left:30rpx;
+			display:flex ;
+			overflow-x: scroll;
+			.item{
+				display: flex;
+				flex-direction: column;
+				margin-right: 18rpx;
+				width: 200rpx;
+				.img-box{
+					position: relative;
+					margin-bottom: 20rpx;
+					.good-img{
+						width: 200rpx;
+						height: 200rpx;
+					}
+					.time{
+						position: absolute;
+						bottom: 0;
+						left:0;
+						height: 30rpx;
+						line-height: 30rpx;
+						width: 150rpx;
+						text-align: center;
+						border-radius:0px 10rpx 0px 0px;
+						background:rgba(242,39,50,1);
+						font-size:20rpx;
+						font-weight:400;
+						color:rgba(255,255,255,1);
+					}
+				}
+				.price-box{
+					display: flex;
+					justify-content: space-between;
+					font-weight:500;
+					color:rgba(242,39,50,1);
+					line-height:36rpx;
+					margin-bottom: 10rpx;
+					.n-price{
+						font-size:30rpx;
+					}
+					.o-price{
+						font-size:26rpx;
+						color: #999999;
+						text-decoration: line-through;
+					}
+				}
+				.getNum{
+					font-size:26rpx;
+					font-weight:400;
+					color:rgba(255,180,79,1);
+					display: flex;
+					align-items: center;
+					image{
+						width: 28rpx;
+						height: 28rpx;
+						margin-right: 4rpx;
+					}
+				}
+			}
+		}
+	}
+	
 	.nav {
 		display: flex;
 		// margin: 24rpx;
@@ -125,7 +405,8 @@
 
 	.icons-list-container {
 		position: relative;
-
+		padding: 0 !important;
+		height: 131rpx;
 		.bg {
 			position: absolute;
 			left: 0;
@@ -134,43 +415,49 @@
 			height: 131rpx;
 			z-index: 1;
 		}
-
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		justify-content: space-between;
-		// align-items: center;
-		width: 100%;
-		// height: 165rpx;
-		box-sizing: border-box;
-		padding: 0 15rpx;
-		padding-bottom: 15px;
-
-		.icon-item {
-			width: 25%;
+		.icons-box{
 			display: flex;
-			flex-direction: column;
-			align-items: center;
-			z-index: 2;
-			margin-top: -72rpx;
-
-			.icon-img {
-				img {
-					width: 100%;
-					height: 100%;
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			position: absolute;
+			left:0;
+			top:-30rpx;
+			// align-items: center;
+			width: 100%;
+			// height: 165rpx;
+			box-sizing: border-box;
+			padding: 0 15rpx;
+			.icon-item {
+				width: 25%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				z-index: 2;
+				// margin-top: -34rpx;
+			
+				.icon-img {
+					img {
+						width: 100%;
+						height: 100%;
+					}
+			
+					width:100rpx;
+					height:100rpx;
+					padding: 0 0 6rpx;
 				}
-
-				width:88rpx;
-				height:88rpx;
-				padding: 24rpx 0 6rpx;
-			}
-
-			.icon-title {
-				font-size: 26rpx;
-				font-weight: 500;
-				color: #666666;
+			
+				.icon-title {
+					font-size: 26rpx;
+					font-weight: 500;
+					color: #666666;
+				}
 			}
 		}
+	
+		padding-bottom: 15px;
+
+		
 	}
 
 	.container {}
@@ -210,8 +497,16 @@
 				height: 31rpx;
 				flex-grow: 0;
 				padding: 0 10rpx 0 20rpx;
+				img{
+					width: 31rpx;
+					height: 31rpx;
+					display:block;
+				}
+				
 			}
-
+			text{
+				// margin-left:37rpx
+			}
 
 		}
 	}

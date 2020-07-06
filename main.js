@@ -14,9 +14,10 @@ Vue.config.productionTip = false
 
 App.mpType = 'app'
 
+
 Vue.prototype.$store = store;
 Vue.prototype.$api = api;
-Vue.prototype.$request = request;
+Vue.prototype.$fly = request;
 Vue.prototype.$tools = tools;
 // Vue.prototype.$system = systemInfo;
 Vue.prototype.$tips = tips;
