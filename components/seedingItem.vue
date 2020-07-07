@@ -14,7 +14,7 @@
 				<view v-if="userId==item.master_info.user_id" @click="mineControl(item.id)" class="ismine">
 					<image src="@/static/images/seeding/icon_more.png" mode=""></image>
 				</view>
-				<view v-else-if="!item.master_info.is_follow" @click="handleConcern(item.id)" class="concern">
+				<view v-else-if="!item.master_info.is_follow && showFollow" @click="handleConcern(item.id)" class="concern">
 					<image src="@/static/images/seeding/icon_concern.png" mode="scaleToFill"></image>
 					<text>关注</text>
 					<!-- <text>{{item.master_info.is_follow?'已关注':'关注'}}</text> -->
@@ -143,6 +143,10 @@
 			showAllDesc:{
 				type:Boolean,
 				default:false
+			},
+			showFollow:{
+				type:Boolean,
+				default:true
 			}
 		},
 		data() {
