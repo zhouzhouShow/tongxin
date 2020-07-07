@@ -1,6 +1,6 @@
 <template>
 	<view class="uni-load-more">
-		<view class="uni-load-more__img" v-show="status === 'loading' && showIcon">
+		<view class="uni-load-more__img" v-show="status === 2 && showIcon">
 			<view class="load1">
 				<view :style="{background:color}"></view>
 				<view :style="{background:color}"></view>
@@ -20,7 +20,7 @@
 				<view :style="{background:color}"></view>
 			</view>
 		</view>
-		<text class="uni-load-more__text" :style="{color:color}">{{status === 'more' ? contentText.contentdown : (status === 'loading' ? contentText.contentrefresh : contentText.contentnomore)}}</text>
+		<text class="uni-load-more__text" :style="{color:color}">{{status === 1 ? contentText.contentdown : (status === 2 ? contentText.contentrefresh : contentText.contentnomore)}}</text>
 	</view>
 </template>
 
@@ -29,9 +29,9 @@
 		name: "uni-load-more",
 		props: {
 			status: {
-				//上拉的状态：more-loading前；loading-loading中；noMore-没有更多了
-				type: String,
-				default: 'more'
+				//上拉的状态：1前；2中；3-没有更多了
+				type: Number,
+				default: 1
 			},
 			showIcon: {
 				type: Boolean,

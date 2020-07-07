@@ -100,17 +100,17 @@
 				</view>
 			</view>
 		</view>
-		<backTop @click="scrollTop" ref="backTop" :isBackTop='isBackTop'></backTop>
+		<fixedIcon @click="scrollTop" ref="backTop" :showItem='showItem'></fixedIcon>
 		<comfooter :tabIdx="0" :centerAngle="payAngle"></comfooter>
 	</view>
 </template>
 
 <script>
-	import backTop from '@/components/backTop.vue'
+	import fixedIcon from '@/components/fixedIcon.vue'
 	import comfooter from'@/components/com-footer.vue'
 	export default {
 		components:{
-			backTop,
+			fixedIcon,
 			comfooter
 		},
 		data() {
@@ -138,7 +138,9 @@
 				}],
 				miaoshaList:[1,2,3,4,5,5],
 				specialList:[1,2,3],
-				isBackTop:false
+				showItem:{
+					backTop:false
+				}
 			}
 		},
 		onLoad() {
@@ -150,9 +152,10 @@
 			}
 			this.sTimer = setTimeout(() => {
 				if (e.scrollTop > 200) {
-					this.isBackTop = true
+					this.showItem.backTop = true
+					this.showItem.share = true
 				} else {
-					this.isBackTop = false
+					this.showItem.backTop = false
 				}
 			}, 300)
 		

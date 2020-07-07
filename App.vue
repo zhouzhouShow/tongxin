@@ -40,9 +40,23 @@
 		justify-content: center;
 		align-items: center;
 	}
+	image{
+		display: inline-block;
+	}
 	page{
 		width: 100%;
 		height: 100%;
+	}
+	button{
+		background: transparent;
+		border: none;
+		box-shadow: none;
+		padding: 0;
+		line-height: 0;
+
+	}
+	button:after{
+		border: none;
 	}
 	.clamp {
 		overflow: hidden;
