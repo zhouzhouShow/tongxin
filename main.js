@@ -10,6 +10,7 @@ import utils from './utils/index.js'
 import tags from './utils/tags.js'
 import shakeScroll from './utils/shake.js'
 import swiperLink from './utils/swiperLink.js'
+import './utils/eventChannel.js'
 Vue.config.productionTip = false
 
 App.mpType = 'app'

@@ -4,7 +4,7 @@
 			<view class="avatar">
 				<image :src="userInfo.avatar" mode="scaleToFill"></image>
 			</view>
-			<view class="info">
+			<view class="info" @click="handleToUserpage">
 				<view class="info_nickname">
 					<text>{{userInfo.nickname}}</text>
 				</view>
@@ -37,16 +37,18 @@
 			 @handleConcern="handleConcern" @previewImage="previewImage" @handleLike="handleLike"></SeedingItem>
 			<uni-load-more :status="loadingType"></uni-load-more>
 		</view>
-		<view class="seeding_create">
+		<view @click="handleToCreate" class="seeding_create">
 			<image src="../../static/images/seeding/icon_create.png" mode=""></image>
 		</view>
 	</view>
 </template>
 
 <script>
+	import {seedingJson} from '@/static/js/seedingJson.js'
 	import SeedingItem from '@/components/seedingItem.vue'
 	import uniLoadMore from "@/components/uni-load-more/uni-load-more.vue"
 	export default {
+		name:"seeding",
 		components: {
 			SeedingItem,
 			uniLoadMore
@@ -67,7 +69,8 @@
 					nickname: '呢子dayi',
 					avatar: require('../../static/images/seeding/icon_avatar.png'),
 					seeding: 2,
-					fans: 3200
+					fans: 3200,
+					desc:''
 				},
 				navList: [{
 						id: 1,
@@ -80,145 +83,7 @@
 				],
 				nowIndex: 0,
 				targetIndex: 0,
-				list: [{
-						id: 1,
-						master_info: {
-							user_id: 98,
-							avatar: require('../../static/images/seeding/icon_avatar.png'),
-							nickname: '呢子dayi',
-							title: '种草达人',
-							is_follow: false
-						},
-						product_info: {
-							id: 1,
-							images: [
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7UQtVY1UJXGxbD1RmUhYqZSB3VWUXWFUSMkhUIlZqEDIifQ8gW2ZEdVELVWNVCVxsWw9UZlIXDyQEZlZlU0FWZVM.jpg',
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7VQ1RY1EJVWRRFiplIHdVZRJbIRkIclQWEEEqAzNWBAABZkR1VQ1RY1EJVWRRFFV5D0wHNQ1MSCdNUxUzPApUZBsKVGQ.jpg',
-								'http://img0.imgtn.bdimg.com/it/u=3347969450,2605879496&fm=26&gp=0.jpg',
-								'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-								'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg'
-							],
-							cover: 'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-							video: '',
-							name: '【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝',
-							desc: '2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速…',
-							price: 199,
-							toppic_id: 1,
-							topic: '今天又种草了新的穿搭',
-							like_num: 2000,
-							share_num: 2000,
-							is_like: false,
-						},
-						related_products: [{
-							id: 2,
-							images: [
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7UQtVY1UJXGxbD1RmUhYqZSB3VWUXWFUSMkhUIlZqEDIifQ8gW2ZEdVELVWNVCVxsWw9UZlIXDyQEZlZlU0FWZVM.jpg',
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7VQ1RY1EJVWRRFiplIHdVZRJbIRkIclQWEEEqAzNWBAABZkR1VQ1RY1EJVWRRFFV5D0wHNQ1MSCdNUxUzPApUZBsKVGQ.jpg',
-								'http://img0.imgtn.bdimg.com/it/u=3347969450,2605879496&fm=26&gp=0.jpg',
-								'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-								'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg'
-							],
-							cover: 'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-							video: 'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4',
-							name: '【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝',
-							desc: '2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速…',
-							price: 0,
-							toppic_id: 1,
-							topic: '今天又种草了新的穿搭',
-							like_num: 2000,
-							share_num: 2000,
-							is_like: false,
-						}, {
-							id: 3,
-							images: [
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7UQtVY1UJXGxbD1RmUhYqZSB3VWUXWFUSMkhUIlZqEDIifQ8gW2ZEdVELVWNVCVxsWw9UZlIXDyQEZlZlU0FWZVM.jpg',
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7VQ1RY1EJVWRRFiplIHdVZRJbIRkIclQWEEEqAzNWBAABZkR1VQ1RY1EJVWRRFFV5D0wHNQ1MSCdNUxUzPApUZBsKVGQ.jpg',
-								'http://img0.imgtn.bdimg.com/it/u=3347969450,2605879496&fm=26&gp=0.jpg',
-								'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-								'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg'
-							],
-							cover: 'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-							video: 'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4',
-							name: '【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝',
-							desc: '2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速…',
-							price: 0,
-							toppic_id: 1,
-							topic: '今天又种草了新的穿搭',
-							like_num: 2000,
-							share_num: 2000,
-							is_like: false,
-						}]
-					},
-					{
-						id: 2,
-						master_info: {
-							user_id: 99,
-							avatar: require('../../static/images/seeding/icon_avatar.png'),
-							nickname: '呢子dayi',
-							title: '种草达人',
-							is_follow: false
-						},
-						product_info: {
-							id: 1,
-							images: [
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7UQtVY1UJXGxbD1RmUhYqZSB3VWUXWFUSMkhUIlZqEDIifQ8gW2ZEdVELVWNVCVxsWw9UZlIXDyQEZlZlU0FWZVM.jpg',
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7VQ1RY1EJVWRRFiplIHdVZRJbIRkIclQWEEEqAzNWBAABZkR1VQ1RY1EJVWRRFFV5D0wHNQ1MSCdNUxUzPApUZBsKVGQ.jpg',
-								'http://img0.imgtn.bdimg.com/it/u=3347969450,2605879496&fm=26&gp=0.jpg',
-								'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-								'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg'
-							],
-							cover: 'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-							video: 'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4',
-							name: '【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝',
-							desc: '2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速…',
-							price: 199,
-							toppic_id: 1,
-							topic: '今天又种草了新的穿搭',
-							like_num: 2000,
-							share_num: 2000,
-							is_like: false,
-						},
-						related_products: [{
-							id: 2,
-							images: [
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7UQtVY1UJXGxbD1RmUhYqZSB3VWUXWFUSMkhUIlZqEDIifQ8gW2ZEdVELVWNVCVxsWw9UZlIXDyQEZlZlU0FWZVM.jpg',
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7VQ1RY1EJVWRRFiplIHdVZRJbIRkIclQWEEEqAzNWBAABZkR1VQ1RY1EJVWRRFFV5D0wHNQ1MSCdNUxUzPApUZBsKVGQ.jpg',
-								'http://img0.imgtn.bdimg.com/it/u=3347969450,2605879496&fm=26&gp=0.jpg',
-								'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-								'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg'
-							],
-							cover: 'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-							video: 'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4',
-							name: '【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝',
-							desc: '2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速…',
-							price: 0,
-							toppic_id: 1,
-							topic: '今天又种草了新的穿搭',
-							like_num: 2000,
-							share_num: 2000,
-							is_like: false,
-						}, {
-							id: 3,
-							images: [
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7UQtVY1UJXGxbD1RmUhYqZSB3VWUXWFUSMkhUIlZqEDIifQ8gW2ZEdVELVWNVCVxsWw9UZlIXDyQEZlZlU0FWZVM.jpg',
-								'http://www.emeiji.com/photo/UREgE0pfe0xQCDNNWAk9AF0LegBWCHsBWAp7FkkJOwJdADBMUFF7VQ1RY1EJVWRRFiplIHdVZRJbIRkIclQWEEEqAzNWBAABZkR1VQ1RY1EJVWRRFFV5D0wHNQ1MSCdNUxUzPApUZBsKVGQ.jpg',
-								'http://img0.imgtn.bdimg.com/it/u=3347969450,2605879496&fm=26&gp=0.jpg',
-								'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-								'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg'
-							],
-							cover: 'http://img2.imgtn.bdimg.com/it/u=3012120879,3377454015&fm=11&gp=0.jpg',
-							video: 'http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4',
-							name: '【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝【拉比树】0-3岁儿童夏季新款衬衫蓝色宝宝',
-							desc: '2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速2020新款中大儿童两件套帅洋气休闲韩版，各位可以参考一下，然后再做购买。价格合理，质量保证，欲购从速…',
-							price: 0,
-							toppic_id: 1,
-							topic: '今天又种草了新的穿搭',
-							like_num: 2000,
-							share_num: 2000,
-							is_like: false,
-						}]
-					}
-				]
+				list: seedingJson
 			};
 		},
 		onReachBottom() {
@@ -274,6 +139,16 @@
 						urls: list
 					});
 				}
+			},
+			handleToUserpage() {
+				wx.navigateTo({
+					url: "./userpage",
+				})
+			},
+			handleToCreate() {
+				wx.navigateTo({
+					url: "./release",
+				})
 			}
 		}
 	}
@@ -281,44 +156,7 @@
 
 <style lang="scss">
 	page {
-
-		view,
-		scroll-view,
-		swiper,
-		swiper-item,
-		movable-area,
-		movable-view,
-		cover-view,
-		cover-image,
-		icon,
-		text,
-		rich-text,
-		progress,
-		button,
-		checkbox-group,
-		checkbox,
-		form,
-		input,
-		label,
-		picker,
-		picker-view,
-		radio-group,
-		radio,
-		slider,
-		switch,
-		textarea,
-		navigator,
-		functional-page-navigator,
-		image,
-		video,
-		camera,
-		live-player,
-		live-pusher,
-		map,
-		canvas,
-		open-data,
-		web-view,
-		ad {
+		view{
 			box-sizing: border-box;
 		}
 	}

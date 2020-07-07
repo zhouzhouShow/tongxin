@@ -14,7 +14,9 @@
 			"style": {}
 		}, {
 			"path": "pages/seeding/seeding",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "种草"
+			}
 		}, {
 			"path": "pages/search/search",
 			"style": {
@@ -66,12 +68,26 @@
 				"navigationBarTitleText": "限时抢购"
 			}
 		}
-		
-	    ,{
-            "path" : "pages/index/season",
-            "style" : {}
-        }
-    ],
+
+		, {
+			"path": "pages/index/season",
+			"style": {}
+		}, {
+			"path": "pages/seeding/userpage",
+			"style": {
+				"navigationBarTitleText": "个人主页"
+			}
+		}, {
+			"path": "pages/seeding/release",
+			"style": {}
+		}, {
+			"path": "pages/seeding/shoppingCarRelate",
+			"style": {}
+		}, {
+			"path": "pages/seeding/boughtRelate",
+			"style": {}
+		}
+	],
 	"subPackages": [{
 		"root": "pagesA",
 		"pages": [{
