@@ -8,7 +8,10 @@
 			}
 		}, {
 			"path": "pages/center/center",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "我的",
+				"navigationStyle": "custom"
+			}
 		}, {
 			"path": "pages/shopCart/shopCart",
 			"style": {}
@@ -104,6 +107,21 @@
 			"style": {
 				"navigationBarTitleText": "确认订单"
 			}
+		}, {
+			"path": "pages/center/income",
+			"style": {}
+		}, {
+			"path": "pages/center/withdraw",
+			"style": {}
+		}, {
+			"path": "pages/center/inviteMember",
+			"style": {}
+		}, {
+			"path": "pages/center/storeData",
+			"style": {}
+		}, {
+			"path": "pages/center/order/storeOrder",
+			"style": {}
 		}
 	],
 	"subPackages": [{
