@@ -13,7 +13,17 @@
  */
 
 /* 颜色变量 */
-
+$page-color-base: #F3F3F3;
+$font-color-dark:#000;
+$font-color-light:#666;
+$font-lg: 32upx;
+$font-sm: 24upx;
+$font-base: 28upx;
+$base-color: #FF5152;
+$gradient-color:linear-gradient(90deg,rgba(255,82,83,1) 0%,rgba(254,44,44,1) 100%);
+$gradient-light-dark:linear-gradient(right,#FF7D80 0%,#FF0A2C 100%);
+$gradient-dark-light:linear-gradient(right,#FF0528 0%,#FF7D80 100%);
+$shadow-color-light:rgba(255,9,44,0.2);
 /* 行为相关颜色 */
 $uni-color-primary: #007aff;
 $uni-color-success: #4cd964;

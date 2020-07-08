@@ -46,7 +46,8 @@
 				【巴拉巴拉】草莓短袖女童连衣裙宝宝夏装纯棉背心裙2020新款儿童童装仔上衣仔上衣仔上衣仔上衣裙… 仔上衣
 			</view>
 			<view class="like-box">
-				<image class="like" src="../../static/images/icon/icon_clear.png" mode=""></image>
+				<image class="like" src="../../static/images/good/d-like.png" mode=""></image>
+				<!-- <image class="like" src="../../static/images/good/like.png" mode=""></image> -->
 				<text>2000</text>
 			</view>
 		</view>
@@ -58,7 +59,7 @@
 				<view class="from-area">
 					<text class="label">发货</text>
 					<view class="tip-box2">
-						<image src="../../static/images/icon/icon_clear.png" mode=""></image>
+						<image src="../../static/images/icon/location.png" mode=""></image>
 						<text src="">广东广州</text>
 					</view>
 					<text class="line">|</text>
@@ -82,22 +83,185 @@
 		<view class="color-box text-column-box">
 			<view class="row-box">
 				<text class="label">选择</text>
-				<text class="text">支持7请选择颜色尺码</text>
+				<text class="text">请选择颜色尺码</text>
 				<text class="iconfont iconyoujiantou" ></text>
 			</view>
-			<view class="row-box setMargin">
+			<view class="setMargin row-box">
 				<text class="label">参数</text>
-				<text class="text">支持7品牌 适用年龄</text>
+				<text class="text">品牌 适用年龄</text>
 				<text class="iconfont iconyoujiantou" ></text>
 			</view>
 		</view>
+		<view class="brand row-box ">
+			<image class="b-img" src="../../static/images/icon/nav-item-2.png" mode=""></image>
+			<view class="name-box">
+				<text class="name">abc 鹅绒童装</text>
+				<text class="area">中国</text>
+			</view>
+			<view class="r-text">进入品牌</view>
+			<text style="margin-left:0" class="iconfont iconyoujiantou" ></text>
+		</view>
+		<view class="seeding row-box">
+			<view class="seeding-img">
+				<image class="b-img" src="../../static/images/icon/nav-item-2.png" mode=""></image>
+				<image class="b-img" src="../../static/images/icon/nav-item-2.png" mode=""></image>
+				<image class="b-img" src="../../static/images/icon/nav-item-2.png" mode=""></image>
+			</view>
+			<text class="tips">大家都在种草</text>
+			<view class="r-text">去看看</view>
+			<text style="margin-left:0" class="iconfont iconyoujiantou" ></text>
+		</view>
+		<view class="recommend">
+			<view class="r-title">店铺推荐</view>
+			<!-- <view class="good-box"> -->
+			<scroll-view class="good-box" scroll-x="true" style="white-space: nowrap;"  >
+				<view class="item" v-for="(item,index) in recommendList" :key="index">
+					<image src="../../static/images/icon/nav-item-3.png" mode=""></image>
+					<view class="good-name clamp">草莓短袖女童连衣裙adfsadgasd宝宝夏装纯棉</view>
+					<view class="price">¥199.9</view>
+				</view>
+			</scroll-view>
+			<!-- </view> -->
+		</view>
+		<!-- 产品详情 -->
+		<div class="good-info">
+			<div class="detail-tips-title"> — 商品详情 —</div>
+			<!--  <img v-for="(item,index) in goodsDetailImgs"
+		        style="margin-bottom:10rpx;"
+		        @click="previewDetailImg(index)"
+		       :key="index" 
+		       :src="item"
+		       mode="widthFix"
+		       width="100%"
+		       alt=""> -->
+			<parser :html="detail.goods_detail" :selectable="true"></parser>
+			<!-- <rich-text :nodes="detail.goods_detail" class="richClass"></rich-text> -->
+		</div>
+		<div class="buy-fixed-btn">
+			<div class="kefu">
+				<img class="kefu-icon" src="/static/images/good/kefu.png" alt="">
+				<div>购物车</div>
+			</div>
+			<div class="kefu">
+				<img class="kefu-icon" src="/static/images/good/kefu.png" alt="">
+				<div>客服</div>
+				<button class="kefu-button" open-type="contact"></button>
+			</div>
+			<div class="operation flex-center">
+				<div  class="buy-btn" @click.stop="showPopFun(1)">
+					立即购买
+				</div>
+				<div class="add-shopcart isCanNotbuy"  @click.stop="showPopFun(1)">
+					加入购物车
+				</div>
+			</div>
+		</div>
+		<div class="buy-pop" @touchmove.stop="">
+			<div class="buy-pop-mask-box" v-if="showPopChoice" @click.stop="closePop"></div>
+		
+			<!-- <div class="buy-pop-box"  v-if="goodStock.colorarr && curColorKey"> -->
+			<div class="buy-pop-box" :class="showPopChoice?'showPop':'hidePop'">
+				<div class="choose-good-box">
+					<div class="img-box">
+						<image :src="good_img" mode=""></image>
+					</div>
+					<div class="info-box">
+							<p class="price"><span class="p-icon">¥</span>12321
+							<!-- <oneGoodPrice :totalPrice='detail.killgood.price' :skuNum='goodUnit'></oneGoodPrice> -->
+							</p>
+						<p class="store">库存: {{ inventoryNum || 0 }}</p>
+						<p>已选: {{newColorArr[colorChooseIndex].pack_title}}</p>
+					</div>
+				</div>
+				<div class="buy-pop-box-color" style="padding: 0rpx 30rpx 5rpx 30rpx;">
+					<div class="color-title">
+						颜色选择({{newColorArr.length}})
+					</div>
+					<div class="color-list" v-if="newColorArr.length">
+						<div class="color-item" v-for="(value,index) in newColorArr" :class="{ 'color_active' : value.pack_sku == curColorKey}"
+						 @click.stop="curColorKeyFun(value,index)" :key="index">
+						 <image class="color-img" :src="good_img" mode=""></image>
+							<span>{{value.pack_title}}</span>
+							<!-- <span class="nums" v-if="value.choiceNum">{{value.choiceNum}}</span> -->
+						</div>
+					</div>
+				</div>
+				<div class="buy-pop-box-color">
+					<div class="color-title">
+						参考身高
+					</div>
+					<div class="color-list" v-if="newColorArr.length">
+						<div class="color-item size-color active">
+							<span>{{goodSizeStr}}</span>
+							<!-- <span class="nums" v-if="value.choiceNum">{{value.choiceNum}}</span> -->
+						</div>
+					</div>
+				</div>
+				<div class="number-box">
+					<span class="num-tips">购买数量</span>
+					<div class="num-right-box">
+						<!-- <span class="inventory">库存: {{ inventoryNum || 0 }}</span> -->
+						<div>
+						<uni-number-box :value='1' :max="10" @change="getNumberValue"
+						 :onlyKey="123"></uni-number-box>
+						
+						</div>
+					</div>
+				</div>
+				<div class="buy-sure-btn-container">
+					<div class="buy-sure-btn">
+						<div class="add-cart">加入购物车</div>
+						<div class="buy-now" @click.stop="subAddShopCart">立即购买</div>
+					</div>
+				</div>
+			</div>
+		
+			
+		</div>
+		<!-- <div class="share-pop"> -->
+			<popup :show="sharePop" :maskClick="false" type="bottom">
+				<div class="share-pop">
+					<div class="title flex-center">
+						<span>分享</span>
+						<span class="iconfont iconchacha"></span>
+					</div>
+					<div class="share-type">
+						<div class="">
+							<image src="../../static/images/good/share_wechat.png" mode=""></image>
+							<p>分享群/好友</p>
+						</div>
+						<div class="">
+							<image src="../../static/images/good/share_download.png" mode=""></image>
+							<p>保存图片</p>
+						</div>
+					</div>
+					<div class="cancel">取消</div>
+				</div>
+			</popup>
+		<!-- </div> -->
 	</view>
 </template>
 
 <script>
+	import parser from "@/components/jyf-Parser/index.vue"
+	import uniNumberBox from "@/components/uni-number-box/uni-number-box.vue"
+	import popup from '@/components/uni-popup/uni-popup.vue'
 	export default {
+		components:{
+			parser,
+			uniNumberBox,
+			popup
+		},
 		data() {
 			return {
+				recommendList:[1,2,3,4,5,5],
+				showPopChoice:false,
+				inventoryNum:100,
+				colorChooseIndex:0,
+				sharePop:true,
+				goodSizeStr:'100/200',
+				newColorArr:[{pack_sku:'YX-PACK-33908_1',goods_id:324,code:123,pack_title:'蓝色',price:1231,sku_num:100,amount:123}],
+				good_img:'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
 				detail: {
 					goods_base: '',
 					goods_img: [
@@ -106,6 +270,17 @@
 					]
 				}
 			};
+		},
+		methods:{
+			getNumberValue(e){
+				
+			},
+			closePop() {
+				this.showPopChoice = false
+			},
+			showPopFun(){
+				this.showPopChoice = true
+			},
 		},
 		onLoad(){
 			let a ={"status":1,"msg":"\u83b7\u53d6\u6210\u529f","data":{"goods_img":["https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/9700375b1229b042803ae80042376f61.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/1b60c1c8682d7254e92242096fe5178c.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/cd97ab49dd62dd1a2a7b017a4c09c3b4.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/56b78d7f092c22e89d2608c8ac56b44c.jpg"],"goods_base":{"id":"33030","brand_id":"197","class_id":"545","code":"dbk0616","comment_num":"0","every_pack":"","goods_type":"3","level_limit":"","level_limit_time":"0","price_market":"356.00","price_purchase":"10.00","price_sale":"29.90","price_wholesale":"0.00","salenum":"11123","shelves":"2","title":"\u8fea\u8d1d\u514b\u4e28\u4f11\u95f2\u65f6\u5c1a\u79cb\u5b63\u7cfb\u5217\u7ae5\u88c580-104,100-140","top_tpl":"0","bottom_tpl":"0","video_url":"","viewnum":"1467","wholesale_num":"1","is_free_shipping":"0","weight":"0.10","ext_attr":null,"kind_ratio":"\u88e4\u5b5031%\uff0c\u4e0a\u886364%\uff0c\u5916\u59575%","year_area_id":"30","child_gender_id":"3","brand_area_id":"45","brand_material_id":"25","season_id":"3","style":"10"},"goods_detail":"<p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/9700375b1229b042803ae80042376f61.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/1b60c1c8682d7254e92242096fe5178c.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/cd97ab49dd62dd1a2a7b017a4c09c3b4.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/56b78d7f092c22e89d2608c8ac56b44c.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/e305d3b844b7ffcbd5c0f661a7a9fd96.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/5d503baecfb6ab92c73698286d9a394d.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/6d564d4203a243adcba5862a9b6fe187.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/66b780f5d83d2345f7740c5c7410402b.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/3e1207d57665484389fb4fc5bff07159.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/6a0994307bc5d0a954f87b734b61c03c.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/bd3ef67bb8fd728bb7b310e1fc9fe21a.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/dfcda2abcbabf076215d81c6b54353d1.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p> <\/p>         ","goods_style":"\u4f11\u95f2","member_price":[{"level_name":"\u767d\u94f6\u4f1a\u5458","level":"7","price":29.9,"rate":"100"},{"level_name":"\u9ec4\u91d1\u4f1a\u5458","level":"10","price":29.3,"rate":"98"},{"level_name":"\u94c2\u91d1\u4f1a\u5458","level":"11","price":28.41,"rate":"95"},{"level_name":"\u94bb\u77f3\u4f1a\u5458","level":"12","price":26.91,"rate":"90"}],"seasion_name":"\u79cb","brand_name":"\u8fea\u8d1d\u514b","brand_info":{"id":"197","brand_name":"\u8fea\u8d1d\u514b","goods_class_id":"50","brand_logo":"","brand_description":"","sort":"0","recommend":"0","create_time":"1592297307","update_time":"1592460973","letter":"","brand_banner":"","video_url":"https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200618\/42b45bcf2a22740587419fad47f2fbd9.mp4","video_description":"","status":"0","path":null},"brand_area":"\u5c71\u4e1c","brand_material":"\u68c9","is_like":0,"is_collect":0,"iskill":1,"killgood":{"id":"2785","main_id":"1329","goods_id":"33030","price":"8.80","time_slot":"09:00","start_time":"1593997200","end_time":"1594051199","goods_type":"3","stock":"600","sale_num":"300","type":"1","limitnum":"0","deadline":23187,"isdoing":1},"lastmoney":29.3,"level_name":"\u9ec4\u91d1\u4f1a\u5458","level_id":"10"}}
@@ -118,7 +293,56 @@
 	.good-detail {
 		background: #f3f3f3;
 	}
-
+	.share-pop{
+		height: 536rpx;
+		.title{
+			height: 100rpx;
+			background: #f8f8f8;
+			text-align: center;
+			position: relative;
+			.iconchacha{
+				position: absolute;
+				right: 20rpx;
+				top:20rpx;
+				font-size: 60rpx;
+				color: red;
+			}
+		}
+		.share-type{
+			padding: 70rpx 0;
+			display: flex;
+			justify-content: center;
+			div:nth-child(1){
+				margin-right: 245rpx;
+			}
+			div{
+				image{
+					width: 110rpx;
+					height: 110rpx;
+				}
+				p{
+					margin-top:30rpx;
+					font-size:28rpx;
+					font-weight:400;
+					color:rgba(51,51,51,1);
+				}
+			}
+		}
+		.cancel{
+			width:690rpx;
+			height:80rpx;
+			line-height:80rpx;
+			margin:0 auto;
+			text-align: center;
+			background:rgba(238,238,238,1);
+			opacity:0.8;
+			border-radius:40rpx;
+			font-size:30rpx;
+			font-family:PingFang SC;
+			font-weight:400;
+			color:rgba(102,102,102,1);
+		}
+	}
 	.good-swiper-container {
 		background: #fff;
 
@@ -142,19 +366,28 @@
 		background: #fff;
 		margin-bottom: 20rpx;
 	}
-	.support{
-		
-	}
-	.color-box{
+	.good-info {
+		width: 100%;
+		background: #fff;
+		margin-bottom: 20rpx;
+		padding: 0 24rpx;
+		box-sizing: border-box;
 	
-	}
-	.setMargin{
-		margin-top: 47rpx;
+		.detail-tips-title {
+			text-align: center;
+			padding: 39rpx 0 30rpx 0;
+		}
+	
+		image {
+			width: 100% !important;
+			display: block;
+		}
 	}
 	.row-box{
 		display: flex;
 		font-size:28rpx;
 		font-weight:400;
+		align-items: center;
 		.label{
 			color: #999999;
 			margin-right: 45rpx;
@@ -168,6 +401,133 @@
 			font-size: 47rpx;
 		}
 	}
+	.recommend{
+		padding:40rpx 30rpx;
+		margin-bottom: 20rpx;
+		background: #fff;
+		.r-title{
+			font-size:30rpx;
+			font-weight:400;
+			margin-bottom: 30rpx;
+		}
+		.good-box{
+			.item{
+				width:200rpx ;
+				margin-right: 20rpx;
+				display: inline-block;
+				image{
+					width: 200rpx;
+					height: 200rpx;
+					margin-bottom: 20rpx;
+				}
+				.good-name{
+					font-size:24rpx;
+					font-weight:400;
+					color:rgba(51,51,51,1);
+					margin-bottom: 18rpx;
+				}
+				.price{
+					font-size:30rpx;
+					font-weight:500;
+					color:rgba(242,39,50,1);
+				}
+			}
+		}
+		// <view class="r-title">店铺推荐</view>
+		// <view class="good-box">
+		// 	<view class="item">
+		// 		<image src="../../static/images/icon/nav-item-3.png" mode=""></image>
+		// 		<view class="good-name">草莓短袖女童连衣裙adfsadgasd宝宝夏装纯棉</view>
+		// 		<view class="price">¥199.9</view>
+		// 	</view>
+		// </view>
+	}
+	.seeding{
+		padding:20rpx 30rpx;
+		background: #fff;
+		margin-bottom: 20rpx;
+		.seeding-img{
+			position: relative;
+			margin-right: 20rpx;
+			width: 120rpx;
+			height: 55rpx;
+			image:nth-child(1){
+				left: 0;
+			}
+			image:nth-child(2){
+				left: 30rpx;
+			}
+			image:nth-child(3){
+				left: 60rpx;
+			}
+			image{
+				position: absolute;
+				width: 60rpx;
+				height: 60rpx;
+				top:0;
+			}
+		}
+		.tips{
+			font-size:28rpx;
+			font-weight:400;
+			color:rgba(51,51,51,1);
+		}
+		.r-text{
+			margin-left:auto;
+			margin-right: 20rpx;
+			font-size:28rpx;
+			font-family:PingFang SC;
+			font-weight:400;
+			color:rgba(153,153,153,1);
+		}
+		
+	}
+	.brand{
+		padding:30rpx 30rpx 35rpx;
+		margin-bottom: 20rpx;
+		background: #fff;
+		.b-img{
+			width: 120rpx;
+			height: 120rpx;
+			margin-right: 20rpx;
+		}
+		.name-box{
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			
+			.name{
+				margin-bottom: 27rpx;
+				font-size:32rpx;
+				font-weight:400;
+				color:rgba(51,51,51,1);
+			}
+			.area{
+				font-size:26rpx;
+				font-weight:400;
+				color:rgba(153,153,153,1);
+			}
+		}
+		.r-text{
+			margin-left:auto;
+			margin-right: 20rpx;
+			font-size:28rpx;
+			font-family:PingFang SC;
+			font-weight:400;
+			color:rgba(153,153,153,1);
+		}
+		
+	}
+	.support{
+		
+	}
+	.color-box{
+	
+	}
+	.setMargin{
+		margin-top: 47rpx;
+	}
+	
 	.good-area{
 		background: #fff;
 		margin-bottom: 20rpx;
@@ -331,4 +691,445 @@
 			font-size: 26rpx;
 		}
 	}
+	// 购买按钮
+	.buy-fixed-btn {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 98rpx;
+		z-index: 100;
+		padding-left:42rpx;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		background: #fff;
+		text-align: center;
+	
+		.index,
+		.kefu,
+		.collect {
+			font-size: 20rpx;
+			font-weight: bold;
+			color: #999999;
+			padding: 0 30rpx;
+			position: relative;
+		}
+	
+		.kefu-button {
+			position: absolute;
+			top: 0;
+			right: 0;
+			left: 0;
+			bottom: 0;
+			opacity: 0;
+		}
+	
+		.index {
+			.index-icon {
+				width: 48rpx;
+				height: 48rpx;
+			}
+		}
+	
+		.kefu-icon {
+			width: 48rpx;
+			height: 48rpx;
+		}
+	
+		.collect-icon {
+			width: 48rpx;
+			height: 48rpx;
+		}
+		.operation{
+			width:420rpx;
+			margin-right: 30rpx;
+			.buy-btn {
+				width:210rpx;
+				height:80rpx;
+				background:linear-gradient(90deg,rgba(251,172,60,1) 0%,rgba(247,114,16,1) 100%);
+				border-radius:40rpx 0px 0px 40rpx;
+				font-size: 32rpx;
+				background: #F23030;
+				font-weight: 400;
+				color: #fff;
+				line-height: 80rpx;
+			}
+			.add-shopcart {
+				width:210rpx;
+				height:80rpx;
+				background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
+				border-radius:0px 40px 40px 0px;
+				font-size: 32rpx;
+				color: #fff;
+				line-height: 80rpx;
+			}
+		}
+		
+	
+		.disable {
+			width: 450rpx;
+			background: #ccc;
+		}
+	
+		
+	}
+	// 购买规格选择
+	.buy-pop {
+		// position: fixed;
+		// top: 0;
+		// left: 0;
+		// right: 0;
+		// bottom: 0;
+		// z-index: 1000;
+	
+		.buy-pop-mask-box {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			z-index: 99;
+			background: rgba(0, 0, 0, .5);
+		}
+	
+	
+		.buy-pop-box {
+			position: fixed;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			z-index: 100;
+			background: #fff;
+			min-height: 550rpx;
+			transition: all .5s;
+			// border-radius: 10rpx 10rpx 0px 0px;
+	
+			.choose-good-box {
+				padding: 20rpx 20rpx 0;
+				display: flex;
+				margin-bottom: 40rpx;
+	
+				.img-box {
+					width: 186rpx;
+					height: 192rpx;
+					// overflow: hidden;
+					image {
+						width: 100%;
+						height: 100%;
+						// border-radius: 10rpx;
+					}
+				}
+	
+				.info-box {
+					margin-left: 20rpx;
+					color: #666666;
+					font-size: 24rpx;
+					padding-top: 20rpx;
+					font-weight: 400;
+					.price {
+						font-size: 48rpx;
+						color: rgba(242, 48, 48, 1);
+						margin-bottom: 20rpx;
+						.p-icon{
+							font-size: 30rpx;
+						}
+					}
+	
+					.store {
+						margin-bottom: 15rpx;
+					}
+				}
+	
+				.close {
+					width: 27rpx;
+					height: 27rpx;
+					position: absolute;
+					right: 20rpx;
+					top: 30rpx;
+				}
+			}
+	
+			.buy-pop-box-header {
+				padding: 0 30rpx;
+				margin-top: -30rpx;
+				display: flex;
+				align-items: flex-end;
+	
+				.buy-pop-good-img {
+					width: 250rpx;
+					height: 250rpx;
+					background: #fff;
+					border: 2rpx solid #CCCCCC;
+					border-radius: 10rpx;
+					margin-right: 20rpx;
+					overflow: hidden;
+	
+					.good-img {
+						width: 250rpx;
+						height: 250rpx;
+					}
+				}
+	
+				.buy-pop-good-info {
+					.buy-pop-origin-price {
+						color: #EB3636;
+						font-size: 40rpx;
+						font-weight: 400;
+	
+						// line-height:111rpx;
+						span {
+							font-size: 27rpx;
+						}
+					}
+				}
+			}
+	
+			.buy-pop-stock {
+				margin: 10rpx 0;
+			}
+	
+			.buy-pop-stock,
+			.buy-pop-choiced {
+				font-size: 26rpx;
+				font-weight: 400;
+				color: #222222;
+			}
+	
+			.number-box {
+				padding: 0 15rpx 50rpx;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+	
+				.num-tips {
+					font-size: 38rpx;
+					color: #333;
+					font-weight: 500;
+				}
+	
+				.num-right-box {
+					display: flex;
+					align-items: center;
+	
+					.inventory {
+						font-size: 22rpx;
+						margin-right: 20rpx;
+					}
+				}
+			}
+	
+			.total-box {
+				text-align: right;
+				color: #333333;
+				font-size: 24rpx;
+				padding: 0 22rpx 35rpx;
+				display: flex;
+	
+				span:nth-child(1) {
+					font-size: 400;
+				}
+	
+				justify-content: space-between;
+	
+			}
+	
+			.buy-pop-box-color {
+				padding: 20rpx 30rpx 5rpx 30rpx;
+	
+				// border-bottom: 1px solid #EEEEEE;
+				.color-title {
+					color: #333;
+					font-size: 30rpx;
+					font-weight: 500;
+				}
+	
+				.color-list {
+					display: flex;
+					flex-wrap: wrap;
+					padding: 30rpx 0rpx;
+	
+					div.size-color {
+						border: 1px solid rgba(238, 238, 238, 1);
+						border-radius: 8rpx;
+						span{
+							background: #fff;
+						}
+					}
+					.color_active{
+						border:1rpx solid rgba(242,39,50,1);
+						color: #F22732;
+					}
+					.color-item {
+						width:200rpx;
+						margin-right: 20rpx;
+						border-radius:8rpx;
+						font-size: 24rpx;
+						font-weight: 400;
+						overflow: hidden;
+						text-align: center;
+						margin-bottom: 12rpx;
+						color: #333;
+						position: relative;
+						.color-img{
+								width: 100%;
+								height: 200rpx;
+								background:rgba(230,231,233,1);
+								margin-bottom: 8rpx;
+						}
+						span{
+							width: 100%;
+							display: inline-block;
+							height:60rpx;
+							line-height:60rpx;
+							background:rgba(248,248,248,1);
+							border-radius:8rpx;
+						}
+				
+	
+						&.active {
+							background: rgba(254, 239, 239, 1);
+							color: #F23030;
+						}
+					}
+				}
+			}
+	
+			.buy-pop-spec {
+				padding: 30rpx;
+	
+				.spec-title {
+					color: #222222;
+					font-size: 28rpx;
+					font-weight: bold;
+				}
+	
+				.spec-item {
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					padding: 20rpx;
+	
+					.spec-item-left {
+						width: 200rpx;
+						min-height: 67rpx;
+						padding: 10rpx;
+						background: #F2F2F2;
+						border-radius: 8rpx;
+						text-align: center;
+						// line-height: 67rpx;
+						font-size: 26rpx;
+						display: flex;
+						align-items: center;
+						justify-content: center;
+						word-break: break-all;
+	
+						span {
+							flex: 1;
+						}
+	
+						&.active {
+							background: #BFBFBF;
+						}
+	
+						&.disabled {
+							color: #666;
+						}
+					}
+	
+					.spec-item-center {
+						font-size: 24rpx;
+						font-weight: 400;
+					}
+	
+					.size-num {
+						display: flex;
+						width: 260rpx;
+						height: 70rpx;
+						background: #F2F2F2;
+						border-radius: 10rpx;
+	
+						.minus,
+						.plus {
+							width: 70rpx;
+							height: 70rpx;
+							text-align: center;
+							line-height: 70rpx;
+							font-size: 56rpx;
+							color: #CCCCCC;
+	
+						}
+	
+						.option-number {
+							flex: 1;
+							color: #222222;
+							font-size: 36rpx;
+							text-align: center;
+							line-height: 70rpx;
+							background: #fff;
+	
+							.option-number-input {
+								border: none;
+								width: 100%;
+								outline: none;
+								text-align: center;
+								height: 70rpx;
+								line-height: 70rpx;
+								color: #222222;
+								font-size: 34rpx;
+							}
+						}
+					}
+				}
+			}
+		}
+	
+		.buy-pack-pop-box {
+			height: 658rpx;
+		}
+	
+		.buy-sure-btn-container {
+			text-align: center;
+			background: #fff;
+			color: #333333;
+			display: flex;
+			justify-content: center;
+			height: 100rpx;
+			padding-bottom: 10rpx;
+			.add-cart,.buy-now{
+				width:345rpx;
+				height:80rpx;
+				line-height:80rpx;
+			}
+			.add-cart{
+				border-radius:40px 0px 0px 40px;
+				background:linear-gradient(90deg,rgba(251,172,60,1) 0%,rgba(247,114,16,1) 100%);
+			}
+			.buy-now{
+				border-radius:0px 40rpx 40rpx 0px;
+				background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
+			}
+			.buy-sure-btn {
+				width: 690rpx;
+				height: 88rpx;
+				display: flex;
+				align-items: center;
+				border-radius: 40rpx;
+				overflow: hidden;
+				text-align: center;
+				color: #fff;
+				font-size: 32rpx;
+			}
+		}
+	
+	}
+	.showPop{
+		transform:translateY(0);
+		visibility: inherit;
+	}
+	.hidePop{
+		transform: translateY(100%);
+		visibility: hidden;
+	}
+	
 </style>
