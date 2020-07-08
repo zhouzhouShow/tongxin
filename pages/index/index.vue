@@ -100,7 +100,7 @@
 				</view>
 			</view>
 		</view>
-		<fixedIcon @click="scrollTop" ref="backTop" :showItem='showItem'></fixedIcon>
+		<fixedIcon @share="share" ref="backTop" :showItem='showItem'></fixedIcon>
 		<comfooter :tabIdx="0" :centerAngle="payAngle"></comfooter>
 	</view>
 </template>
@@ -116,21 +116,34 @@
 		data() {
 			return {
 				title: 'Hello',
+				navList:[{
+					title:'童婴会场',
+					link:'/pages/index/xinma-recommend',
+				},{
+					title:'女童会场',
+					link:'/pages/index/xinma-recommend',
+				},{
+					title:'男童会场',
+					link:'/pages/index/xinma-recommend',
+				},{
+					title:'秋冬上新',
+					link:'/pages/index/season',
+				}],
 				banner: [{
 					image: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200629/b68cb24fca8464dbaf34c8c74d2a0b0d.jpg'
 				}],
 				listItem: [{
 					img: require("@/static/images/icon/nav-item-1.png"),
 					title: '晴妈推荐',
-					link: ''
+					link: '/pages/index/xinma-recommend'
 				},{
 					img: require("@/static/images/icon/nav-item-2.png"),
 					title: '爆款好物',
-					link: ''
+					link: '/pages/index/hot'
 				},{
 					img: require("@/static/images/icon/nav-item-3.png"),
 					title: '限时抢购',
-					link: ''
+					link: '/pages/index/timeLimitedGood'
 				},{
 					img: require("@/static/images/icon/nav-item-4.png"),
 					title: '新品上架',
@@ -161,15 +174,19 @@
 		
 		},
 		methods: {
+			share(){
+				// 分享
+				
+			},
 			toBrandDetail (){
 				console.log(123)
 				uni.navigateTo({
 					url:'pages/search/search'
 				})
 			},
-			nav(){
+			nav(url){
 				uni.navigateTo({
-					url:'pages/search/search'
+					url:url
 				})
 			},
 			scrollTop() {

@@ -13,6 +13,15 @@
 				</swiper>
 			</view>
 		</view>
+		<viwe class="list-nav">
+			<!-- <view class="item"></view> -->
+			<image class="img1" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg" mode=""></image>
+			<image class="img2" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg" mode=""></image>
+			<view class="more" @click="showMore">
+				<text>查看更多</text>
+				<image class="icon" src="../../static/images/icon/getMore.png" mode=""></image>
+			</view>
+		</viwe>
 	
 		<view class="recommend-box">
 			<view class="r-title flex-center">
@@ -22,69 +31,77 @@
 			</view>
 			<view class="list">
 			<block v-for="(item,index) in list" :key="index">
-				<view class="item">
-					<image class="i-img" :src="item.url" mode=""></image>
-					<view class="info flex-align-center">
-						<text class="name clamp">{{item.name}}</text>
-						<text class="n-price">
-							<text class="p-icon">¥</text>{{item.price}}
-						</text>
-					</view>
-				</view>
+				<div class="item">
+					<product :product="item"></product>
+				</div>
 			</block>
 			</view>
 			<load-more :status="loadMore"></load-more>
 		</view>
-		<fixedIcon ref="backTop" @tirggter="tirggterFixed" :showItem='showItem'></fixedIcon>
+		<fixedIcon @share="share" ref="backTop" :showItem='showItem'></fixedIcon>
 	</view>
 </template>
 
 <script>
-	import goodItem from '@/components/goodsItem.vue'
+	import product from '@/components/product'
 	import fixedIcon from '@/components/fixedIcon.vue'
 	import loadMore from '@/components/uni-load-more/uni-load-more.vue'
 	import loadMoreData from '@/mixins/loadmore.js'
 	export default {
 		mixins: [loadMoreData],
 		components: {
-			goodItem,
+			product,
 			fixedIcon,
 			loadMore
 		},
 		data() {
 			return {
 				showItem: {
-					cart: true,
+					cart: false,
 					share: true,
 					backTop: true,
 				},
 				list: [{
-						name: '分阿里交付的拉丝粉',
-						desc: '2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice: 199,
-						price: 80,
-						url: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
+					pic_urls: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
+					stocksnum: 10,
+					goods_type: 1,
+					price_market: 123,
+					code: 123213,
+					title: '张阿第三方第大师法撒旦个单方事故第三方三方飞',
+					price: '123',
+					nub: 123
+				},
+					{
+						pic_urls: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
+						stocksnum: 10,
+						goods_type: 1,
+						price_market: 123,
+						code: 123213,
+						
+						title: '张阿第三方第三方飞',
+						price: '123',
+						nub: 123
 					},
 					{
-						name: '分阿里交付的拉丝粉',
-						desc: '2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice: 199,
-						price: 80,
-						url: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
-					},
-					{
-						name: '分阿里交付的拉丝粉',
-						desc: '2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice: 199,
-						price: 80,
-						url: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
+						pic_urls: '',
+						stocksnum: 10,
+						goods_type: 1,
+						price_market: 123,
+						code: 123213,
+						
+						title: '张阿第三方第三方飞',
+						price: '123',
+						nub: 123
 					}
 				],
 
 			};
 		},
 		methods: {
-			tirggterFixed(e) {
+			showMore(){
+				
+			},
+			share(e) {
 
 			},
 		},
@@ -132,12 +149,39 @@
 			}
 			
 		}
-		.poster {
-			width: 100%;
-			height: 360rpx;
-			margin-bottom: 20rpx;
+		.list-nav{
+			background: #fff;
+			padding: 10rpx 0 10rpx 20rpx;
+			display: flex;
+			margin-bottom: 45rpx;
+			.img1,.img2{
+				width: 320rpx;
+				height: 320rpx;
+				margin-right: 10rpx;
+				border-radius:8rpx;
+			}
+			.more{
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				width:74rpx;
+				height:320rpx;
+				background:linear-gradient(0deg,rgba(252,57,67,1) 0%,rgba(247,45,126,1) 100%);
+				border-radius:8rpx 0px 0px 8rpx;
+				text{
+					width: 27rpx;
+					font-size:28rpx;
+					font-weight:400;
+					color:rgba(255,255,255,1);
+				}
+				.icon{
+					width: 20rpx;
+					height: 20rpx;
+					margin-top: 15rpx;
+				}
+			}
 		}
-
 		.recommend-box {
 			padding: 0 20rpx;
 			text-align: center;
@@ -162,15 +206,7 @@
 
 				margin-bottom: 38rpx;
 			}
-			// <view class="item">
-			// 	<image class="i-img" :src="item.url" mode=""></image>
-			// 	<view class="info">
-			// 		<text class="name clamp">{{item.name}}</text>
-			// 		<text class="n-price">
-			// 			<text class="p-icon">¥</text>{{item.price}}
-			// 		</text>
-			// 	</view>
-			// </view>
+	
 			.list{
 				display: flex;
 				flex-wrap:wrap;
@@ -179,6 +215,7 @@
 			.item{
 				width: 345rpx;
 				margin-bottom: 28rpx;
+				border-radius: 8rpx;
 				.i-img{
 					width:345rpx;
 					height:345rpx;

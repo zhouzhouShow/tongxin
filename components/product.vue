@@ -22,7 +22,7 @@
 					<span class="mark-price">¥188</span>
         </div>
 				<div class="like">
-					<image src="../static/images/icon/icon_clear.png" mode=""></image>
+					<image src="../static/images/good/d-like.png" mode=""></image>
 					1000
 				</div>
       </div>
@@ -137,11 +137,11 @@
 
 <style lang="scss" scoped>
   .product1-goods-item {
-    border-radius: rpx(8);
+    border-radius: 8rpx;
     overflow: hidden;
     background: #fff;
     position: relative;
-    border:1px solid #eee;
+    border:1rpx solid #eee;
     padding-bottom:20rpx;
     .good-show {
       /*padding-bottom: 100%;*/
@@ -232,7 +232,6 @@
       justify-content: center;
       .good-title {
         margin:20rpx 0 0;
-				padding-left:20rpx;
         font-size: rpx(26);
         color: #3F3F3F;
         white-space: nowrap;
@@ -247,7 +246,7 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				padding: 20rpx 20rpx 0;
+				padding: 20rpx 20rpx 0 0;
 			  .good-desc-part1 {
 			    display: flex;
 			    align-items: center;
@@ -271,6 +270,7 @@
 					image{
 						width:20rpx;
 						height:18rpx;
+						margin-right: 5rpx;
 					}
 					font-size:24rpx;
 					font-weight:400;

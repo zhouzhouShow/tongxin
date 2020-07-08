@@ -79,7 +79,7 @@
 				keyword: '',
 				showClearBtn: false,
 				searchResultList: [{
-					pic_urls: '',
+					pic_urls: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
 					stocksnum: 10,
 					goods_type: 1,
 					price_market: 123,

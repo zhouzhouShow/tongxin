@@ -14,7 +14,7 @@
 			</view>
 			<load-more  :status="loadMore"></load-more>
 		</view>
-		<fixedIcon ref="backTop" @tirggter="tirggterFixed" :showItem='showItem'></fixedIcon>
+		<fixedIcon @share="share" ref="backTop" :showItem='showItem'></fixedIcon>
 	</view>
 </template>
 
@@ -61,7 +61,7 @@
 			};
 		},
 		methods:{
-			tirggterFixed(e){
+			share(e){
 				
 			},
 			toDetail(id){
