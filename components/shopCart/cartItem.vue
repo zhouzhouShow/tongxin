@@ -7,7 +7,7 @@
 			<p class="g-name clamp-two">{{'2020新款木马短袖女童连衣裙宝宝夏装纯棉 '}}</p>
 			<p class="g-spec flex-justify-center">
 				<text>粉色;120cm</text>
-				<text class="iconfont iconarrow"></text>
+				<text v-if="type=='cart'" class="iconfont iconarrow"></text>
 			</p>
 			<p class="discount">9.2折</p>
 			<p class="pirce-box">
@@ -63,7 +63,7 @@
 			flex-direction: column;
 			justify-content: flex-start;
 			text-align: left;
-			height: 220rpx;
+			height: 230rpx;
 
 			.g-name {
 				font-size: 28rpx;

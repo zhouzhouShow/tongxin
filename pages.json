@@ -8,7 +8,9 @@
 			}
 		}, {
 			"path": "pages/center/center",
-			"style": {}
+			"style": {
+				"navigationStyle": "custom"
+			}
 		}, {
 			"path": "pages/shopCart/shopCart",
 			"style": {}

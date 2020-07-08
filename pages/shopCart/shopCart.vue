@@ -112,6 +112,7 @@
 		bottom: 100rpx;
 		height: 98rpx;
 		left: 0;
+		z-index: 99;
 		background: #fff;
 		display: flex;
 		align-items: center;
