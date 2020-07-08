@@ -38,7 +38,7 @@
 			</view>
 		</view>
 		<view v-if="userInfo.is_vip" class="income">
-			<view class="nav_box">
+			<view @click="handleToMyIncome" class="nav_box">
 				<view class="nav">
 					<view class="name">
 						<text>我的收益（元）</text>
@@ -69,7 +69,7 @@
 						<text>可提现（元）：</text>
 						<text>88.88</text>
 					</view>
-					<view class="btn">
+					<view @click="handleToWithdraw" class="btn">
 						<button type="default">提现</button>
 					</view>
 				</view>
@@ -151,32 +151,31 @@
 					desc: '',
 					is_vip: true,
 				},
-				orderNav: [
-					{
+				orderNav: [{
 						ids: 0,
 						name: '全部',
-						icon:require('../../static/images/center/order_all.png')
-					}, 
+						icon: require('../../static/images/center/order_all.png')
+					},
 					{
 						ids: 1,
 						name: '待付款',
-						icon:require('../../static/images/center/order_waitpay.png')
-					}, 
+						icon: require('../../static/images/center/order_waitpay.png')
+					},
 					{
 						ids: 2,
 						name: '待发货',
-						icon:require('../../static/images/center/order_waitrecive.png')
-					}, 
+						icon: require('../../static/images/center/order_waitrecive.png')
+					},
 					{
 						ids: 3,
 						name: '已发货',
-						icon:require('../../static/images/center/order_shipped.png')
-					}, 
+						icon: require('../../static/images/center/order_shipped.png')
+					},
 					{
 						ids: 4,
 						name: '退货/售后',
-						icon:require('../../static/images/center/order_return.png')
-					}, 
+						icon: require('../../static/images/center/order_return.png')
+					},
 				]
 			}
 		},
@@ -184,7 +183,18 @@
 			this.paddingTop = wx.getMenuButtonBoundingClientRect().top
 			wx.showTabBar()
 		},
-		methods: {}
+		methods: {
+			handleToMyIncome() {
+				wx.navigateTo({
+					url: './income'
+				})
+			},
+			handleToWithdraw() {
+				wx.navigateTo({
+					url: './withdraw'
+				})
+			}
+		}
 	}
 </script>
 
@@ -305,29 +315,33 @@
 			margin: 20rpx;
 		}
 
-		.order,.service {
+		.order,
+		.service {
 			.list {
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
 				padding: 20rpx 0 30rpx 0;
 				background-color: #fff;
-				.item{
+
+				.item {
 					flex: 1;
 					display: flex;
 					flex-direction: column;
 					justify-content: center;
 					align-items: center;
-					image{
+
+					image {
 						width: 44rpx;
 						height: 44rpx;
 					}
-					text{
-						height:26rpx;
-						font-size:26rpx;
-						font-family:PingFang SC;
-						font-weight:400;
-						color:rgba(102,102,102,1);
+
+					text {
+						height: 26rpx;
+						font-size: 26rpx;
+						font-family: PingFang SC;
+						font-weight: 400;
+						color: rgba(102, 102, 102, 1);
 						margin-top: 15rpx;
 					}
 				}
@@ -411,21 +425,22 @@
 				}
 			}
 		}
-		.store{
+
+		.store {
 			.list {
 				padding: 30rpx 0;
 				background-color: #fff;
 				display: flex;
 				align-items: center;
 				justify-content: space-between;
-			
+
 				.item {
 					flex: 1;
 					display: flex;
 					flex-direction: column;
 					align-items: center;
 					justify-content: center;
-			
+
 					.num {
 						height: 26rpx;
 						font-size: 36rpx;
@@ -434,7 +449,7 @@
 						font-weight: 500;
 						color: rgba(51, 51, 51, 1);
 					}
-			
+
 					.name {
 						height: 26rpx;
 						font-size: 26rpx;

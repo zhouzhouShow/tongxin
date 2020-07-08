@@ -90,7 +90,15 @@
 			"path": "pages/seeding/boughtRelate",
 			"style": {}
 		}
-	],
+	    ,{
+            "path" : "pages/center/income",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/center/withdraw",
+            "style" : {}
+        }
+    ],
 	"subPackages": [{
 		"root": "pagesA",
 		"pages": [{
