@@ -77,16 +77,15 @@
 	}
 </script>
 
-<style lang="scss">
-	page {
-		view {
-			box-sizing: border-box;
-		}
-
-		background-color: #F3F3F3;
+<style lang="scss" scoped>
+	view {
+		box-sizing: border-box;
 	}
 
 	.choose_relate {
+
+		background-color: #F3F3F3;
+		min-height: 100%;
 		overflow: hidden;
 
 		.item {

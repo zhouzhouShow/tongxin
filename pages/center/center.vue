@@ -214,19 +214,16 @@
 </script>
 
 <style lang="scss" scoped>
-	page {
-		view {
-			box-sizing: border-box;
-		}
-	}
-
 	.center {
 		background-color: #F3F3F3;
 		min-height: 100%;
 		overflow: hidden;
+		view {
+			box-sizing: border-box;
+		}
 
 		.userinfo {
-			height: 277rpx;
+			height: 340rpx;
 
 			.title {
 				width: 750rpx;

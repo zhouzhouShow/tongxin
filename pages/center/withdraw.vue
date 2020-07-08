@@ -49,17 +49,14 @@
 	}
 </script>
 
-<style lang="scss">
-	page {
-		view {
-			box-sizing: border-box;
-		}
-	}
-
+<style lang="scss" scoped>
 	.withdraw {
 		min-height: 100%;
 		background-color: #F3F3F3;
 		overflow: hidden;
+		view {
+			box-sizing: border-box;
+		}
 
 		.total {
 			margin-top: 20rpx;
@@ -102,7 +99,7 @@
 			}
 
 			.form {
-				height: 26rpx;
+				height: 76rpx;
 				font-size: 28rpx;
 				font-family: PingFang SC;
 				font-weight: 400;

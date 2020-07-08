@@ -151,14 +151,11 @@
 	}
 </script>
 
-<style lang="scss">
-	page {
+<style lang="scss" scoped>
+	.member {
 		view {
 			box-sizing: border-box;
 		}
-	}
-
-	.member {
 		.info {
 			width: 750rpx;
 			height: 265rpx;
@@ -290,7 +287,7 @@
 			}
 		}
 		
-		.list{
+		>.list{
 			.item{
 				height: 105rpx;
 				display: flex;

@@ -255,11 +255,9 @@
 	}
 </script>
 
-<style lang="scss">
-	page {
-		view {
-			box-sizing: border-box;
-		}
+<style lang="scss" scoped>
+	view {
+		box-sizing: border-box;
 	}
 .release{
 	padding-bottom: 170rpx;
@@ -279,7 +277,7 @@
 	}
 	.upload{
 		width: 100%;
-		padding: 0 20rpx;
+		padding: 0 10rpx 0 20rpx;
 		display: flex;
 		flex-wrap: wrap;
 		.video{
@@ -472,7 +470,7 @@
 
 	.relate_title{
 		padding-top: 50rpx;
-		height:30rpx;
+		height:80rpx;
 		font-size:30rpx;
 		font-family:PingFang SC;
 		font-weight:400;
@@ -534,10 +532,10 @@
 	}
 
 	.relates{
-		padding: 0 40rpx 0 20rpx;
+		padding: 0 20rpx 0 20rpx;
 		.item {
 			margin-top: 30rpx;
-			width: 670rpx;
+			width: 690rpx;
 			height: 100rpx;
 			padding: 10rpx;
 			background: rgba(248, 248, 248, 1);

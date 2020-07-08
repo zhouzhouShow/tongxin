@@ -29,7 +29,7 @@
 			</view>
 			<view @click="showSearch" :class="['search',isSearch?'show':'hide']">
 				<image src="../../static/images/seeding/icon_search.png" mode="scaleToFill"></image>
-				<input :focus="isSearch" @blur="searchBlue" type="text" v-model="searchText"  placeholder="输入要搜索的内容" />
+				<input :focus="isSearch" @blur="searchBlue" type="text" v-model="searchText" placeholder="输入要搜索的内容" />
 			</view>
 		</view>
 		<view class="seeding_list">
@@ -44,11 +44,13 @@
 </template>
 
 <script>
-	import {seedingJson} from '@/static/js/seedingJson.js'
+	import {
+		seedingJson
+	} from '@/static/js/seedingJson.js'
 	import SeedingItem from '@/components/seedingItem.vue'
 	import uniLoadMore from "@/components/uni-load-more/uni-load-more.vue"
 	export default {
-		name:"seeding",
+		name: "seeding",
 		components: {
 			SeedingItem,
 			uniLoadMore
@@ -62,15 +64,15 @@
 		data() {
 			return {
 				loadingType: 'more',
-				searchText:'',
-				isSearch:false,
+				searchText: '',
+				isSearch: false,
 				userInfo: {
 					id: 99,
 					nickname: '呢子dayi',
 					avatar: require('../../static/images/seeding/icon_avatar.png'),
 					seeding: 2,
 					fans: 3200,
-					desc:''
+					desc: ''
 				},
 				navList: [{
 						id: 1,
@@ -109,7 +111,7 @@
 			},
 			handleToDetail(id) {
 				wx.navigateTo({
-					url: "./productDetail?id="+id,
+					url: "./productDetail?id=" + id,
 				})
 			},
 			showSearch() {
@@ -117,7 +119,7 @@
 			},
 			searchBlue() {
 				console.log(this.searchText)
-				if(!this.searchText){
+				if (!this.searchText) {
 					this.isSearch = false
 				}
 			},
@@ -154,11 +156,9 @@
 	}
 </script>
 
-<style lang="scss">
-	page {
-		view{
-			box-sizing: border-box;
-		}
+<style lang="scss" scoped>
+	view {
+		box-sizing: border-box;
 	}
 
 	.seeding {
@@ -237,13 +237,13 @@
 			background: #fff;
 			display: flex;
 			justify-content: space-between;
-			
-			.box{
+
+			.box {
 				display: flex;
 				align-items: flex-start;
 			}
-			
-			.search{
+
+			.search {
 				display: flex;
 				height: 60rpx;
 				align-items: center;
@@ -251,19 +251,23 @@
 				border-radius: 30rpx;
 				overflow: hidden;
 				transition: all .5s;
-				&.hide{
+
+				&.hide {
 					width: 60rpx;
 				}
-				&.show{
+
+				&.show {
 					flex: 1;
 				}
-				image{
-					flex-basis: 60rpx;
-					width: 60rpx;
+
+				image {
+					flex-basis: 30rpx;
+					width: 30rpx;
 					height: 30rpx;
 					padding: 0 15rpx;
 				}
-				input{
+
+				input {
 					flex: 1;
 					font-size: 30rpx;
 					height: 60rpx;
