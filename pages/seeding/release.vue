@@ -3,10 +3,13 @@
 		<view class="line"></view>
 		<view class="reason">
 			<textarea :maxlength="-1" v-model="seedingReason" placeholder="请描述你种草ta的理由" />
-		</view>
+			</view>
 		<view class="upload">
 			<view v-if="video" class="video">
 				<video :src="video" :controls="false"></video>
+				<view @click="handleDeleteVideo" class="delete">
+					<image src="../../static/images/seeding/icon_delete.png" mode="scaleToFill"></image>
+				</view>
 			</view>
 			<view v-for="(image, index) in images" :key="index" class="image">
 				<image :src="image" mode="aspectFill"></image>
@@ -174,6 +177,9 @@
 			handleDelete(index) {
 				this.images.splice(index,1)
 			},
+			handleDeleteVideo() {
+				this.video = ''
+			},
 			showThemePopup() {
 				this.selectTopic = this.topic
 				this.selectTopicId = this.topicId
@@ -250,6 +256,11 @@
 </script>
 
 <style lang="scss">
+	page {
+		view {
+			box-sizing: border-box;
+		}
+	}
 .release{
 	padding-bottom: 170rpx;
 	.line{
@@ -274,9 +285,21 @@
 		.video{
 			width:230rpx;
 			height:230rpx;
+			position: relative;
 			video{
 				width:100%;
 				height:100%;
+			}
+			.delete{
+				width:40rpx;
+				height:40rpx;
+				position: absolute;
+				right: 10rpx;
+				top: 10rpx;
+				image{
+					width:100%;
+					height:100%;
+				}
 			}
 		}
 		.image{

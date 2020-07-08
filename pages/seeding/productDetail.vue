@@ -62,6 +62,11 @@
 </script>
 
 <style lang="scss">
+	page {
+		view {
+			box-sizing: border-box;
+		}
+	}
 .line{
 	width:750rpx;
 	height:20rpx;
