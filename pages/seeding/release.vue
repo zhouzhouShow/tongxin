@@ -256,6 +256,11 @@
 </script>
 
 <style lang="scss">
+	page {
+		view {
+			box-sizing: border-box;
+		}
+	}
 .release{
 	padding-bottom: 170rpx;
 	.line{

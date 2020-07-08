@@ -88,15 +88,15 @@
 				</view>
 			</view>
 			<view class="list">
-				<view class="item">
+				<view @click="handleToMemberList" class="item">
 					<text class="num">256</text>
 					<text class="name">已邀会员</text>
 				</view>
-				<view class="item">
+				<view @click="handleToStoreOrder" class="item">
 					<text class="num">700</text>
 					<text class="name">店铺订单</text>
 				</view>
-				<view class="item">
+				<view @click="handleToStoreData" class="item">
 					<text class="num">120</text>
 					<text class="name">今日浏览</text>
 				</view>
@@ -193,12 +193,33 @@
 				wx.navigateTo({
 					url: './withdraw'
 				})
+			},
+			handleToMemberList() {
+				wx.navigateTo({
+					url: './inviteMember'
+				})
+			},
+			handleToStoreData() {
+				wx.navigateTo({
+					url: './storeData'
+				})
+			},
+			handleToStoreOrder() {
+				wx.navigateTo({
+					url: './order/storeOrder'
+				})
 			}
 		}
 	}
 </script>
 
 <style lang="scss" scoped>
+	page {
+		view {
+			box-sizing: border-box;
+		}
+	}
+
 	.center {
 		background-color: #F3F3F3;
 		min-height: 100%;

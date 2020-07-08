@@ -149,6 +149,11 @@
 </script>
 
 <style lang="scss">
+	page {
+		view {
+			box-sizing: border-box;
+		}
+	}
 	.userpage {
 		padding-bottom: 140rpx;
 		&_info {
