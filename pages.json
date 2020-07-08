@@ -8,10 +8,7 @@
 			}
 		}, {
 			"path": "pages/center/center",
-			"style": {
-				"navigationBarTitleText": "我的",
-				"navigationStyle":"custom"
-			}
+			"style": {}
 		}, {
 			"path": "pages/shopCart/shopCart",
 			"style": {}
@@ -101,28 +98,14 @@
 			"style": {
 				"navigationBarTitleText": "品牌详情"
 			}
+		},
+		{
+			"path": "pages/shopCart/submitOrder",
+			"style": {
+				"navigationBarTitleText": "确认订单"
+			}
 		}
-	    ,{
-            "path" : "pages/center/income",
-            "style" : {}
-        }
-        ,{
-            "path" : "pages/center/withdraw",
-            "style" : {}
-        }
-        ,{
-            "path" : "pages/center/inviteMember",
-            "style" : {}
-        }
-        ,{
-            "path" : "pages/center/storeData",
-            "style" : {}
-        }
-        ,{
-            "path" : "pages/center/order/storeOrder",
-            "style" : {}
-        }
-    ],
+	],
 	"subPackages": [{
 		"root": "pagesA",
 		"pages": [{

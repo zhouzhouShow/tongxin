@@ -1,6 +1,6 @@
 <template>
 	<view class="item flex-align-center">
-		<checkbox color="#17B948" :checked="isAll" v-if="type=='cart'" />
+		<checkbox class="c-checkbox" color="#17B948" :checked="isAll" v-if="type=='cart'" />
 		<image class="g-img" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg"
 		 mode=""></image>
 		<view class="g-info">
@@ -48,10 +48,13 @@
 <style lang="scss" scoped>
 	.item {
 		padding-bottom: 30rpx;
+		.c-checkbox{
+			margin-right: 20rpx;
+		}
 		.g-img {
 			width: 219rpx;
 			height: 219rpx;
-			margin: 0 20rpx;
+			margin-right: 20rpx ;
 		}
 
 		.g-info {
