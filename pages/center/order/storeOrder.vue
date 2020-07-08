@@ -15,7 +15,11 @@
 					</view>
 				</view>
 				<view class="product">
-					
+					<list>
+						<view v-for="el in item.productList" :key="el.id" class="product_item">
+							<productItem type="order"></productItem>
+						</view>
+					</list>
 				</view>
 			</view>
 		</view>
@@ -25,11 +29,13 @@
 <script>
 	import uniLoadMore from "@/components/uni-load-more/uni-load-more.vue"
 	import orderNav from "@/components/orderNav.vue"
+	import productItem from "@/components/shopCart/cartItem.vue"
 	export default {
 		name: "storeOrder",
 		components: {
 			uniLoadMore,
-			orderNav
+			orderNav,
+			productItem
 		},
 		data() {
 			return {
@@ -55,32 +61,28 @@
 					},
 				],
 				nowNavIndex: 0,
-				status:['待付款','待收货','已收货','已退款'],
-				list:[
-					{
-						id:1,
-						userInfo:{
-							nickname:'nickname',
-							mobile:'185****2525',
-							avatar:''
-						},
-						status:1,
-						total:88,
-						pay:88,
-						productList:[
-							{
-								id:1,
-								cover:'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg',
-								name:'2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 ',
-								number:1,
-								price:88,
-								discount:0.7,
-								discountText:'7折',
-								spec:'粉色；120cm'
-							}
-						]
-					}
-				]
+				status: ['待付款', '待收货', '已收货', '已退款'],
+				list: [{
+					id: 1,
+					userInfo: {
+						nickname: 'nickname',
+						mobile: '185****2525',
+						avatar: ''
+					},
+					status: 1,
+					total: 88,
+					pay: 88,
+					productList: [{
+						id: 1,
+						cover: 'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg',
+						name: '2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 ',
+						number: 1,
+						price: 88,
+						discount: 0.7,
+						discountText: '7折',
+						spec: '粉色；120cm'
+					}]
+				}]
 			};
 		},
 		methods: {
@@ -91,24 +93,33 @@
 	}
 </script>
 
-<style lang="scss">
-	page {
+<style lang="scss" scoped>
+	.store_order {
+		min-height: 100%;
+		overflow: hidden;
 		background-color: #F3F3F3;
-
 		view {
 			box-sizing: border-box;
 		}
-	}
-
-	.store_order {
-		padding-top: 90rpx;
-		.nav{
+		.nav {
 			position: fixed;
 			top: 0;
 		}
-		.list{
-			.item{
-				
+
+		.list {
+			padding-top: 90rpx;
+			.item {
+				width: 710rpx;
+				margin: 20rpx;
+				background-color: #fff;
+				border-radius:10px;
+				padding: 40rpx 30rpx 30rpx 30rpx;
+
+				.header {}
+
+				.product {
+					&_item {}
+				}
 			}
 		}
 	}

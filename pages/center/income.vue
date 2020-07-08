@@ -6,18 +6,20 @@
 				<image v-if="nav.ids==headerNavIndex" src="../../static/images/center/icon_nav-active.png" mode="scaleToFill"></image>
 			</view>
 		</view>
-		<view class="info" style="background: url(../../static/images/center/income_top_bg.png) no-repeat;background-size: 100% 100%;">
-			<view class="title">
-				<text>今日收入（元）</text>
-			</view>
-			<view class="date">
-				<text>2020-06-28</text>
-			</view>
-			<view class="total">
-				<text>200.00</text>
-			</view>
-			<view class="tip">
-				<text>返利说明</text>
+		<view class="info">
+			<view class="info_box" style="background: url(../../static/images/center/income_top_bg.png) no-repeat;background-size: 100% 100%;">
+				<view class="title">
+					<text>今日收入（元）</text>
+				</view>
+				<view class="date">
+					<text>2020-06-28</text>
+				</view>
+				<view class="total">
+					<text>200.00</text>
+				</view>
+				<view class="tip">
+					<text>返利说明</text>
+				</view>
 			</view>
 		</view>
 		<view class="list_nav">
@@ -142,18 +144,14 @@
 	}
 </script>
 
-<style lang="scss">
-	page {
+<style lang="scss" scoped>
+	.income {
+		overflow: hidden;
+		min-height: 100%;
 		background-color: #F3F3F3;
-
 		view {
 			box-sizing: border-box;
 		}
-	}
-
-	.income {
-		overflow: hidden;
-		background-color: #fff;
 
 		.header_nav {
 			width: 750rpx;
@@ -162,6 +160,7 @@
 			display: flex;
 			align-items: center;
 			padding: 0 30rpx;
+			background-color: #fff;
 
 			.item {
 				display: flex;
@@ -188,58 +187,63 @@
 		}
 
 		.info {
-			width: 710rpx;
-			height: 250rpx;
-			margin: 10rpx 20rpx 0 20rpx;
-			position: relative;
-
-			.title {
-				height: 30rpx;
-				font-size: 30rpx;
-				line-height: 30rpx;
-				font-family: PingFang SC;
-				font-weight: 400;
-				color: rgba(255, 255, 255, 1);
-				padding: 40rpx 0 20rpx 40rpx;
-			}
-
-			.date {
-				height: 20rpx;
-				font-size: 28rpx;
-				line-height: 20rpx;
-				padding-left: 40rpx;
-				font-family: DINPro;
-				font-weight: 400;
-				color: rgba(255, 255, 255, 1);
-			}
-
-			.total {
-				width: 100%;
-				margin-top: 24rpx;
-				height: 51rpx;
-				font-size: 72rpx;
-				line-height: 51rpx;
-				font-family: DINPro;
-				font-weight: 500;
-				color: rgba(255, 255, 255, 1);
-				display: flex;
-				justify-content: center;
-			}
-
-			.tip {
-				position: absolute;
-				top: 0;
-				right: 0;
-				width: 144rpx;
-				height: 48rpx;
-				background: rgba(255, 127, 24, 1);
-				border-radius: 0rpx 10rpx 0rpx 10rpx;
-				line-height: 48rpx;
-				text-align: center;
-				font-size: 24rpx;
-				font-family: PingFang SC;
-				font-weight: 500;
-				color: rgba(255, 255, 255, 1);
+			background-color: #fff;
+			overflow: hidden;
+			&_box{
+				width: 710rpx;
+				height: 250rpx;
+				margin: 10rpx 20rpx 0 20rpx;
+				position: relative;
+				overflow: hidden;
+				
+				.title {
+					height: 30rpx;
+					font-size: 30rpx;
+					line-height: 30rpx;
+					font-family: PingFang SC;
+					font-weight: 400;
+					color: rgba(255, 255, 255, 1);
+					margin: 40rpx 0 20rpx 40rpx;
+				}
+				
+				.date {
+					height: 20rpx;
+					font-size: 28rpx;
+					line-height: 20rpx;
+					padding-left: 40rpx;
+					font-family: DINPro;
+					font-weight: 400;
+					color: rgba(255, 255, 255, 1);
+				}
+				
+				.total {
+					width: 100%;
+					margin-top: 24rpx;
+					height: 51rpx;
+					font-size: 72rpx;
+					line-height: 51rpx;
+					font-family: DINPro;
+					font-weight: 500;
+					color: rgba(255, 255, 255, 1);
+					display: flex;
+					justify-content: center;
+				}
+				
+				.tip {
+					position: absolute;
+					top: 0;
+					right: 0;
+					width: 144rpx;
+					height: 48rpx;
+					background: rgba(255, 127, 24, 1);
+					border-radius: 0rpx 10rpx 0rpx 10rpx;
+					line-height: 48rpx;
+					text-align: center;
+					font-size: 24rpx;
+					font-family: PingFang SC;
+					font-weight: 500;
+					color: rgba(255, 255, 255, 1);
+				}
 			}
 		}
 
@@ -247,6 +251,7 @@
 			padding: 50rpx 20rpx 20rpx 20rpx;
 			display: flex;
 			align-items: center;
+			background-color: #fff;
 
 			.item {
 				width: 140rpx;
@@ -270,6 +275,7 @@
 
 		.list {
 			padding: 0 30rpx;
+			background-color: #fff;
 
 			.item {
 				border-bottom: 1rpx solid #EEEEEE;

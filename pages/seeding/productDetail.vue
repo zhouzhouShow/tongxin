@@ -7,10 +7,12 @@
 </template>
 
 <script>
-	import {seedingJson} from '@/static/js/seedingJson.js'
+	import {
+		seedingJson
+	} from '@/static/js/seedingJson.js'
 	import SeedingItem from '@/components/seedingItem.vue'
 	export default {
-		name:"productDetail",
+		name: "productDetail",
 		components: {
 			SeedingItem,
 		},
@@ -61,15 +63,14 @@
 	}
 </script>
 
-<style lang="scss">
-	page {
-		view {
-			box-sizing: border-box;
-		}
+<style lang="scss" scoped>
+	view {
+		box-sizing: border-box;
 	}
-.line{
-	width:750rpx;
-	height:20rpx;
-	background:rgba(243,243,243,1);
-}
+
+	.line {
+		width: 750rpx;
+		height: 20rpx;
+		background: rgba(243, 243, 243, 1);
+	}
 </style>

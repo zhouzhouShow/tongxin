@@ -72,8 +72,11 @@
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.seeding_images {
+		view{
+			box-sizing: border-box;
+		}
 		.images_video {
 			width: 710rpx;
 			height: 710rpx;

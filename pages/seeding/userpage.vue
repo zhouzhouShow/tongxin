@@ -34,8 +34,9 @@
 		</view>
 		<view class="userpage_list">
 			<SeedingItem :list="nowIndex==0?seedingList:likeList" :isTabBar="false" :userId="masterInfo.id" @handleToDetail="handleToDetail"
-			 @handleDelete="handleDelete" :showFollow="nowIndex==1?true:false" @handleConcern="handleConcern" @previewImage="previewImage" @handleLike="handleLike"></SeedingItem>
-			 <uni-load-more :status="loadingType"></uni-load-more>
+			 @handleDelete="handleDelete" :showFollow="nowIndex==1?true:false" @handleConcern="handleConcern" @previewImage="previewImage"
+			 @handleLike="handleLike"></SeedingItem>
+			<uni-load-more :status="loadingType"></uni-load-more>
 		</view>
 		<view v-if="masterInfo.id!=userInfo.id" class="userpage_btn">
 			<view @click="handleConcernUser" :class="[masterInfo.is_follow?'':'active']">
@@ -68,14 +69,14 @@
 					fans: 3200,
 					desc: ''
 				},
-				masterInfo:{
+				masterInfo: {
 					id: 98,
 					nickname: '呢子dayi',
 					avatar: require('../../static/images/seeding/icon_avatar.png'),
 					seeding: 2,
 					fans: 3200,
 					desc: '',
-					is_follow:false
+					is_follow: false
 				},
 				navList: [{
 						id: 1,
@@ -88,9 +89,9 @@
 				],
 				nowIndex: 0,
 				seedingList: seedingJson,
-				seedingLength:3,
+				seedingLength: 3,
 				likeList: seedingJson,
-				likeLength:10
+				likeLength: 10
 			};
 		},
 		onReachBottom() {
@@ -104,7 +105,7 @@
 				this.nowIndex = idx
 			},
 			handleConcern(id) {
-				let list = this.nowIndex==0?this.seedingList:this.likeList
+				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
 				let item = list.filter(v => v.id == id)[0] || {}
 				item.master_info.is_follow = !item.master_info.is_follow
 			},
@@ -112,7 +113,7 @@
 				this.masterInfo.is_follow = !this.masterInfo.is_follow
 			},
 			handleDelete(id) {
-				let list = this.nowIndex==0?this.seedingList:this.likeList
+				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
 				list.forEach((item, index) => {
 					if (item.id == id) {
 						list.splice(index, 1)
@@ -128,7 +129,7 @@
 				this.imgPreview(item.product_info.images, num)
 			},
 			handleLike(id) {
-				let list = this.nowIndex==0?this.seedingList:this.likeList
+				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
 				let item = list.filter(v => v.id == id)[0] || {}
 				item.product_info.is_like = !item.product_info.is_like
 				item.product_info.like_num = item.product_info.is_like ? item.product_info.like_num + 1 : item.product_info.like_num -
@@ -148,14 +149,16 @@
 	}
 </script>
 
-<style lang="scss">
-	page {
-		view {
-			box-sizing: border-box;
-		}
+<style lang="scss" scoped>
+	view {
+		box-sizing: border-box;
 	}
+
 	.userpage {
 		padding-bottom: 140rpx;
+		min-height: 100%;
+		background-color: #F3F3F3;
+
 		&_info {
 			width: 750rpx;
 			height: 422rpx;
@@ -307,8 +310,8 @@
 				}
 			}
 		}
-	
-		&_btn{
+
+		&_btn {
 			position: fixed;
 			bottom: 0;
 			width: 750rpx;
@@ -317,20 +320,22 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			&>view{
-				width:690rpx;
-				height:80rpx;
-				border-radius:40rpx;
-				font-size:30rpx;
-				font-family:PingFang SC;
-				font-weight:400;
+
+			&>view {
+				width: 690rpx;
+				height: 80rpx;
+				border-radius: 40rpx;
+				font-size: 30rpx;
+				font-family: PingFang SC;
+				font-weight: 400;
 				line-height: 80rpx;
 				text-align: center;
 				background-color: #EEEEEE;
 				color: #666666;
-				&.active{
-					background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
-					color:rgba(255,255,255,1);
+
+				&.active {
+					background: linear-gradient(90deg, rgba(252, 56, 67, 1) 0%, rgba(246, 42, 138, 1) 100%);
+					color: rgba(255, 255, 255, 1);
 				}
 			}
 		}

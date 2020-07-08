@@ -204,8 +204,11 @@
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	.seeding_item {
+		view{
+			box-sizing: border-box;
+		}
 		.item {
 			margin-bottom: 20rpx;
 			padding: 30rpx 20rpx 40rpx 20rpx;

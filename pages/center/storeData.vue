@@ -129,15 +129,14 @@
 	}
 </script>
 
-<style lang="scss">
-	page {
+<style lang="scss" scoped>
+	.store_data {
+		min-height: 100%;
+		overflow: hidden;
 		background-color: #F3F3F3;
 		view{
 			box-sizing: border-box;
 		}
-	}
-
-	.store_data {
 		.visitors {
 			height: 205rpx;
 			overflow: hidden;
