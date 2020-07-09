@@ -14,55 +14,64 @@
 
 <script>
 	export default {
-		name:"refundResult",
+		name: "refundResult",
 		data() {
 			return {
-				
+
 			};
 		}
 	}
 </script>
 
-<style lang="scss">
-.refund_result{
-	min-height: 100%;
-	background-color: #F3F3F3;
-	overflow: hidden;
-	padding-top: 142rpx;
-	.icon{
-		width: 95rpx;
-		height: 85rpx;
-		margin: 0 auto;
-		image{
-			width: 100%;
-			height: 100%;
+<style lang="scss" scoped>
+	view {
+		box-sizing: border-box;
+	}
+
+	.refund_result {
+		min-height: 100%;
+		background-color: #F3F3F3;
+		overflow: hidden;
+		padding-top: 142rpx;
+
+		.icon {
+			width: 95rpx;
+			height: 85rpx;
+			margin: 0 auto;
+
+			image {
+				width: 100%;
+				height: 100%;
+			}
 		}
-	}
-	.type{
-		height:30rpx;
-		font-size:30rpx;
-		font-family:PingFang SC;
-		font-weight:400;
-		color:rgba(51,51,51,1);
-		line-height:30rpx;
-		margin-top: 40rpx;
-		display: flex;
-		justify-content: center;
-	}
-	.tip{
-		height:26rpx;
-		font-size:26rpx;
-		font-family:PingFang SC;
-		font-weight:400;
-		color:rgba(153,153,153,1);
-		line-height:40rpx;
-		display: flex;
-		justify-content: center;
-		text{
-			text{
-				color: #333333;
+
+		.type {
+			height: 30rpx;
+			font-size: 30rpx;
+			font-family: PingFang SC;
+			font-weight: 400;
+			color: rgba(51, 51, 51, 1);
+			line-height: 30rpx;
+			margin-top: 40rpx;
+			display: flex;
+			justify-content: center;
+		}
+
+		.tip {
+			height: 26rpx;
+			font-size: 26rpx;
+			font-family: PingFang SC;
+			font-weight: 400;
+			color: rgba(153, 153, 153, 1);
+			line-height: 40rpx;
+			display: flex;
+			justify-content: center;
+
+			text {
+				text {
+					color: #333333;
+				}
 			}
 		}
 	}
-}
 </style>

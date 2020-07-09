@@ -159,7 +159,7 @@
 					font-family: PingFang SC;
 					font-weight: 400;
 					color: rgba(255, 255, 255, 1);
-					line-height: 24rpx;
+					line-height: 26rpx;
 					background: rgba(255, 180, 79, 1);
 					border-radius: 4rpx;
 					padding: 6rpx 7rpx;

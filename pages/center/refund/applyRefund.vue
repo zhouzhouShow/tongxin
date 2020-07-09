@@ -136,7 +136,7 @@
 	}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 	view {
 		box-sizing: border-box;
 	}

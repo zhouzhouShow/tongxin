@@ -131,6 +131,14 @@
             "path" : "pages/center/refund/refundResult",
             "style" : {}
         }
+        ,{
+            "path" : "pages/center/refund/refundOrder",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/center/refund/refundDetail",
+            "style" : {}
+        }
     ],
 	"subPackages": [{
 		"root": "pagesA",
