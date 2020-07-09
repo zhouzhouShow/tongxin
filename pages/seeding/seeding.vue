@@ -93,7 +93,18 @@
 			this.loadingType = 'loading'
 			setTimeout(() => this.loadingType = 'more', 3000)
 		},
+		onLoad() {
+			this.getPersonalCenterData()
+		},
 		methods: {
+			getPersonalCenterData() {
+				uni.request({
+					url:this.$api.personalCenterData,
+					method:'POST'
+				}).then(res=>{
+					console.log(res)
+				})
+			},
 			changeNav(index) {
 				if (index == this.nowIndex) return
 				this.nowIndex = index

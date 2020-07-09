@@ -67,7 +67,7 @@
 								¥3.9
 							</view>
 						</view>
-				<!-- </scroll-view> -->
+				</scroll-view>
 			
 			</view>
 			
