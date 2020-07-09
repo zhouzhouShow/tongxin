@@ -123,7 +123,15 @@
 			"path": "pages/center/order/storeOrder",
 			"style": {}
 		}
-	],
+	    ,{
+            "path" : "pages/center/refund/applyRefund",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/center/refund/refundResult",
+            "style" : {}
+        }
+    ],
 	"subPackages": [{
 		"root": "pagesA",
 		"pages": [{

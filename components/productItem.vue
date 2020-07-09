@@ -30,7 +30,7 @@
 					</view>
 					<view v-else class="refund">
 						<text>购买数量：{{info.number}}</text>
-						<text>申请数量：1</text>
+						<text>申请数量：{{refundNumber}}</text>
 					</view>
 				</view>
 			</view>
@@ -56,6 +56,10 @@
 			showRefundInfo:{
 				type:Boolean,
 				default:false
+			},
+			refundNumber:{
+				type:Number,
+				default:0
 			}
 		},
 		data() {
@@ -205,7 +209,7 @@
 						color: rgba(102, 102, 102, 1);
 
 						text:nth-child(1) {
-							margin-left: 50rpx;
+							margin-right: 30rpx;
 						}
 					}
 				}
