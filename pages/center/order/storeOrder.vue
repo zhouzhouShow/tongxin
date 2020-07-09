@@ -17,19 +17,30 @@
 				<view class="product">
 					<list>
 						<view v-for="el in item.productList" :key="el.id" class="product_item">
-							<productItem type="order"></productItem>
+							<productItem :info="el"></productItem>
 						</view>
 					</list>
 				</view>
+				<view class="total">
+					<view class="left">
+						<text>总价</text>
+						<text>¥ 88</text>
+					</view>
+					<view class="right">
+						<text>实付款</text>
+						<text>¥ 88</text>
+					</view>
+				</view>
 			</view>
 		</view>
+		<uni-load-more :status="loadingType"></uni-load-more>
 	</view>
 </template>
 
 <script>
 	import uniLoadMore from "@/components/uni-load-more/uni-load-more.vue"
 	import orderNav from "@/components/orderNav.vue"
-	import productItem from "@/components/shopCart/cartItem.vue"
+	import productItem from "@/components/productItem.vue"
 	export default {
 		name: "storeOrder",
 		components: {
@@ -39,6 +50,7 @@
 		},
 		data() {
 			return {
+				loadingType:1,
 				navList: [{
 						ids: 0,
 						name: '全部'
@@ -115,10 +127,39 @@
 				border-radius:10px;
 				padding: 40rpx 30rpx 30rpx 30rpx;
 
-				.header {}
+				.header {
+					font-size:30rpx;
+					line-height: 28rpx;
+					font-family:PingFang SC;
+					font-weight:400;
+					color:rgba(102,102,102,1);
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
+					padding-bottom: 30rpx;
+					.status{
+						color: #FFB44F;
+					}
+				}
 
-				.product {
-					&_item {}
+				.product{}
+				.total{
+					display: flex;
+					justify-content: flex-end;
+					align-items: center;
+					margin-top: 40rpx;
+					height:28rpx;
+					font-size:28rpx;
+					font-family:PingFang SC;
+					font-weight:400;
+					line-height:28rpx;
+					.left{
+						color: #999999;
+					}
+					.right{
+						margin-left: 30rpx;
+						color: #666666;
+					}
 				}
 			}
 		}
