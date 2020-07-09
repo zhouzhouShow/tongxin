@@ -122,7 +122,28 @@
 		}, {
 			"path": "pages/center/order/storeOrder",
 			"style": {}
+		}, {
+			"path": "pages/index/session",
+			"style": {
+				"navigationBarTitleText": "专场"
+			}
+		}, {
+			"path": "pages/center/order/orderList",
+			"style": {
+				"navigationBarTitleText": "我的订单"
+			}
 		}
+		, {
+			"path": "pages/center/order/orderDetail",
+			"style": {
+				"navigationBarTitleText": "订单详情"
+			}
+		}, {
+				"path": "pages/center/order/logistics",
+				"style": {
+					"navigationBarTitleText": "物流详情"
+				}
+			}
 	],
 	"subPackages": [{
 		"root": "pagesA",
@@ -184,6 +205,10 @@
 		}, {
 			"name": "shopCart", //模式名称
 			"path": "pages/shopCart/shopCart",
+			"query": "" //启动参数，在页面的onLoad函数里面得到。
+		}, {
+			"name": "orderDetail", //模式名称
+			"path": "pages/center/order/orderDetail",
 			"query": "" //启动参数，在页面的onLoad函数里面得到。
 		}]
 	}

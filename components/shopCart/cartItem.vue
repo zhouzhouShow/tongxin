@@ -10,7 +10,7 @@
 				<text v-if="type=='cart'" class="iconfont iconarrow"></text>
 			</p>
 			<p class="discount">9.2折</p>
-			<p class="pirce-box">
+			<p class="pirce-box flex-align-center">
 				<span class="n-price">
 					<span class="p-icon">¥</span>{{213}}
 				</span>

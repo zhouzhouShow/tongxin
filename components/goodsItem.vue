@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<!-- 秒杀抢购item -->
 		<block v-if="itemtype=='timeLimite'">
 			<view class="item2">
 				<view class="g-img-box">
@@ -20,6 +21,31 @@
 				</view>
 			</view>
 		</block>
+		<!-- 会场item -->
+		<block v-if="itemtype=='sessionItem'">
+			<view class="item" style="margin-bottom: 0;">
+				<view class="g-img-box">
+					<image class="g-img" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg"
+					 mode=""></image>
+				</view>
+				<view class="g-info">
+					<p class="g-name">{{item.name}}</p>
+					<p class="discount">9.2折</p>
+					<p class="pirce-box">
+						<span class="n-price">
+							<span class="p-icon">¥</span>{{item.price}}
+						</span>
+						<span class="o-pirce">¥{{item.oPrice}}</span>
+					
+					</p>
+					<p class="sold-num flex-align-center">
+						<span>已售: 609</span>
+							<view class="buy" @clickl.stop="buy">去购买</view>
+					</p>
+				</view>
+			</view>
+		</block>
+		<!-- 其他默认item -->
 		<block v-else>
 			<view class="item">
 				<view class="g-img-box">
@@ -181,7 +207,18 @@
 				font-weight: 400;
 				color: rgba(242, 39, 50, 1);
 			}
-
+			.discount {
+				margin-top: 10rpx;
+				width: 80rpx;
+				height: 30rpx;
+				line-height: 30rpx;
+				text-align: center;
+				background: rgba(255, 180, 79, 1);
+				border-radius: 4rpx;
+				font-size: 24rpx;
+				color: #fff;
+				font-weight: 400;
+			}
 			.pirce-box {
 				display: flex;
 				align-items: center;
@@ -204,6 +241,24 @@
 					color: rgba(153, 153, 153, 1);
 				}
 
+				.buy {
+					margin-left: auto;
+					text-align: center;
+					width: 150rpx;
+					height: 50rpx;
+					line-height: 50rpx;
+					background: linear-gradient(90deg, rgba(252, 56, 67, 1) 0%, rgba(246, 42, 138, 1) 100%);
+					border-radius: 25rpx;
+					font-size: 28rpx;
+					font-weight: 400;
+					color: rgba(255, 255, 255, 1);
+				}
+			}
+	
+			.sold-num{
+				font-size:26rpx;
+				font-weight:400;
+				color:rgba(153,153,153,1);
 				.buy {
 					margin-left: auto;
 					text-align: center;

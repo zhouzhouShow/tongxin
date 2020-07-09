@@ -1,4 +1,4 @@
 export default {
-	baseUrl:'https://fapi.flan1688.com',
+	baseUrl:'http://txyx.k-sg.cn',
 	contentType:'form'
 }

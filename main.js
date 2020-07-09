@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App'
 import store from './store'
-import request from './api/request.js'
+import fly from './utils/fly.js'
 import tools from './utils/tools.js'
 import systemInfo from './utils/systemInfo.js'
 import tips from './utils/tip.js'
@@ -18,7 +18,7 @@ App.mpType = 'app'
 
 Vue.prototype.$store = store;
 Vue.prototype.$api = api;
-Vue.prototype.$fly = request;
+Vue.prototype.$fly = fly;
 Vue.prototype.$tools = tools;
 // Vue.prototype.$system = systemInfo;
 Vue.prototype.$tips = tips;

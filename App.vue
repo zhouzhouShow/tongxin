@@ -1,13 +1,55 @@
 <script>
 	export default {
-		onLaunch: function() {
+		methods:{
+			toPage(callback){
+			    uni.reLaunch({	
+			      url: '/pages/index/index',
+			      // reLaunch: true,
+			    }) 
+			    callback()
+			},
+			login(code,refreeid) {
+			  return new Promise((resolve, reject) => {
+			    this.$fly.post(this.$api.login, {
+			      js_code: code,
+						refreeid:refreeid || ''
+			    }).then((res) => {
+			      wx.setStorageSync('token', res.data.token);
+			      resolve(res.data.token);
+			    })
+			  })
+			},
+			_login() {
+			  let _this = this;
+			  return new Promise((resolve, reject) => {
+			    wx.login({
+			      success(res) {
+			        if (res.code) {
+			          let code = res.code;
+			          resolve(code)
+			        } else {
+			          _this.$tip.toast('微信登录失败')
+			        }
+			      }
+			    });
+			  })
+			},
+			//用户初始化操作
+			async appInit(refreeid) {
+			  let code = await this._login();
+			  let tiem = await this.login(code,refreeid);
+			},
+		},
+		 async onLaunch(option) {
 			console.log('App Launch')
 			wx.hideTabBar(); //隐藏默认tab
-			wx.login({
-				success:(res)=>{
-					console.log(res)
-				}
-			})
+			if(option.query.scene && decodeURIComponent(option.query.scene).includes('user_refreeid')){ //分销,下级进入
+				let str = decodeURIComponent(option.query.scene)
+				let refreeid = str.substr(str.indexOf('=')+1)
+				await this.appInit(refreeid);
+			}else{
+				await this.appInit();
+			}
 		},
 		created() {
 		  wx.hideTabBar(); //隐藏默认tab

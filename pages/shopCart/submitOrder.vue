@@ -2,10 +2,10 @@
 	<view class="submitOrder">
 		<!-- <view class="top-bg"></view> -->
 		<view class="content">
-			<view class="area-box">
+			<view class="area-box" @click="modifyAddress">
 				<view class="user"><text >张小飞</text><text>19888883213</text></view>
 				<view class="area-info">
-					<image class="a-icon" src="../../static/images/center/icon_address.png" mode=""></image>
+					<image class="a-icon" src="../../static/images/icon/area_icon.png" mode=""></image>
 					<text class="area">广东省广州市天河区华观路1993万科广场 A栋407A</text>
 					<text class="iconfont iconyoujiantou"></text>
 				</view>
@@ -58,12 +58,12 @@
 		<view class="fixed-bottom">
 			
 			<view class="total">
-				<text>不含运费</text>
+				<text>共2件</text>
 				<text>合计:</text>
 				<text class="p-box"><text class="p-icon">¥</text>8899</text>
 			</view>
 			<view class="submit">
-				结算
+				提交订单
 			</view>
 		</view>
 	</view>
@@ -80,6 +80,13 @@
 				desc:'',
 				totalPrice:1123213,
 			};
+		},
+		methods:{
+			modifyAddress() {
+				uni.navigateTo({
+					url: "/pages/center/address/address?isShop=1&cart_ids=" + this.shopCarIds
+				});
+			},
 		}
 	}
 </script>
@@ -237,6 +244,7 @@
 		bottom: 0;
 		height: 98rpx;
 		left: 0;
+		z-index: 99;
 		background: #fff;
 		display: flex;
 		align-items: center;

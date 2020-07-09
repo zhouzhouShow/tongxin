@@ -1,6 +1,6 @@
 <template>
 	<view class="container">
-		<view class="header-box">
+		<view class="header-box" :style="{paddingTop:wechatNavBtnHeight+'px'}">
 			<view class="header">
 				<image class="logo-icon" src="@/static/images/icon/logo-icon.png" mode=""></image>
 				<view class="search-input-container">
@@ -20,13 +20,17 @@
 				</view>
 			</view>
 			<view class="swiper-display-area">
-				<swiper v-if="banner.length>0" interval="3000" autoplay=true duration="500" circular=true>
+				<swiper @change="swiperChange" v-if="banner.length>0" interval="3000" autoplay=true duration="500" circular=true>
 					<view v-for="(item,index) in banner" :key="index" @click="toBrandDetail(item.ad_link)">
 						<swiper-item>
 							<img style="width:100%;height:388rpx;display:block;" :src="item.image">
 						</swiper-item>
 					</view>
 				</swiper>
+				<view class="dot-container">
+					<swiperDot :current='current' :length="banner.length"></swiperDot>
+				</view>
+				
 				<!-- <img style="width:100%;height:330rpx;display:block;" src=""> -->
 			</view>
 			<view class="icons-list-container">
@@ -48,7 +52,7 @@
 				<text class="text">新品秒杀榜</text>
 			</view>
 			<view class="miaosha-good">
-				<!-- <scroll-view scroll-x="true" style="height:300rpx"> -->
+				<scroll-view scroll-x="true" style="white-space:nowrap">
 						<view class="item" v-for="item in miaoshaList" :key="item">
 							<view class="img-box">
 								<image class="good-img" src="../../static/images/index/index_icon_1.png" mode=""></image>
@@ -108,14 +112,17 @@
 <script>
 	import fixedIcon from '@/components/fixedIcon.vue'
 	import comfooter from'@/components/com-footer.vue'
+	import swiperDot from '@/components/index/swiper-dot.vue'
 	export default {
 		components:{
 			fixedIcon,
-			comfooter
+			comfooter,
+			swiperDot
 		},
 		data() {
 			return {
 				title: 'Hello',
+				wechatNavBtnHeight:0, //胶囊按钮距离顶部位置
 				navList:[{
 					title:'童婴会场',
 					link:'/pages/index/xinma-recommend',
@@ -130,6 +137,8 @@
 					link:'/pages/index/season',
 				}],
 				banner: [{
+					image: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200629/b68cb24fca8464dbaf34c8c74d2a0b0d.jpg'
+				},{
 					image: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200629/b68cb24fca8464dbaf34c8c74d2a0b0d.jpg'
 				}],
 				listItem: [{
@@ -153,11 +162,12 @@
 				specialList:[1,2,3],
 				showItem:{
 					backTop:false
-				}
+				},
+				current:0
 			}
 		},
 		onLoad() {
-
+			this.wechatNavBtnHeight = wx.getMenuButtonBoundingClientRect().top+1
 		},
 		onPageScroll(e) {
 			if (this.sTimer) {
@@ -174,6 +184,9 @@
 		
 		},
 		methods: {
+			swiperChange(e){
+				this.current = e.detail.current
+			},
 			share(){
 				// 分享
 				
@@ -321,11 +334,8 @@
 		}
 		.miaosha-good{
 			padding-left:30rpx;
-			display:flex ;
-			overflow-x: scroll;
 			.item{
-				display: flex;
-				flex-direction: column;
+				display: inline-block;
 				margin-right: 18rpx;
 				width: 200rpx;
 				.img-box{
@@ -412,7 +422,11 @@
 
 		z-index: 1;
 		height: 388rpx;
-
+		.dot-container{
+			position: absolute;
+			left: 85px;
+			bottom: 30rpx;
+		}
 		swiper {
 			width: 100%;
 			height: 100%;

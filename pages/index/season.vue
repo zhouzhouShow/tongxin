@@ -1,3 +1,4 @@
+<!-- 秋冬上新 -->
 <template>
 	<view class="season">
 		<view class="notice flex-center">
