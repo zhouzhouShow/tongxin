@@ -1,11 +1,13 @@
 import store from '../store'
+import config from '../api/config'
+
 const Fly = require('flyio/dist/npm/wx');
 const fly = new Fly;
 //设置超时
 fly.config.timeout = 20000;
+fly.config.baseURL = config.baseUrl;
 
 fly.interceptors.request.use((request) => {
-
   // const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJmbGFuIiwiaWF0IjoxNTc0NjUxNDcwLCJleHAiOjE1NzU5NDc0NzAsImRhdGEiOnsidWlkIjoiNTc5OTIifX0.474kuALHWlQ8rGgghP381oC24Sv7dkkL7Ul14MNb3IQ';
   const token = wx.getStorageSync('token') || '';
 
