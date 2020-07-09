@@ -132,18 +132,29 @@
 			"style": {
 				"navigationBarTitleText": "我的订单"
 			}
-		}
-		, {
+		}, {
 			"path": "pages/center/order/orderDetail",
 			"style": {
 				"navigationBarTitleText": "订单详情"
 			}
 		}, {
-				"path": "pages/center/order/logistics",
-				"style": {
-					"navigationBarTitleText": "物流详情"
-				}
+			"path": "pages/center/order/logistics",
+			"style": {
+				"navigationBarTitleText": "物流详情"
 			}
+		}, {
+			"path": "pages/center/refund/applyRefund",
+			"style": {}
+		}, {
+			"path": "pages/center/refund/refundResult",
+			"style": {}
+		}, {
+			"path": "pages/center/refund/refundOrder",
+			"style": {}
+		}, {
+			"path": "pages/center/refund/refundDetail",
+			"style": {}
+		}
 	],
 	"subPackages": [{
 		"root": "pagesA",
