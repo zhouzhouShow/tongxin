@@ -9,8 +9,8 @@
 					<text>{{userInfo.nickname}}</text>
 				</view>
 				<view class="info_num">
-					<text>种草数 {{userInfo.seeding}}</text>
-					<text>粉丝 {{userInfo.fans}}</text>
+					<text>种草数 {{userInfo.article_num}}</text>
+					<text>粉丝 {{userInfo.fans_num}}</text>
 				</view>
 			</view>
 			<view class="icon">
@@ -66,14 +66,7 @@
 				loadingType: 'more',
 				searchText: '',
 				isSearch: false,
-				userInfo: {
-					id: 99,
-					nickname: '呢子dayi',
-					avatar: require('../../static/images/seeding/icon_avatar.png'),
-					seeding: 2,
-					fans: 3200,
-					desc: ''
-				},
+				userInfo: {},
 				navList: [{
 						id: 1,
 						text: '精选'
@@ -93,16 +86,13 @@
 			this.loadingType = 'loading'
 			setTimeout(() => this.loadingType = 'more', 3000)
 		},
-		onLoad() {
+		mounted() {
 			this.getPersonalCenterData()
 		},
 		methods: {
 			getPersonalCenterData() {
-				uni.request({
-					url:this.$api.personalCenterData,
-					method:'POST'
-				}).then(res=>{
-					console.log(res)
+				this.$fly.post(this.$api.personalCenterData).then(res=>{
+					this.userInfo = res.data || {}
 				})
 			},
 			changeNav(index) {

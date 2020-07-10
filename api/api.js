@@ -1,4 +1,5 @@
 import baseHost from './config'
+import seedingApi from './seedingApi.js'
 
 let host = baseHost.baseUrl;
 
@@ -11,6 +12,6 @@ const api = {
   
 }
 
-// Object.assign(api, xApi);
+Object.assign(api, seedingApi);
 
 export default api;
