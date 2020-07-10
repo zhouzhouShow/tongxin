@@ -3,9 +3,9 @@
 		<view class="header-box" :style="{paddingTop:wechatNavBtnHeight+'px'}">
 			<view class="header">
 				<image class="logo-icon" src="@/static/images/icon/logo-icon.png" mode=""></image>
-				<view class="search-input-container">
+				<view class="search-input-container" @click.stop="toSearch">
 					<view class="search-icon">
-						<img style="" src="@/static/images/icon/search.png">
+						<img  src="@/static/images/icon/search.png">
 					</view>
 					<text>在童心优选中选择</text>
 				</view>
@@ -13,13 +13,10 @@
 			<view class="nav flex-align-center">
 				<image class="nav-icon" src="/static/images/icon/logo-text.png"></image>
 				<view class="nav-box flex-align-center">
-					<text class="item">婴童会场</text>
-					<text class="item">婴童会场</text>
-					<text class="item">婴童会场</text>
-					<text class="item">婴童会场</text>
+					<text class="item" v-for="(item,index) in navList" :key="index">{{item.title}}</text>
 				</view>
 			</view>
-			<view class="swiper-display-area">
+			<view class="swiper-display-area"  >
 				<swiper @change="swiperChange" v-if="banner.length>0" interval="3000" autoplay=true duration="500" circular=true>
 					<view v-for="(item,index) in banner" :key="index" @click="toBrandDetail(item.ad_link)">
 						<swiper-item>
@@ -27,7 +24,7 @@
 						</swiper-item>
 					</view>
 				</swiper>
-				<view class="dot-container">
+				<view class="dot-container" v-if="banner.length>0">
 					<swiperDot :current='current' :length="banner.length"></swiperDot>
 				</view>
 				
@@ -166,7 +163,8 @@
 				current:0
 			}
 		},
-		onLoad() {
+		 onLoad() {
+			this.banner = this.getBanner()
 			this.wechatNavBtnHeight = wx.getMenuButtonBoundingClientRect().top+1
 		},
 		onPageScroll(e) {
@@ -184,6 +182,15 @@
 		
 		},
 		methods: {
+			async getBanner(){
+				let data = await this.$fly.post(this.$api.indexAdlist)
+				return data.data
+			},
+			toSearch(){
+				uni.navigateTo({
+					url:'/pages/search/search'
+				})
+			},
 			swiperChange(e){
 				this.current = e.detail.current
 			},

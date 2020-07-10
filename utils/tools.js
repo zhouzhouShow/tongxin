@@ -62,8 +62,15 @@ function updataApp() { //版本更新
 		})
 	}
 }
+function previewImage(list,index = 0){
+	uni.previewImage({
+		urls:list,
+		current:index
+	})
+}
 export default {
 	updataApp,
 	getImgInfo,
-	auth
+	auth,
+	previewImage
 }
