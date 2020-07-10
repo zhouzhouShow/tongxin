@@ -1,4 +1,5 @@
 import api from '../api/api'
+import config from '../api/config'
 import request from '../js_sdk/jamling-request/j-request/request.js'
 import login from '@/utils/login.js'
 
@@ -65,8 +66,9 @@ function uploadFile(path, title = '上传中') {
 			title: title,
 			mask: true
 		})
+		console.log(api)
 		uni.uploadFile({
-			url: api.uploadImg,
+			url: config.baseUrl +api.uploadImage,
 			filePath: path,
 			name: 'file',
 			formData: {

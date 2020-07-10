@@ -1,16 +1,16 @@
 <template>
 	<view class="seeding">
-		<view class="seeding_user" style="background: url(../../static/images/seeding/user_bg.png);">
+		<view @click="handleToUserPage(0)" class="seeding_user" style="background: url(../../static/images/seeding/user_bg.png);">
 			<view class="avatar">
 				<image :src="userInfo.avatar" mode="scaleToFill"></image>
 			</view>
-			<view class="info" @click="handleToUserpage">
+			<view class="info">
 				<view class="info_nickname">
 					<text>{{userInfo.nickname}}</text>
 				</view>
 				<view class="info_num">
-					<text>种草数 {{userInfo.seeding}}</text>
-					<text>粉丝 {{userInfo.fans}}</text>
+					<text>种草数 {{userInfo.article_num}}</text>
+					<text>粉丝 {{userInfo.fans_num}}</text>
 				</view>
 			</view>
 			<view class="icon">
@@ -29,12 +29,15 @@
 			</view>
 			<view @click="showSearch" :class="['search',isSearch?'show':'hide']">
 				<image src="../../static/images/seeding/icon_search.png" mode="scaleToFill"></image>
-				<input :focus="isSearch" @blur="searchBlue" type="text" v-model="searchText" placeholder="输入要搜索的内容" />
+				<input :focus="isSearch" @blur.stop="searchBlur" type="text" v-model="searchText" placeholder="输入要搜索的内容" />
+				<view @click="keywordSearch" class="text">
+					<text>搜索</text>
+				</view>
 			</view>
 		</view>
 		<view class="seeding_list">
 			<SeedingItem :list="list" :isTabBar="true" :userId="userInfo.id" @handleToDetail="handleToDetail" @handleDelete="handleDelete"
-			 @handleConcern="handleConcern" @previewImage="previewImage" @handleLike="handleLike"></SeedingItem>
+			 @handleConcern="handleConcern" @previewImage="previewImage" @handleToUserPage="handleToUserPage" @handleLike="handleLike"></SeedingItem>
 			<uni-load-more :status="loadingType"></uni-load-more>
 		</view>
 		<view @click="handleToCreate" class="seeding_create">
@@ -44,9 +47,6 @@
 </template>
 
 <script>
-	import {
-		seedingJson
-	} from '@/static/js/seedingJson.js'
 	import SeedingItem from '@/components/seedingItem.vue'
 	import uniLoadMore from "@/components/uni-load-more/uni-load-more.vue"
 	export default {
@@ -63,46 +63,69 @@
 		},
 		data() {
 			return {
-				loadingType: 'more',
+				loadingType: '1',
 				searchText: '',
 				isSearch: false,
-				userInfo: {
-					id: 99,
-					nickname: '呢子dayi',
-					avatar: require('../../static/images/seeding/icon_avatar.png'),
-					seeding: 2,
-					fans: 3200,
-					desc: ''
-				},
+				userInfo: {},
 				navList: [{
-						id: 1,
-						text: '精选'
-					},
-					{
-						id: 2,
-						text: '穿搭'
-					}
-				],
+					id: 1,
+					text: '精选'
+				}],
 				nowIndex: 0,
 				targetIndex: 0,
-				list: seedingJson
+				list: [],
+				page:0,
+				pageSize:10
 			};
 		},
 		onReachBottom() {
-			if (this.loadingType == 'loading' || this.loadingType == 'noMore') return
-			this.loadingType = 'loading'
-			setTimeout(() => this.loadingType = 'more', 3000)
+			if (this.loadingType == 2 || this.loadingType == 3) return
+			this.page++
+			this.getFeaturedList()
 		},
-		onLoad() {
+		mounted() {
 			this.getPersonalCenterData()
+			this.getFeaturedList()
+		},
+		onReady() {
+			uni.$on('changeFollow',info=>{
+					let id = info.userId
+					let item = this.list.filter(v=>v.user_id==id)
+					item && (item[0].isfollow = info.isfollow)
+			})
+				
+			uni.$on('changeLike',info=>{
+					let id = info.id
+					let isfav = info.isfav
+					let likenum = info.likenum
+					let item = this.list.filter(v=>v.id==id)
+					item && (item[0].isfav = isfav)
+					item && (item[0].likenum = likenum)
+			})
+		},
+		onUnload() {
+			uni.$off('changeFollow')
+			uni.$off('changeLike')
 		},
 		methods: {
 			getPersonalCenterData() {
-				uni.request({
-					url:this.$api.personalCenterData,
-					method:'POST'
-				}).then(res=>{
-					console.log(res)
+				this.$fly.post(this.$api.personalCenterData).then(res => {
+					this.userInfo = res.data || {}
+				})
+			},
+			getFeaturedList() {
+				this.loadingType = 2
+				this.$fly.post(this.$api.getFeaturedList,{
+					keyword:this.searchText,
+					page:this.page,
+					pageSize:this.pageSize
+				}).then(res => {
+					this.list = this.list.concat(res.data.list)
+					if(res.data.list.length<this.pageSize){
+						this.loadingType = 3
+					}else{
+						this.loadingType = 1
+					}
 				})
 			},
 			changeNav(index) {
@@ -111,7 +134,12 @@
 			},
 			handleConcern(id) {
 				let item = this.list.filter(v => v.id == id)[0] || {}
-				item.master_info.is_follow = !item.master_info.is_follow
+				this.$fly.post(this.$api.seedingHandleFollow,{
+					relateId:item.user_id,
+					actionType:0
+				}).then(res=>{
+					item.isfollow = true
+				})
 			},
 			handleDelete(id) {
 				this.list.forEach((item, index) => {
@@ -128,20 +156,49 @@
 			showSearch() {
 				this.isSearch = true
 			},
-			searchBlue() {
-				console.log(this.searchText)
+			searchBlur() {
 				if (!this.searchText) {
 					this.isSearch = false
 				}
+			},
+			keywordSearch() {
+				this.page = 0
+				this.list = []
+				this.loadingType = 1
+				this.getFeaturedList()
 			},
 			previewImage(item, num) {
 				this.imgPreview(item.product_info.images, num)
 			},
 			handleLike(id) {
 				let item = this.list.filter(v => v.id == id)[0] || {}
-				item.product_info.is_like = !item.product_info.is_like
-				item.product_info.like_num = item.product_info.is_like ? item.product_info.like_num + 1 : item.product_info.like_num -
-					1
+				this.$fly.post(this.$api.seedingHandleLike,{
+					relateId:id,
+					actionType:item.isfav?1:0
+				}).then(res=>{
+					item.isfav = !item.isfav
+					item.likenum = item.isfav ? item.likenum + 1 : item.likenum - 1
+				})
+			},
+			handleToUserPage(id) {
+				wx.navigateTo({
+					url: "./userpage?writer_id=" + id,
+					// events:{
+					// 	changeFollow:info=>{
+					// 		let id = info.userId || info.id
+					// 		let item = this.list.filter(v=>v.user_id==id||v.id==id)
+					// 		item && (item[0].isfollow = info.isfollow)
+					// 	},
+					// 	changeLike:info=>{
+					// 		let id = info.id
+					// 		let isfav = info.isfav
+					// 		let likenum = info.likenum
+					// 		let item = this.list.filter(v=>v.id==id)
+					// 		item && (item[0].isfav = isfav)
+					// 		item && (item[0].likenum = likenum)
+					// 	}
+					// }
+				})
 			},
 			// 图片预览
 			imgPreview(list, idx) {
@@ -152,11 +209,6 @@
 						urls: list
 					});
 				}
-			},
-			handleToUserpage() {
-				wx.navigateTo({
-					url: "./userpage",
-				})
 			},
 			handleToCreate() {
 				wx.navigateTo({
@@ -205,6 +257,10 @@
 
 				&_nickname {
 					height: 30rpx;
+					width: 520rpx;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
 					font-size: 30rpx;
 					font-family: PingFang SC;
 					font-weight: bold;
@@ -244,7 +300,7 @@
 		}
 
 		&_nav {
-			padding: 30rpx 30rpx 0 30rpx;
+			padding: 30rpx 30rpx 10rpx 30rpx;
 			background: #fff;
 			display: flex;
 			justify-content: space-between;
@@ -262,9 +318,13 @@
 				border-radius: 30rpx;
 				overflow: hidden;
 				transition: all .5s;
+				position: relative;
 
 				&.hide {
 					width: 60rpx;
+					input{
+						display: none;
+					}
 				}
 
 				&.show {
@@ -283,6 +343,17 @@
 					font-size: 30rpx;
 					height: 60rpx;
 					line-height: 60rpx;
+					padding-right: 120rpx;
+				}
+				
+				.text{
+					position: absolute;
+					width: 90rpx;
+					overflow: hidden;
+					font-size: 30rpx;
+					left: 485rpx;
+					top: 50%;
+					transform: translateY(-50%);
 				}
 			}
 

@@ -8,18 +8,18 @@
 				<text>{{masterInfo.nickname}}</text>
 			</view>
 			<view class="desc">
-				{{masterInfo.desc || '主任太懒了，什么也没留下'}}
+				{{masterInfo.bio || '主人太懒了，什么也没留下'}}
 			</view>
 			<view class="number">
 				<view class="left">
-					<text>种草数 {{masterInfo.seeding}}</text>
+					<text>种草数 {{masterInfo.article_num}}</text>
 				</view>
 				<view class="line"></view>
 				<view class="right">
-					<text>粉丝 {{masterInfo.fans}}</text>
+					<text>粉丝 {{masterInfo.fans_num}}</text>
 				</view>
 			</view>
-			<view class="edit" v-if="masterInfo.id==userInfo.id">
+			<view class="edit" v-if="masterInfo && !userId">
 				<image src="../../static/images/seeding/icon_edit.png" mode="scaleToFill"></image>
 				<text>编辑</text>
 			</view>
@@ -27,20 +27,20 @@
 		<view class="userpage_nav">
 			<view class="line"></view>
 			<view @click="changeNav(idx)" v-for="(nav,idx) in navList" :key="idx" :class="['item',nowIndex==idx?'active':'']">
-				<text v-if="idx===0">{{nav.text}}{{seedingLength>0?`（${seedingLength}）`:''}}</text>
-				<text v-else>{{nav.text}}{{likeLength>0?`（${likeLength}）`:''}}</text>
+				<text v-if="idx===0">{{nav.text}}{{masterInfo.article_num}}</text>
+				<text v-else>{{nav.text}}{{masterInfo.fav_num}}</text>
 				<image v-if="nowIndex==idx" src="../../static/images/seeding/icon_nav-active.png" mode=""></image>
 			</view>
 		</view>
 		<view class="userpage_list">
-			<SeedingItem :list="nowIndex==0?seedingList:likeList" :isTabBar="false" :userId="masterInfo.id" @handleToDetail="handleToDetail"
-			 @handleDelete="handleDelete" :showFollow="nowIndex==1?true:false" @handleConcern="handleConcern" @previewImage="previewImage"
+			<SeedingItem :list="nowIndex==0?seedingList:likeList" :isTabBar="false" :userId="userId==0?masterInfo.id:undefined" @handleToDetail="handleToDetail"
+			 @handleDelete="handleDelete" @handleConcern="handleConcern" @previewImage="previewImage"
 			 @handleLike="handleLike"></SeedingItem>
 			<uni-load-more :status="loadingType"></uni-load-more>
 		</view>
-		<view v-if="masterInfo.id!=userInfo.id" class="userpage_btn">
-			<view @click="handleConcernUser" :class="[masterInfo.is_follow?'':'active']">
-				<text>{{masterInfo.is_follow?'已关注':'关注'}}</text>
+		<view v-if="masterInfo && userId" class="userpage_btn">
+			<view @click="handleConcernUser" :class="[masterInfo.isfollow?'':'active']">
+				<text>{{masterInfo.isfollow?'已关注':'关注'}}</text>
 			</view>
 		</view>
 	</view>
@@ -60,24 +60,9 @@
 		},
 		data() {
 			return {
-				loadingType: 'more',
-				userInfo: {
-					id: 99,
-					nickname: '呢子dayi',
-					avatar: require('../../static/images/seeding/icon_avatar.png'),
-					seeding: 2,
-					fans: 3200,
-					desc: ''
-				},
-				masterInfo: {
-					id: 98,
-					nickname: '呢子dayi',
-					avatar: require('../../static/images/seeding/icon_avatar.png'),
-					seeding: 2,
-					fans: 3200,
-					desc: '',
-					is_follow: false
-				},
+				loadingType: '1',
+				userId: 0,
+				masterInfo: {},
 				navList: [{
 						id: 1,
 						text: '种草'
@@ -87,30 +72,135 @@
 						text: '喜欢'
 					}
 				],
+				page:0,
+				pageSize:10,
 				nowIndex: 0,
-				seedingList: seedingJson,
-				seedingLength: 3,
+				seedingList: [],
 				likeList: seedingJson,
-				likeLength: 10
 			};
 		},
 		onReachBottom() {
-			if (this.loadingType == 'loading' || this.loadingType == 'noMore') return
-			this.loadingType = 'loading'
-			setTimeout(() => this.loadingType = 'more', 3000)
+			if (this.loadingType == 2 || this.loadingType == 3) return
+			this.page++
+			if(this.nowIndex==0){
+				this.getSeedingCenterSeeding()
+			}else{
+				this.getSeedingCenterLike()
+			}
+		},
+		async onLoad(options) {
+			this.eventChannel = this.getOpenerEventChannel()
+			if (options.writer_id) {
+				this.userId = options.writer_id
+			}else{
+				this.userId = 0
+			}
+			let id = await this.getPersonalCenterData()
+			this.getSeedingCenterSeeding()
 		},
 		methods: {
+			getPersonalCenterData() {
+				return new Promise((res,rej)=>{
+					let data = this.userId > 0 ? {
+						writer_id: this.userId
+					} : {}
+					uni.showLoading()
+					this.$fly.post(this.$api.personalCenterData, data).then(rs => {
+						this.masterInfo = rs.data || {}
+						uni.hideLoading()
+						res(rs.data)
+					}).catch(err=>{
+						uni.hideLoading()
+						rej(err)
+					})
+				})
+			},
+			getSeedingCenterSeeding() {
+				this.loadingType = 2
+				this.$fly.post(this.$api.getSeedingCenterSeeding,{
+					page:this.page,
+					pageSize:this.pageSize,
+					writer_id:this.masterInfo.id
+				}).then(res=>{
+					this.seedingList = this.seedingList.concat(res.data.list)
+					if(res.data.list.length<this.pageSize){
+						this.loadingType = 3
+					}else{
+						this.loadingType = 1
+					}
+				})
+			},
+			getSeedingCenterLike() {
+				this.loadingType = 2
+				this.$fly.post(this.$api.getSeedingCenterLike,{
+					page:this.page,
+					pageSize:this.pageSize,
+					writer_id:this.masterInfo.id
+				}).then(res=>{
+					this.likeList = this.likeList.concat(res.data.list)
+					if(res.data.list.length<this.pageSize){
+						this.loadingType = 3
+					}else{
+						this.loadingType = 1
+					}
+				})
+			},
 			changeNav(idx) {
 				if (idx == this.nowIndex) return
 				this.nowIndex = idx
+				this.page = 0
+				this.loadingType = 1
+				if(this.nowIndex==0){
+					this.seedingList = []
+					this.getSeedingCenterSeeding()
+				}else{
+					this.likeList = []
+					this.getSeedingCenterLike()
+				}
 			},
 			handleConcern(id) {
 				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
 				let item = list.filter(v => v.id == id)[0] || {}
-				item.master_info.is_follow = !item.master_info.is_follow
+				this.$fly.post(this.$api.seedingHandleFollow,{
+					relateId:item.user_id,
+					actionType:0
+				}).then(res=>{
+					item.isfollow = true
+					if(item.user_id==this.userId){
+						this.masterInfo.isfollow = !this.masterInfo.isfollow
+					}
+					// this.eventChannel.emit('changeFollow',{
+					// 	id:id,
+					// 	isfollow:item.isfollow
+					// })
+					uni.$emit('changeFollow',{
+						userId:item.user_id,
+						isfollow:item.isfollow
+					})
+				})
 			},
 			handleConcernUser() {
 				this.masterInfo.is_follow = !this.masterInfo.is_follow
+				this.$fly.post(this.$api.seedingHandleFollow,{
+					relateId: this.userId,
+					actionType: this.masterInfo.isfollow?1:0
+				}).then(res=>{
+					this.masterInfo.isfollow = !this.masterInfo.isfollow
+					let list = this.nowIndex == 0 ? this.seedingList : this.likeList
+					list.forEach(item=>{
+						if(item.user_id==this.masterInfo.id){
+							item.isfollow = this.masterInfo.isfollow
+						}
+					})
+					// this.eventChannel.emit('changeFollow',{
+					// 	userId:this.userId,
+					// 	isfollow:this.masterInfo.isfollow
+					// })
+					uni.$emit('changeFollow',{
+						userId:this.userId,
+						isfollow:this.masterInfo.isfollow
+					})
+				})
 			},
 			handleDelete(id) {
 				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
@@ -131,9 +221,35 @@
 			handleLike(id) {
 				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
 				let item = list.filter(v => v.id == id)[0] || {}
-				item.product_info.is_like = !item.product_info.is_like
-				item.product_info.like_num = item.product_info.is_like ? item.product_info.like_num + 1 : item.product_info.like_num -
-					1
+				this.$fly.post(this.$api.seedingHandleLike,{
+					relateId:id,
+					actionType:item.isfav?1:0
+				}).then(res=>{
+					item.isfav = !item.isfav
+					item.likenum = item.isfav ? item.likenum + 1 : item.likenum - 1
+					if(this.userId<=0){
+						if(this.nowIndex==0){
+							this.masterInfo.fav_num = item.isfav?this.masterInfo.fav_num+1: this.masterInfo.fav_num-1
+						}else{
+							this.masterInfo.fav_num = this.masterInfo.fav_num-1
+							this.likeList.forEach((item,index)=>{
+								if(item.id==id){
+									this.likeList.splice(index,1)
+								}
+							})
+						}
+					}
+					// this.eventChannel.emit('changeLike',{
+					// 	id:id,
+					// 	isfav:item.isfav,
+					// 	likenum:item.likenum
+					// })
+					uni.$emit('changeLike',{
+						id:id,
+						isfav:item.isfav,
+						likenum:item.likenum
+					})
+				})
 			},
 			// 图片预览
 			imgPreview(list, idx) {
@@ -157,11 +273,12 @@
 	.userpage {
 		padding-bottom: 140rpx;
 		min-height: 100%;
-		background-color: #F3F3F3;
+		background-color: #fff;
 
 		&_info {
 			width: 750rpx;
-			height: 422rpx;
+			min-height: 422rpx;
+			padding: 40rpx;
 			display: flex;
 			flex-direction: column;
 			justify-content: center;

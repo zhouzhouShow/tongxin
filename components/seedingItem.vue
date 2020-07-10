@@ -2,96 +2,96 @@
 	<view class="seeding_item">
 		<view class="item" v-for="(item,index) in list" :key="item.id">
 			<view class="item_master">
-				<view class="info">
+				<view @click="handleToUserPage(item.user_id)" class="info">
 					<view class="info_avatar">
-						<image :src="item.master_info.avatar" mode="scaleToFill"></image>
+						<image :src="item.userinfo.avatar" mode="scaleToFill"></image>
 					</view>
 					<view class="info_about">
-						<text>{{item.master_info.nickname}}</text>
-						<text>{{item.master_info.title}}</text>
+						<text>{{item.userinfo.nickname}}</text>
+						<text>{{item.userinfo.bio}}</text>
 					</view>
 				</view>
-				<view v-if="userId==item.master_info.user_id" @click="mineControl(item.id)" class="ismine">
+				<view v-if="userId==item.userinfo.id" @click="mineControl(item.id)" class="ismine">
 					<image src="@/static/images/seeding/icon_more.png" mode=""></image>
 				</view>
-				<view v-else-if="!item.master_info.is_follow && showFollow" @click="handleConcern(item.id)" class="concern">
+				<view v-else-if="!item.isfollow && showFollow" @click="handleConcern(item.id)" class="concern">
 					<image src="@/static/images/seeding/icon_concern.png" mode="scaleToFill"></image>
 					<text>关注</text>
 					<!-- <text>{{item.master_info.is_follow?'已关注':'关注'}}</text> -->
 				</view>
 			</view>
 			<view class="item_show">
-				<SeedingImages :imagesType="imagesType" :info="item" @previewImage="previewImage"></SeedingImages>
+				<SeedingImages :imagesType="imagesType" :info="item.up_data" @previewImage="previewImage"></SeedingImages>
 			</view>
 			<view class="item_about">
-				<view @click="handleToDetail(item.product_info.id)" v-if="item.related_products.length<=0" class="only">
+				<view @click="handleToDetail(item.goodsinfo[0].goods_id)" v-if="item.goodsinfo.length<=1" class="only">
 					<view class="image">
-						<image :src="item.product_info.cover" mode="aspectFit"></image>
+						<image :src="item.goodsinfo[0].goods_images[0]" mode="aspectFit"></image>
 					</view>
 					<view class="info">
 						<view class="title">
-							<text>{{item.product_info.name}}</text>
+							<text>{{item.goodsinfo[0].goods_title}}</text>
 						</view>
 						<view class="price">
-							<text>¥{{item.product_info.price}}</text>
+							<text>¥{{item.goodsinfo[0].price_last}}</text>
 						</view>
 					</view>
 				</view>
 				<view @click="showPopup(item,index)" v-else class="more">
 					<view class="images">
-						<view v-for="img in item.related_products" :key="img.id" class="image">
-							<image :src="img.cover" mode="aspectFit"></image>
+						<view v-for="img in item.goodsinfo" :key="img.id" class="image">
+							<image :src="img.goods_images[0]" mode="aspectFit"></image>
 						</view>
 					</view>
 					<view class="num">
-						<text>{{item.related_products.length}}个关联商品</text>
+						<text>{{item.goodsinfo.length}}个关联商品</text>
 						<image src="@/static/images/seeding/icon_arrow-right-grey.png" mode=""></image>
 					</view>
 				</view>
 			</view>
 			<view :class="['item_desc',showAllDesc?'':'ellipses']">
-				<text>{{item.product_info.desc}}</text>
+				<text>{{item.content}}</text>
 			</view>
 			<view class="item_theme">
 				<view class="left">
-					<view class="icon">
+					<view v-if="item.topicinfo.length>0" class="icon">
 						<image src="@/static/images/seeding/icon_theme.png" mode=""></image>
 					</view>
-					<view class="title">
-						<text>{{item.product_info.topic}}</text>
+					<view v-if="item.topicinfo.length>0" class="title">
+						<text>{{item.topicinfo[0].name}}</text>
 					</view>
 				</view>
 				<view class="right">
 					<view @click="handleLike(item.id)" class="like">
-						<image :src="item.product_info.is_like?require('@/static/images/seeding/icon_like.png'):require('@/static/images/seeding/icon_unlike.png')"
+						<image :src="item.isfav?require('@/static/images/seeding/icon_like.png'):require('@/static/images/seeding/icon_unlike.png')"
 						 mode="scaleToFill"></image>
-						<text>({{item.product_info.like_num}})</text>
+						<text>({{item.likenum}})</text>
 					</view>
 					<view class="share">
 						<image src="@/static/images/seeding/icon_share.png" mode="scaleToFill"></image>
-						<text>({{item.product_info.share_num}})</text>
-						<button open-type=“share></button>
+						<text>({{item.sharenum}})</text>
+						<button open-type="share"></button>
 					</view>
 				</view>
 			</view>
 		</view>
 		<uni-popup @change="popupChange" ref="popup" type="bottom">
 			<view class="popup_header">
-				<text class="title">{{list[targetIndex].related_products.length}}个关联商品</text>
+				<text class="title">{{list[targetIndex].goodsinfo.length}}个关联商品</text>
 				<image @click="hidePopup" class="close" src="@/static/images/seeding/icon_close.png" mode="scaleToFill"></image>
 			</view>
 			<view class="popup_list">
-				<view  @click="handleToDetail(el.id)" v-for="(el,index) in list[targetIndex].related_products" :key="index" class="popup_list_item">
+				<view  @click="handleToDetail(el.goods_id)" v-for="(el,index) in list[targetIndex].goodsinfo" :key="index" class="popup_list_item">
 					<view class="left">
-						<image :src="el.cover" mode="aspectFill"></image>
+						<image :src="el.goods_images[0]" mode="aspectFill"></image>
 					</view>
 					<view class="right">
 						<view class="top">
-							<text>{{el.name}}</text>
+							<text>{{el.goods_title}}</text>
 						</view>
 						<view class="bottom">
 							<text class="type">¥</text>
-							<text class="total">{{el.price}}</text>
+							<text class="total">{{el.price_last}}</text>
 						</view>
 					</view>
 				</view>
@@ -168,6 +168,9 @@
 			handleLike(id) {
 				this.$emit('handleLike', id)
 			},
+			handleToUserPage(id) {
+				this.$emit('handleToUserPage',id)
+			},
 			showPopup(item, index) {
 				this.targetIndex = index || 0
 				this.isTabBar && wx.hideTabBar()
@@ -210,9 +213,10 @@
 			box-sizing: border-box;
 		}
 		.item {
-			margin-bottom: 20rpx;
+			// margin-bottom: 20rpx;
 			padding: 30rpx 20rpx 40rpx 20rpx;
 			background-color: #fff;
+			border-bottom: 20rpx solid #F3F3F3;
 
 			&_master {
 				display: flex;
@@ -220,6 +224,7 @@
 				align-items: center;
 
 				.info {
+					flex: 1;
 					display: flex;
 					align-items: center;
 
@@ -236,12 +241,18 @@
 					}
 
 					&_about {
+						width: 448rpx;
 						margin-left: 20rpx;
 						display: flex;
 						flex-direction: column;
 						justify-content: center;
 
 						text:nth-child(1) {
+							display: block;
+							width: 100%;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
 							height: 30rpx;
 							font-size: 30rpx;
 							font-family: PingFang SC;
@@ -251,6 +262,11 @@
 						}
 
 						text:nth-child(2) {
+							display: block;
+							width: 100%;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
 							height: 28rpx;
 							line-height: 28rpx;
 							font-size: 28rpx;
