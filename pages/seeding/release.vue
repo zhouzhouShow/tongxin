@@ -35,19 +35,19 @@
 			</view>
 		</view>
 		<view class="relates">
-			<view @click.stop="handleToDetail(product.product_info.id)" v-for="(product,idx) in relateList" :key="idx" class="item">
+			<view @click.stop="handleToDetail(product.goods_id)" v-for="(product,idx) in relateList" :key="idx" class="item">
 				<view class="image">
-					<image :src="product.product_info.cover" mode="aspectFit"></image>
+					<image :src="product.image" mode="aspectFit"></image>
 				</view>
 				<view class="info">
 					<view class="title">
-						<text>{{product.product_info.name}}</text>
+						<text>{{product.name}}</text>
 					</view>
 					<view class="price">
-						<text>¥{{product.product_info.price}}</text>
+						<text>¥{{product.price}}</text>
 					</view>
 				</view>
-				<view @click.stop="removeRelate(product,idx)" class="remove">
+				<view @click.stop="removeRelate(product.goods_id)" class="remove">
 					<image src="../../static/images/seeding/icon_remove.png" mode=""></image>
 				</view>
 			</view>
@@ -125,36 +125,37 @@
 				video:'',
 				chooseType:[['image'],['video'],['image','video']],
 				sourceType: ['album', 'camera'],
-				relateList:seedingJson,
+				relateList:[],
+				relateIds:[],
 				maxRelate:9,
 				maxDuration:30,
 				maxCount:9,
-				topicList:[
-					{
-						id:1,
-						name:'儿童的时尚穿搭'
-					},
-					{
-						id:2,
-						name:'婴幼儿衣物如何选择'
-					},
-					{
-						id:3,
-						name:'0~1岁宝宝如何挑选衣服'
-					},
-					{
-						id:4,
-						name:'六一儿童节给孩子添新衣'
-					}
-				],
+				topicList:[],
 				topic:'',
 				topicId:0,
 				selectTopic:'',
 				selectTopicId:0,
-				submitImagesUrl:[]
+				submitUrl:[]
 			};
 		},
+		mounted() {
+			this.getTitleList()
+		},
+		onReady() {
+			uni.$on('getRelateInfo',data=>{
+				this.relateIds = data.relateIds
+				this.relateList = data.relateList
+			})
+		},
+		onUnload() {
+			uni.$off('getRelateInfo')
+		},
 		methods:{
+			getTitleList() {
+				this.$fly.post(this.$api.getTitleList).then(res=>{
+					this.topicList = res.data.list || []
+				})
+			},
 			chooseMedia(){
 				let _this = this
 				let type = this.images.length>0?0:2
@@ -191,7 +192,7 @@
 				this.$refs.themePopup.close()
 			},
 			themePopupChange(e) {
-				console.log(e.show)
+				// console.log(e.show)
 			},
 			showRelatePopup() {
 				this.$refs.relatePopup.open()
@@ -200,7 +201,7 @@
 				this.$refs.relatePopup.close()
 			},
 			relatePopupChange(e) {
-				console.log(e.show)
+				// console.log(e.show)
 			},
 			chooseTopic(theme){
 				this.selectTopic = theme.name
@@ -216,17 +217,76 @@
 				})
 			},
 			async handleSubmit() {
-				let _this = this;
-				var loadingTitle = '';
-				for (var i = 0; i < _this.images.length; i++) {
-					loadingTitle = '正在上传第' + (i + 1) + '/' + _this.images.length + '张';
-					let result = await this.$utils.uploadFile(_this.images, loadingTitle);
-					let data = JSON.parse(result.data);
-					_this.submitImagesUrl.push(data.data.url);
+				if(!this.seedingReason){
+					uni.showToast({
+						title:'请描述你种草ta的理由',
+						duration:1500
+					})
+				}else if(!this.video && !this.images){
+					uni.showToast({
+						title:'请上传照片/视频',
+						duration:1500
+					})
+				}else if(this.relateList.length<=0){
+					uni.showToast({
+						title:'至少添加1个关联商品',
+						duration:1500
+					})
+				}else{
+					let loadingTitle = '';
+					if(this.video){
+						loadingTitle = '正在上传视频'
+						let result = await this.$utils.uploadFile(this.video, loadingTitle);
+						let data = JSON.parse(result.data);
+						this.submitUrl.push({
+							url:data.data.url,
+							type:'video'
+						});
+						this.submitFn()
+					}else{
+						for (let i = 0; i < this.images.length; i++) {
+							loadingTitle = '正在上传第' + (i + 1) + '/' + this.images.length + '张';
+							let result = await this.$utils.uploadFile(this.images[i], loadingTitle);
+							let data = JSON.parse(result.data);
+							this.submitUrl.push({
+								url:data.data.url,
+								type:'img'
+							});
+						}
+						this.submitFn()
+					}
 				}
 			},
-			removeRelate(item,idx){
-				this.relateList.splice(idx,1)
+			submitFn() {
+				uni.showLoading()
+				this.$fly.post(this.$api.publishSeeding,{
+					content:this.seedingReason,
+					up_data:JSON.stringify(this.submitUrl),
+					topid_ids:this.topicId,
+					goods_ids:this.relateIds.join(',')
+				}).then(res=>{
+					uni.hideLoading()
+					uni.showToast({
+						title:res.msg || '发布成功',
+						icon:'success',
+						duration:1500
+					})
+					wx.navigateBack()
+				}).catch(err=>{
+					uni.hideLoading()
+				})
+			},
+			removeRelate(goods_id){
+				this.relateIds.forEach((item,index)=>{
+					if(item==goods_id){
+						this.relateIds.splice(index,1)
+					}
+				})
+				this.relateList.forEach((item,index)=>{
+					if(item.goods_id==goods_id){
+						this.relateList.splice(index,1)
+					}
+				})
 			},
 			handleToSearchRelate() {
 				console.log('去搜索商品关联')
@@ -234,20 +294,24 @@
 			handleToShoppingCarRelate() {
 				wx.navigateTo({
 					url: "./shoppingCarRelate",
-					events:{
-						getRelateInfo:data=>{
-							console.log('getRelateInfo',data)
-						}
+					success:res=>{
+						this.hideRelatePopup()
+						res.eventChannel.emit('relateInfo',{
+							relateIds:this.relateIds,
+							relateList:this.relateList
+						})
 					}
 				})
 			},
 			handleToBoughtRelate() {
 				wx.navigateTo({
 					url: "./boughtRelate",
-					events:{
-						getRelateInfo:data=>{
-							console.log('getRelateInfo',data)
-						}
+					success:res=>{
+						this.hideRelatePopup()
+						res.eventChannel.emit('relateInfo',{
+							relateIds:this.relateIds,
+							relateList:this.relateList
+						})
 					}
 				})
 			}

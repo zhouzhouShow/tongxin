@@ -183,7 +183,15 @@
 			this.paddingTop = wx.getMenuButtonBoundingClientRect().top
 			wx.showTabBar()
 		},
+		mounted() {
+			this.getCenterIndex()
+		},
 		methods: {
+			getCenterIndex() {
+				this.$fly.post(this.$api.getCenterIndex).then(res=>{
+					console.log(res)
+				})
+			},
 			handleToMyIncome() {
 				wx.navigateTo({
 					url: './income'

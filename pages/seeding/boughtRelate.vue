@@ -2,19 +2,19 @@
 	<view class="choose_relate">
 		<view @click="chooseItem(item)" v-for="(item,index) in productList" :key="index" class="item">
 			<view class="select">
-				<image :src="selectIds.includes(item.id)?require('../../static/images/seeding/icon_select.png'):require('../../static/images/seeding/icon_unselect.png')"
+				<image :src="selectIds.includes(item.goods_id)?require('../../static/images/seeding/icon_select.png'):require('../../static/images/seeding/icon_unselect.png')"
 				 mode=""></image>
 			</view>
 			<view class="image">
-				<image :src="item.cover" mode="aspectFill"></image>
+				<image :src="item.goods_images[0]" mode="aspectFill"></image>
 			</view>
 			<view class="info">
 				<view class="name">
-					<text>{{item.name}}</text>
+					<text>{{item.goods_title}}</text>
 				</view>
 				<view class="price">
 					<text class="type">¥</text>
-					<text class="total">{{item.price}}</text>
+					<text class="total">{{item.price_last}}</text>
 				</view>
 			</view>
 		</view>
@@ -30,21 +30,12 @@
 		},
 		data() {
 			return {
-				loadingType: 'more',
-				productList: [{
-						id: 1,
-						cover: 'http://img0.imgtn.bdimg.com/it/u=3347969450,2605879496&fm=26&gp=0.jpg',
-						name: '2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 ',
-						price: 88
-					},
-					{
-						id: 2,
-						cover: 'http://img0.imgtn.bdimg.com/it/u=3347969450,2605879496&fm=26&gp=0.jpg',
-						name: '2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 ',
-						price: 188
-					}
-				],
-				selectIds: []
+				loadingType: '1',
+				page: 0,
+				pageSize: 10,
+				productList: [],
+				selectIds: [],
+				selectList: []
 			};
 		},
 		onReachBottom() {
@@ -54,23 +45,67 @@
 		},
 		onLoad(options) {
 			this.eventChannel = this.getOpenerEventChannel()
+			this.eventChannel.on('relateInfo', data => {
+				this.selectIds = data.relateIds
+				this.selectList = data.relateList
+			})
+			this.getSeedingBoughtList()
 		},
-		onUnload() {
-			this.eventChannel.emit('getRelateInfo', {
-				selectIds: this.selectIds
+		onReady() {
+			uni.$on('relateInfo',data=>{
+				this.selectIds = data.relateIds
+				this.selectList = data.relateList
 			})
 		},
+		onUnload() {
+			uni.$emit('getRelateInfo', {
+				relateIds: this.selectIds,
+				relateList: this.selectList
+			})
+			uni.$off('relateInfo')
+		},
 		methods: {
+			getSeedingBoughtList() {
+				this.loadingType = 2
+				this.$fly.post(this.$api.getSeedingBoughtList, {
+					page: this.page,
+					pageSize: this.pageSize
+				}).then(res => {
+					this.productList = this.productList.concat(res.data.list)
+					if (res.data.list.length < this.pageSize) {
+						this.loadingType = 3
+					} else {
+						this.loadingType = 1
+					}
+				})
+			},
+			onReachBottom() {
+				if (this.loadingType == 1) {
+					this.page++
+					this.getSeedingBoughtList()
+				}
+			},
 			chooseItem(item) {
-				let isHas = this.selectIds.includes(item.id)
+				let isHas = this.selectIds.includes(item.goods_id)
 				if (isHas) {
 					this.selectIds.forEach((el, num) => {
-						if (el == item.id) {
+						if (el == item.goods_id) {
 							this.selectIds.splice(num, 1)
 						}
 					})
+					this.selectList.forEach((el, num) => {
+						if (el.goods_id == item.goods_id) {
+							this.selectList.splice(num, 1)
+						}
+					})
 				} else {
-					this.selectIds.push(item.id)
+					this.selectIds.push(item.goods_id)
+					this.selectList.push({
+						goods_id:item.goods_id,
+						image: item.goods_images[0],
+						name: item.goods_title,
+						price: item.price_last
+					})
 				}
 			}
 		}
@@ -83,7 +118,6 @@
 	}
 
 	.choose_relate {
-
 		background-color: #F3F3F3;
 		min-height: 100%;
 		overflow: hidden;
