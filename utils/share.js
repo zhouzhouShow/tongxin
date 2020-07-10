@@ -122,7 +122,7 @@ const shareConfig = {
 			var data = uni.getStorageSync("routerData");
 			if (data.isCode) {
 				utils.code2goods(data.query.id).then(res => {
-					uni.navigateTo({
+					wx.navigateTo({
 						url: data.path + '?id=' + res.goods_id
 					});
 				})
@@ -131,7 +131,7 @@ const shareConfig = {
 					url: data.url
 				})
 			}else{
-				uni.navigateTo({
+				wx.navigateTo({
 					url: data.url
 				});
 			}

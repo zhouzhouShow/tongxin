@@ -125,7 +125,7 @@ export default {
 				})
 				.then(res => {
 					if (res == null) {
-						uni.navigateBack();
+						wx.navigateBack();
 					}
 				});
 		},

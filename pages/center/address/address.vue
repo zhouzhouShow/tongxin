@@ -49,7 +49,7 @@
 				}else{
 					url = `addressManage?type=${this.type}`
 				}
-				uni.navigateTo({
+				wx.navigateTo({
 					url
 				})
 			},
@@ -98,7 +98,7 @@
 			orderBindAddress(id){
 				if(this.isOrder == 1){
 					uni.setStorageSync('addressId', id);
-					uni.navigateBack({
+					wx.navigateBack({
 						delta:1
 					})
 				}

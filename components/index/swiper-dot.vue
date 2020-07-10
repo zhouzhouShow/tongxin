@@ -1,5 +1,5 @@
 <template>
-	<view class="dots" style="background: url(../../../static/images/seeding/swiper_point.png) no-repeat;background-size: 100% 100%;">
+	<view class="dots"  style="background: url(../../../static/images/seeding/swiper_point.png) no-repeat;background-size: 100% 100%;">
 		<text>{{current + 1}}</text>
 		<text>/</text>
 		<text>{{length}}</text>

@@ -12,7 +12,7 @@
 			<view v-for="(item,index) in list"  :key="index" @click="toDetail(item.id)">
 				<goodItem :item="item"></goodItem>
 			</view>
-			<load-more  :status="loadMore"></load-more>
+			<load-more v-if="loadMore != 3"  :status="loadMore"></load-more>
 		</view>
 		<fixedIcon @share="share" ref="backTop" :showItem='showItem'></fixedIcon>
 	</view>
@@ -37,37 +37,40 @@
 					share:true,
 					backTop:true,
 				},
-				list:[
-					{
-						name :'分阿里交付的拉丝粉',
-						desc:'2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice:199,
-						price:80,
-					},
-					{
-						name :'分阿里交付的拉丝粉',
-						desc:'2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice:199,
-						price:80,
-					},
-					{
-						name :'分阿里交付的拉丝粉',
-						desc:'2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice:199,
-						price:80,
-					}
-				],
+				list:[],
 				
 			};
+		},
+		onLoad(){
+			this.getGood()
 		},
 		methods:{
 			share(e){
 				
 			},
+		 async getGood(){
+				this.$tip.loading()
+				let params = {
+					page: this.page,
+					pageSize: this.pageSize,
+					goodsNav:2,
+				}
+				await this.$fly.post(this.$api.goodslist,params).then(res=>{
+					let list = res.data.list
+					this.loadMoreStatusDeal(list)
+					if(list.length>0){
+						this.list = this.list.concat(list)
+					}
+				})
+				this.timeOutLoaded();
+			},
 			toDetail(id){
-				uni.navigateTo({
+				wx.navigateTo({
 					url:'/pages/good/goodDetail?id='+id
 				})
+			},
+			reachBottomCallBack(){
+				this.getGood();
 			},
 		},
 		onShareAppMessage() {
@@ -82,7 +85,6 @@
 	
 .recommend{
 	background: #FFE1E1;
-	padding-bottom: 30rpx;
 	min-height: 100vh;
 	.poster{
 		width:100%;
@@ -90,7 +92,7 @@
 		margin-bottom: 60rpx;
 	}
 	.recommend-box{
-		padding: 0 20rpx;
+		padding: 0 20rpx 30rpx;
 		text-align: center;
 		.r-title{
 			image{

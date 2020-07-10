@@ -83,7 +83,7 @@
 		},
 		methods:{
 			modifyAddress() {
-				uni.navigateTo({
+				wx.navigateTo({
 					url: "/pages/center/address/address?isShop=1&cart_ids=" + this.shopCarIds
 				});
 			},

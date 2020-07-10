@@ -50,8 +50,11 @@ uni.navigateTo = function(option) {
 
 	//打开孙页面，如果子页面中eventChannel未取，则主动取  
 	if (__ec__) {
-		const instance = getApp().$route.matched[0].instances.default.$children[0].$children[1].$children[0];
-		instance.__ec__ = __ec__;
+		if(getApp().$route.matched[0]){
+			const instance = getApp().$route.matched[0].instances.default.$children[0].$children[1].$children[0];
+			instance.__ec__ = __ec__;
+		}
+	
 		// __ec__ = undefined; //无用代码  
 	}
 

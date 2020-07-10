@@ -7,3 +7,4 @@ const good = {
 	grassman: '/api/goods/grassman',//随机种草人
 	
 }
+export default good;

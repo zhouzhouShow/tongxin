@@ -3,22 +3,24 @@
 		<view class="header-box" :style="{paddingTop:wechatNavBtnHeight+'px'}">
 			<view class="header">
 				<image class="logo-icon" src="@/static/images/icon/logo-icon.png" mode=""></image>
-				<view class="search-input-container" @click.stop="toSearch">
-					<view class="search-icon">
-						<img  src="@/static/images/icon/search.png">
+				<navigator url="/pages/search/search">
+					<view class="search-input-container" >
+						<view class="search-icon">
+							<img  src="@/static/images/icon/search.png">
+						</view>
+						<text>在童心优选中选择</text>
 					</view>
-					<text>在童心优选中选择</text>
-				</view>
+				</navigator>
 			</view>
 			<view class="nav flex-align-center">
 				<image class="nav-icon" src="/static/images/icon/logo-text.png"></image>
 				<view class="nav-box flex-align-center">
-					<text class="item" v-for="(item,index) in navList" :key="index">{{item.title}}</text>
+					<text @click="nav(item.link)" class="item" v-for="(item,index) in navList" :key="index">{{item.title}}</text>
 				</view>
 			</view>
 			<view class="swiper-display-area"  >
 				<swiper @change="swiperChange" v-if="banner.length>0" interval="3000" autoplay=true duration="500" circular=true>
-					<view v-for="(item,index) in banner" :key="index" @click="toBrandDetail(item.ad_link)">
+					<view v-for="(item,index) in banner" :key="index" @click="nav(item.ad_link)">
 						<swiper-item>
 							<img style="width:100%;height:388rpx;display:block;" :src="item.image">
 						</swiper-item>
@@ -50,20 +52,10 @@
 			</view>
 			<view class="miaosha-good">
 				<scroll-view scroll-x="true" style="white-space:nowrap">
-						<view class="item" v-for="item in miaoshaList" :key="item">
-							<view class="img-box">
-								<image class="good-img" src="../../static/images/index/index_icon_1.png" mode=""></image>
-								<view class="time">距结束02:02:02</view>
-							</view>
-							<view class="price-box">
-								<text class="n-price">¥199.9</text>
-								<text class="o-price">¥199.9</text>
-							</view>
-							<view class="getNum">
-								<image src="../../static/images/index/zhuan.png" ></image>
-								¥3.9
-							</view>
-						</view>
+					
+					<view v-for="(item,index) in miaoshaList" :key="index" @click="toDetail(item.id)">
+						<miaoshaItem :item="item"></miaoshaItem>	
+					</view>
 				</scroll-view>
 			
 			</view>
@@ -75,31 +67,15 @@
 				<image src="../../static/images/index/index_icon_2.png" mode=""></image>
 				<text class="text">必逛专题</text>
 			</view>
-			<view class="content">
-				<image src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200629/b68cb24fca8464dbaf34c8c74d2a0b0d.jpg" mode="aspectFill"></image>
+			<view class="content" v-for="(item ,index) in specialList" :key="index">
+				<image class="banner" :src="item.brand_banner[0]" ></image>
 				<view class="special-good">
-					<view class="item" v-for="item in specialList" :key="item">
-						<view class="img-box">
-							<image class="good-img" src="../../static/images/icon/nav-item-3.png" mode=""></image>
-							<view class="getMoney">
-								<view class="position">
-									<image class="bg" src="../../static/images/index/kz_bg.png" mode=""></image>
-									<view class="tip-text">
-										<text >可赚</text>
-										<text class="num">10.59</text>
-									</view>
-								</view>
-							</view>
-						</view>
-						<view class="good-name">草莓短袖女童连衣裙adfsadgasd宝宝夏装纯棉</view>
-						<view class="price-box">
-							<text class="n-price">¥199.9</text>
-							<text class="o-price">¥199.9</text>
-						</view>
-			
-					</view>
+					<view v-for="(gItem ,gIndex) in item.goodlist" :key="gIndex" @click="toDetail(item.id)">
+						<brandGoodItem :item="gItem"></brandGoodItem>
+				 </view>
 				</view>
 			</view>
+			<load-more  :status="loadMore"></load-more>
 		</view>
 		<fixedIcon @share="share" ref="backTop" :showItem='showItem'></fixedIcon>
 		<comfooter :tabIdx="0" :centerAngle="payAngle"></comfooter>
@@ -110,11 +86,19 @@
 	import fixedIcon from '@/components/fixedIcon.vue'
 	import comfooter from'@/components/com-footer.vue'
 	import swiperDot from '@/components/index/swiper-dot.vue'
+	import brandGoodItem from '@/components/index/brandGoodItem.vue'
+	import miaoshaItem from '@/components/index/miaoshaItem.vue'
+	import loadMoreData from '@/mixins/loadmore.js'
+	import loadMore from '@/components/uni-load-more/uni-load-more.vue'
 	export default {
+		mixins:[loadMoreData],
 		components:{
 			fixedIcon,
 			comfooter,
-			swiperDot
+			swiperDot,
+			miaoshaItem,
+			brandGoodItem,
+			loadMore
 		},
 		data() {
 			return {
@@ -133,11 +117,7 @@
 					title:'秋冬上新',
 					link:'/pages/index/season',
 				}],
-				banner: [{
-					image: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200629/b68cb24fca8464dbaf34c8c74d2a0b0d.jpg'
-				},{
-					image: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200629/b68cb24fca8464dbaf34c8c74d2a0b0d.jpg'
-				}],
+				banner: [],
 				listItem: [{
 					img: require("@/static/images/icon/nav-item-1.png"),
 					title: '晴妈推荐',
@@ -145,7 +125,7 @@
 				},{
 					img: require("@/static/images/icon/nav-item-2.png"),
 					title: '爆款好物',
-					link: '/pages/index/hot'
+					link: '/pages/index/hotGood'
 				},{
 					img: require("@/static/images/icon/nav-item-3.png"),
 					title: '限时抢购',
@@ -156,16 +136,18 @@
 					link: ''
 				}],
 				miaoshaList:[1,2,3,4,5,5],
-				specialList:[1,2,3],
+				specialList:[],
 				showItem:{
 					backTop:false
 				},
 				current:0
 			}
 		},
-		 onLoad() {
-			this.banner = this.getBanner()
+		async  onLoad() {
+			this.banner = await this.getBanner()
 			this.wechatNavBtnHeight = wx.getMenuButtonBoundingClientRect().top+1
+			this.brandlist()
+			this.miaoshaList = await this.newGoodslist() //上新
 		},
 		onPageScroll(e) {
 			if (this.sTimer) {
@@ -182,12 +164,50 @@
 		
 		},
 		methods: {
+			toDetail(id){
+				wx.navigateTo({
+					url:'/pages/good/goodDetail?id='+id
+				})
+			},
+			// 轮播
 			async getBanner(){
-				let data = await this.$fly.post(this.$api.indexAdlist)
+				let data = await this.$fly.post(this.$api.indexAdlist,{posId:1})
+				return data.data.list
+			},
+			// 小分类
+			async getIndexcatlist(){
+				let data = await this.$fly.post(this.$api.indexcatlist)
 				return data.data
 			},
+			// 上新
+			async newGoodslist(){
+				let data = await this.$fly.post(this.$api.goodslist,{goodsNav:3,page:1,pageSize:10})
+				return data.data.list
+			},
+		
+			// 品牌列表
+			async brandlist(){
+				 if(this.page == 1){
+					 
+					}else{
+						this.$tip.loading();
+					}
+				this.$fly.post(this.$api.brandlist,{
+					page:this.page,
+					pageSize:this.pageSize,
+				}).then((res)=>{
+					this.timeOutLoaded();
+					var list = res.data.list;
+					this.loadMoreStatusDeal(res.data.list)
+					if (list.length > 0) {
+						this.specialList = this.specialList.concat(list)
+					}
+				})
+				return 
+			},
+			
 			toSearch(){
-				uni.navigateTo({
+				wx.navigateTo({
 					url:'/pages/search/search'
 				})
 			},
@@ -198,21 +218,24 @@
 				// 分享
 				
 			},
-			toBrandDetail (){
-				console.log(123)
-				uni.navigateTo({
-					url:'pages/search/search'
+			toBrandDetail (){	
+				wx.navigateTo({
+					url:'/pages/search/search'
 				})
 			},
 			nav(url){
-				uni.navigateTo({
+				wx.navigateTo({
 					url:url
 				})
 			},
 			scrollTop() {
 				this.$refs['backTop'].backTop()
 			},
-		}
+			reachBottomCallBack(){
+				this.brandlist();
+			},
+		},
+		
 	}
 </script>
 
@@ -239,88 +262,15 @@
 				height: 330rpx;
 				margin-bottom: 20rpx;
 			}
+			.special-good:after{
+				content: '';
+				width: 218rpx;
+			}
 			.special-good{
 				display: flex;
 				justify-content: space-between;
 			}
-			.item{
-				display: flex;
-				flex-direction: column;
-				margin-right: 18rpx;
-				width: 218rpx;
-				.img-box{
-					position: relative;
-					margin-bottom: 20rpx;
-					.good-img{
-						width: 218rpx;
-						height: 218rpx;
-					}
-					.getMoney{
-						position: absolute;
-						bottom: 0;
-						left:0;
-						height: 68rpx;
-						width: 67rpx;
-						.position{
-							position: relative;
-							font-size:20rpx;
-							font-weight:400;
-							color:rgba(255,255,255,1);
-							text-align: center;
-							.bg{
-								position: absolute;
-								left:0;
-								top:0;
-								width: 68rpx;
-								height: 68rpx;
-								z-index: 1;
-							}
-							view.tip-text{
-								z-index: 2;
-								position: absolute;
-								left:0;
-								top:0;
-								display: flex;
-								flex-direction: column;
-								justify-content: center;
-								// align-items: center;
-								width: 68rpx;
-								height: 68rpx;
-							}
-						}
-					}
-				}
-				.good-name{
-					margin-bottom: 20rpx;
-					width:190rpx;
-					font-size:24rpx;
-					font-weight:400;
-					color:rgba(51,51,51,1);
-					line-height:30rpx;
-					text-overflow: ellipsis;
-					display: -webkit-box;
-					overflow: hidden;
-					-webkit-line-clamp: 2;
-					-webkit-box-orient: vertical;
-				}
-				.price-box{
-					display: flex;
-					justify-content: space-between;
-					font-weight:500;
-					color:rgba(242,39,50,1);
-					line-height:36rpx;
-					margin-bottom: 10rpx;
-					.n-price{
-						font-size:30rpx;
-					}
-					.o-price{
-						font-size:26rpx;
-						color: #999999;
-						text-decoration: line-through;
-					}
-				}
-				
-			}
+			
 		}
 	}
 	.miaosha{
@@ -341,61 +291,7 @@
 		}
 		.miaosha-good{
 			padding-left:30rpx;
-			.item{
-				display: inline-block;
-				margin-right: 18rpx;
-				width: 200rpx;
-				.img-box{
-					position: relative;
-					margin-bottom: 20rpx;
-					.good-img{
-						width: 200rpx;
-						height: 200rpx;
-					}
-					.time{
-						position: absolute;
-						bottom: 0;
-						left:0;
-						height: 30rpx;
-						line-height: 30rpx;
-						width: 150rpx;
-						text-align: center;
-						border-radius:0px 10rpx 0px 0px;
-						background:rgba(242,39,50,1);
-						font-size:20rpx;
-						font-weight:400;
-						color:rgba(255,255,255,1);
-					}
-				}
-				.price-box{
-					display: flex;
-					justify-content: space-between;
-					font-weight:500;
-					color:rgba(242,39,50,1);
-					line-height:36rpx;
-					margin-bottom: 10rpx;
-					.n-price{
-						font-size:30rpx;
-					}
-					.o-price{
-						font-size:26rpx;
-						color: #999999;
-						text-decoration: line-through;
-					}
-				}
-				.getNum{
-					font-size:26rpx;
-					font-weight:400;
-					color:rgba(255,180,79,1);
-					display: flex;
-					align-items: center;
-					image{
-						width: 28rpx;
-						height: 28rpx;
-						margin-right: 4rpx;
-					}
-				}
-			}
+			
 		}
 	}
 	
@@ -501,7 +397,9 @@
 		
 	}
 
-	.container {}
+	.container {
+		padding-bottom: 90rpx;
+	}
 
 	.header-box {
 		background: #DF464E;

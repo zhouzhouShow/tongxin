@@ -17,12 +17,17 @@
 
 <script>
 	export default {
-		props:['placeholder','btnText'],
+		props:['placeholder','btnText','itemKeyWord'],
 		data() {
 			return {
 				showClearBtn:false,
 				keyword:'',
 			};
+		},
+		mounted(){
+			if(this.itemKeyWord){
+				this.keyword = this.itemKeyWord
+			}
 		},
 		methods:{
 			sureSearch(){
@@ -30,7 +35,7 @@
 			},
 			toSearchResult(){
 				if(this.btnText==='取消' || this.btnText==='返回' ){
-					uni.navigateBack({})
+					wx.navigateBack({})
 				}else{
 					this.$emit('sureBtn',this.keyword)
 				}
@@ -92,7 +97,6 @@
     font-weight:400;
     color: #333333;
     text-align: center;
-    margin-left: 26rpx;
   }
 }
 </style>

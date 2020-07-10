@@ -60,7 +60,7 @@
 			
 			},
 			toDetail(id){
-				uni.navigateTo({
+				wx.navigateTo({
 					url:'/pages/good/goodDetail?id='+id
 				})
 			},

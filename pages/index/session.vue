@@ -104,7 +104,7 @@
 						break;
 					case 6:
 				
-						uni.navigateTo({
+						wx.navigateTo({
 							url:'/pages/search/searchFilters'
 						})
 						break;

@@ -26,17 +26,17 @@
 				<image src="../../static/images/icon/hot.png" mode=""></image>
 			</view>
 			<view class="list">
-			<block v-for="(item,index) in list" :key="index">
-				<view class="item">
-					<image class="i-img" :src="item.url" mode=""></image>
-					<view class="info flex-align-center">
-						<text class="name clamp">{{item.name}}</text>
-						<text class="n-price">
-							<text class="p-icon">¥</text>{{item.price}}
-						</text>
+				<block v-for="(item,index) in list" :key="index">
+					<view class="item" @click="toDetail(item.id)">
+						<image class="i-img" :src="item.goods_images[0]" mode=""></image>
+						<view class="info flex-align-center">
+							<text class="name clamp">{{item.goods_title}}</text>
+							<text class="n-price">
+								<text class="p-icon">¥</text>{{item.price_sale}}
+							</text>
+						</view>
 					</view>
-				</view>
-			</block>
+				</block>
 			</view>
 			<load-more :status="loadMore"></load-more>
 		</view>
@@ -63,34 +63,36 @@
 					share: true,
 					backTop: true,
 				},
-				list: [{
-						name: '分阿里交付的拉丝粉',
-						desc: '2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice: 199,
-						price: 80,
-						url: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
-					},
-					{
-						name: '分阿里交付的拉丝粉',
-						desc: '2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice: 199,
-						price: 80,
-						url: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
-					},
-					{
-						name: '分阿里交付的拉丝粉',
-						desc: '2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice: 199,
-						price: 80,
-						url: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
-					}
-				],
-
+				list: [],
 			};
+		},
+		onLoad(){
+			this.getGood()
 		},
 		methods: {
 			share(e) {
 
+			},
+			toDetail(id){
+				wx.navigateTo({
+					url:'/pages/good/goodDetail?id='+id
+				})
+			},
+			async getGood() {
+				this.$tip.loading()
+				let params = {
+					page: this.page,
+					pageSize: this.pageSize,
+					goodsNav: 1,
+				}
+				await this.$fly.post(this.$api.goodslist, params).then(res => {
+					let list = res.data.list
+					this.loadMoreStatusDeal(list)
+					if (list.length > 0) {
+						this.list = this.list.concat(list)
+					}
+				})
+				this.timeOutLoaded();
 			},
 		},
 		onShareAppMessage() {
@@ -162,6 +164,7 @@
 
 				margin-bottom: 38rpx;
 			}
+
 			// <view class="item">
 			// 	<image class="i-img" :src="item.url" mode=""></image>
 			// 	<view class="info">
@@ -171,41 +174,47 @@
 			// 		</text>
 			// 	</view>
 			// </view>
-			.list{
+			.list {
 				display: flex;
-				flex-wrap:wrap;
+				flex-wrap: wrap;
 				justify-content: space-between;
 			}
-			.item{
+
+			.item {
 				width: 345rpx;
 				margin-bottom: 28rpx;
-				.i-img{
-					width:345rpx;
-					height:345rpx;
-					border-radius:8rpx;
+
+				.i-img {
+					width: 345rpx;
+					height: 345rpx;
+					border-radius: 8rpx;
 					display: block;
 				}
-				.info{
+
+				.info {
 					margin-top: 20rpx;
-					.name{
-						width:260rpx;
+
+					.name {
+						width: 260rpx;
 						text-align: left;
-						font-size:24rpx;
-						font-weight:400;
-						color:rgba(51,51,51,1);
+						font-size: 24rpx;
+						font-weight: 400;
+						color: rgba(51, 51, 51, 1);
 					}
-					.n-price{
+
+					.n-price {
 						font-size: 40rpx;
-						font-weight:500;
-						color:rgba(242,39,50,1);
+						font-weight: 500;
+						color: rgba(242, 39, 50, 1);
 						margin-right: 20rpx;
-						.p-icon{
-							font-size:24rpx;
+
+						.p-icon {
+							font-size: 24rpx;
 						}
 					}
-					
+
 				}
-				
+
 			}
 		}
 

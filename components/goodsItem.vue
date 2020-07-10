@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div v-if="item">
 		<!-- 秒杀抢购item -->
 		<block v-if="itemtype=='timeLimite'">
 			<view class="item2">
@@ -9,7 +9,7 @@
 					<view class="time">剩余:1天20时20分</view>
 				</view>
 				<view class="g-info">
-					<p class="g-name">{{item.name}}</p>
+					<p class="g-name">{{item.goods_title}}</p>
 					<p class="tips-text">抢购价</p>
 					<p class="pirce-box">
 						<span class="n-price">
@@ -29,7 +29,7 @@
 					 mode=""></image>
 				</view>
 				<view class="g-info">
-					<p class="g-name">{{item.name}}</p>
+					<p class="g-name">{{item.goods_title}}</p>
 					<p class="discount">9.2折</p>
 					<p class="pirce-box">
 						<span class="n-price">
@@ -49,17 +49,17 @@
 		<block v-else>
 			<view class="item">
 				<view class="g-img-box">
-					<image class="g-img" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg"
-					 mode=""></image>
+					<image class="g-img" :src="item.goods_images[0]"
+					 mode="aspectFill"></image>
 				</view>
 				<view class="g-info">
-					<p class="g-name">{{item.name}}</p>
-					<p class="g-desc"> {{item.desc}}</p>
+					<p class="g-name">{{item.brandinfo.brand_name}}</p>
+					<p class="g-desc"> {{item.goods_title}}</p>
 					<p class="pirce-box">
 						<span class="n-price">
-							<span class="p-icon">¥</span>{{item.price}}
+							<span class="p-icon">¥</span>{{item.price_sale}}
 						</span>
-						<span class="o-pirce">¥{{item.oPrice}}</span>
+						<span class="o-pirce">¥{{item.price_market}}</span>
 						<view class="buy" @clickl.stop="buy">立即抢购</view>
 					</p>
 				</view>
@@ -124,7 +124,7 @@
 			toGoodsDetail(item) {
 				var id = item.id || "";
 				var sku = item.sku || "";
-				uni.navigateTo({
+				wx.navigateTo({
 					url: '/pages/good/goodDetail?id=' + id + '&sku=' + sku,
 				})
 			},
@@ -220,6 +220,7 @@
 				font-weight: 400;
 			}
 			.pirce-box {
+				margin-top: auto;
 				display: flex;
 				align-items: center;
 

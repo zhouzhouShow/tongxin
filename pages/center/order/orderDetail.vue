@@ -269,23 +269,23 @@
 
 			},
 			getLogistics() {
-				uni.navigateTo({
+				wx.navigateTo({
 					url: '/pages/center/order/logistics?order_id=' + this.orderId
 				})
 			},
 
 			goIndex() {
-				uni.navigateBack({})
+				wx.navigateBack({})
 			},
 
 			toPay(id) {
-				uni.navigateTo({
+				wx.navigateTo({
 					url: '/pages/shopAndOrder/settlement/submitOrder?orderId=' + id
 				})
 			},
 
 			navigatorTo(path, name) {
-				uni.navigateTo({
+				wx.navigateTo({
 					path: path,
 					name: name
 				});

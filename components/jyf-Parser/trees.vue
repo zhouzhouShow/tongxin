@@ -202,7 +202,7 @@
 							// #endif
 						}
 					} else
-						uni.navigateTo({
+						wx.navigateTo({
 							url: e.currentTarget.dataset.href
 						})
 				}

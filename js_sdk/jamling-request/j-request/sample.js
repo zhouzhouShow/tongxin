@@ -33,7 +33,7 @@ request.interceptor.response = ((res, config) => {
         res.success = true;
     } else if (res.code === 1001) {
         // token失效，需要重新登录
-        uni.navigateTo({
+        wx.navigateTo({
             url: '/pages/loign/login'
         })
     }

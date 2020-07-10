@@ -38,7 +38,6 @@ export default {
       })
     },
     reachBottomCallBack() {
-
     }  //触底方法
   },
   onReachBottom() {

@@ -77,7 +77,7 @@
 		},
 		methods: {
 			navToSeckill() {
-				uni.navigateTo({
+				wx.navigateTo({
 					url: `/pages/shopkeeper/seckill-page/seckill-page?id=${this.seckillId}&type=${this.type}`,
 				})
 			}

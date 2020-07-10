@@ -89,7 +89,7 @@
 			navToDetailPage(item) {
 				var id=item.goods_id||"";
 				var sku=item.sku||"";
-				uni.navigateTo({
+				wx.navigateTo({
 				  url:'/pages/good/goodDetail?id='+id+'&sku='+sku+'&type='+this.type,
 				})
 			},

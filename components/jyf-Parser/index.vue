@@ -210,7 +210,7 @@
 								if (this.autocopy)
 									window.location.href = link.href;
 							} else {
-								uni.navigateTo({
+								wx.navigateTo({
 									url: link.getAttribute("href")
 								})
 							}

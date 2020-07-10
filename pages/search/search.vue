@@ -1,19 +1,18 @@
 <template>
   <div class="darkContainer" style="background:#fff">
-    <div class="search-bar">
+		<searchBar @sureBtn="search" placeholder="搜索商品" btnText="取消"></searchBar>
+   <!-- <div class="search-bar">
       <div class="search-input-container">
         <div class="search-icon">
-          <img style="width:31rpx;height:31rpx;display:block;" src="@/static/images/icon/search.png">
+          <img style="width:31rpx;height:31rpx;display:block;" src="@/static/images/icon/search_2.png">
         </div>
         <input @input='keyword?showClearBtn=true:showClearBtn=false' type="text" placeholder='搜索' v-model="keyword">
         <div class="clear-icon" v-show="showClearBtn" @click="clearSearchInput">
           <img style="width:31rpx;height:31rpx;display:block;" src="@/static/images/icon/icon_clear.png">
         </div>
-      </div>
-      <!-- <div class="search-btn" @click="keyWordSearch">搜索</div> -->
-   
+      </div>   
       <div class="search-btn"  @click="toSearchResult(keyword,1)">取消</div>
-    </div>
+    </div> -->
     <!-- 热门搜索 -->
     <div class="hot-search">
       <div class="hot-search-title">热门搜索</div>
@@ -34,6 +33,7 @@
       </div>
       <div style="width:100%;height:1px;"></div>
       <div class="items-container">
+				<div class="no-data" v-if="!historySearchList.length">无搜索历史~</div>
         <div class="search-item" @click="toSearchResult(item.keyword,item.type)" v-for="(item,index) in historySearchList" :key="index">
           {{item.keyword}}
         </div>
@@ -44,16 +44,18 @@
 </template>
    
 <script>
+	import searchBar from '@/components/searchBar'
 
 export default {
-  name: "shopKeeperSearch",
+  name: "search",
   components:{
+		searchBar
   },
   data () {
     return {
       keyword:'',
       showClearBtn:false,
-      hotSearchList:[{hot_words:'童装'}],
+      hotSearchList:[],
       historySearchList:[],
       goodsList:[],
 			type:0,//0:挑款 ,1:份货
@@ -108,9 +110,10 @@ export default {
 		},
     /* 跳转搜索结果 */
     toSearchResult(keyword,type){
+			console.log(1)
       if(keyword){
-        uni.navigateTo({
-          url:'/pages/shopkeeper/searchResult?keyword='+keyword+'&type='+type
+        wx.navigateTo({
+          url:'/pages/search/searchResult?keyword='+keyword+'&type='+type
         })
       }else{
         this.$tip.toast("请输入搜索内容！");
@@ -119,26 +122,28 @@ export default {
     /* 获取热门搜索 */
     getHotSearch(){
       this.$fly.post(this.$api.hotSearch).then(res=>{
-        if(res.status==1){
+        if(res.code==1){
           this.hotSearchList=res.data;
         }
       })
     },
     /* 获取历史搜索 */
     getHistorySearch(){
-      this.$fly.post(this.$api.getHistorySearch).then(res=>{
-        if(res.status==1){
+      this.$fly.post(this.$api.historySearch).then(res=>{
+        if(res.code==1){
           this.historySearchList=res.data.list || [];
         }
       })
     },
     /* 清空历史搜索 */
-    clearHistorySearch(){
-      this.$fly.post(this.$api.clearHistorySearch).then(res=>{
-        if(res.status==1){
+    async clearHistorySearch(){
+			this.$tip.loading()
+      await this.$fly.post(this.$api.deleteHistorySearch).then(res=>{
+        if(res.code==1){
           this.getHistorySearch();
         }
       })
+			this.$tip.loaded()
     },
     /* 获取猜你喜欢 */
     /* todo：接口尚未做好，需要暂时用刚刚上新这个接口来代替 */
@@ -192,7 +197,7 @@ export default {
     }
   },
   onLoad(){
-    // this.getHotSearch();
+    this.getHotSearch();
 		this.goodsList = []
 		// if(this.type==0){ //挑款
 		// 	this.getNewProcudt()
@@ -211,55 +216,8 @@ export default {
 page{
   background: #fff;
 }
-.search-bar{
-  display: flex;
-  flex-direction: row;
-  // justify-content: center;
-  align-items: center;
-	padding:0 20rpx 12rpx;
-  margin:12rpx 0 68rpx;
-	border-bottom:1rpx solid #EEEEEE;
-  .search-input-container{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width:604rpx;
-    height:64rpx;
-    background-color: #F0F1F2;
-    // border:2rpx solid #FF0000;
-    border-radius:28rpx;
-    .search-icon{
-      width:31rpx;
-      height:31rpx;
-      flex-grow: 0;
-      padding:0 10rpx 0 20rpx;
-    }
-    input{
-      width: 80%;
-      // background-color: black;
-      font-size: 26rpx;
-      color: #333333;
-    }
-    .clear-icon{
-      width:31rpx;
-      height:31rpx;
-      flex-grow: 0;
-      padding:20rpx 20rpx 20rpx 10rpx;
-    }
-  }
-	div.noSelected{
-		background: #C9C9C9;
-	}
-  .search-btn {
-    width: 120rpx;
-    height: 64rpx;
-    line-height: 64rpx;
-    font-size:30rpx;
-    font-weight:400;
-    color: #333333;
-    text-align: center;
-    margin-left: 26rpx;
-  }
+.hot-search{
+	margin-top:40rpx;
 }
 .hot-search,
 .search-history{
@@ -282,6 +240,11 @@ page{
     display: flex;
     flex-direction: row;
     flex-wrap:wrap;
+		.no-data{
+			font-size:28rpx;
+			font-weight:400;
+			color:rgba(153,153,153,1);
+		}
     .search-item{
       height:64rpx;
       line-height: 64rpx;
@@ -292,7 +255,7 @@ page{
       font-size: 26rpx;
       font-weight:400;
       padding: 0 25rpx;
-      margin: 35rpx 15rpx 0 ;
+      margin: 35rpx 30rpx 0 0;
     }
   }
 }

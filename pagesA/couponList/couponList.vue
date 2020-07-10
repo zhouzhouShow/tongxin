@@ -165,7 +165,7 @@
 		methods: {
 			toUse(type) {
 				if (type == 3) { //份货
-					uni.navigateTo({
+					wx.navigateTo({
 						url: '/pages/index/brandzoufen?id=75'
 					})
 				} else if (type == 0) {
@@ -173,7 +173,7 @@
 						url: '/pages/index/index'
 					})
 				} else {
-					uni.navigateTo({
+					wx.navigateTo({
 						url: '/pages/index/brandzoufen?id=26'
 					})
 				}

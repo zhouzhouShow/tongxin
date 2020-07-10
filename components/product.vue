@@ -104,7 +104,7 @@
         if (this.isClickable) {
           var id = this.product.id;
           var sku = this.product.sku || "";
-          uni.navigateTo({
+          wx.navigateTo({
             url: '/pages/good/goodDetail?id='+id+'&sku='+sku,
           })
         }
