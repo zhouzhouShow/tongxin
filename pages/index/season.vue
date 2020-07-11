@@ -16,8 +16,7 @@
 		</view>
 		<viwe class="list-nav">
 			<!-- <view class="item"></view> -->
-			<image class="img1" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg" mode=""></image>
-			<image class="img2" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg" mode=""></image>
+			<image class="img1" v-for="(item,index) in list" :key="index"  :src="item.goods_images[0]" mode=""></image>
 			<view class="more" @click="showMore">
 				<text>查看更多</text>
 				<image class="icon" src="../../static/images/icon/getMore.png" mode=""></image>
@@ -62,41 +61,12 @@
 					share: true,
 					backTop: true,
 				},
-				list: [{
-					pic_urls: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
-					stocksnum: 10,
-					goods_type: 1,
-					price_market: 123,
-					code: 123213,
-					title: '张阿第三方第大师法撒旦个单方事故第三方三方飞',
-					price: '123',
-					nub: 123
-				},
-					{
-						pic_urls: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
-						stocksnum: 10,
-						goods_type: 1,
-						price_market: 123,
-						code: 123213,
-						
-						title: '张阿第三方第三方飞',
-						price: '123',
-						nub: 123
-					},
-					{
-						pic_urls: '',
-						stocksnum: 10,
-						goods_type: 1,
-						price_market: 123,
-						code: 123213,
-						
-						title: '张阿第三方第三方飞',
-						price: '123',
-						nub: 123
-					}
-				],
+				list: [],
 
 			};
+		},
+		onLoad(){
+			this.getGood()
 		},
 		methods: {
 			showMore(){
@@ -105,10 +75,29 @@
 			share(e) {
 
 			},
+			reachBottomCallBack(){
+				this.getGood();
+			},
+			async getGood(){
+				this.$tip.loading()
+				let params = {
+					page: this.page,
+					pageSize: this.pageSize,
+					goodsNav:3,
+				}
+				await this.$fly.post(this.$api.goodslist,params).then(res=>{
+					let list = res.data.list
+					this.loadMoreStatusDeal(list)
+					if(list.length>0){
+						this.list = this.list.concat(list)
+					}
+				})
+				this.timeOutLoaded();
+			},
 		},
 		onShareAppMessage() {
 			return {
-				title: '爆款好物'
+				title: '秋冬上新'
 			}
 		}
 	}

@@ -4,7 +4,7 @@
 			<image class="poster" src="https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200707/e2345a113990f00faa21c7f13de0f87a.png" mode=""></image>
 		<!-- </view> -->
 		<view class="recommend-box">
-			<view v-for="(item,index) in list"  :key="index" @click="toDetail(item.id)">
+			<view v-for="(item,index) in list"  :key="index" @click="toDetail(item.goods_id)">
 				<goodItem itemtype="timeLimite" :item="item"></goodItem>
 			</view>
 			<load-more  :status="loadMore"></load-more>
@@ -32,32 +32,30 @@
 					share:true,
 					backTop:true,
 				},
-				list:[
-					{
-						name :'分阿里交付的拉丝粉',
-						desc:'2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice:199,
-						price:80,
-					},
-					{
-						name :'分阿里交付的拉丝粉',
-						desc:'2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice:199,
-						price:80,
-					},
-					{
-						name :'分阿里交付的拉丝粉',
-						desc:'2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice:199,
-						price:80,
-					}
-				],
+				list:[],
 				
 			};
+		},
+		onLoad(){
+			this.getGood()
 		},
 		methods:{
 			share(e){
 			
+			},
+			async getGood() {
+				this.$tip.loading()
+				await this.$fly.post(this.$api.limitList).then(res => {
+					let list = res.data.list
+					this.loadMoreStatusDeal(list)
+					if (list.length > 0) {
+						this.list = this.list.concat(list)
+					}
+				})
+				this.timeOutLoaded();
+			},
+			reachBottomCallBack(){
+				this.getGood();
 			},
 			toDetail(id){
 				wx.navigateTo({

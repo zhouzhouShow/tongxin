@@ -53,7 +53,7 @@
 			<view class="miaosha-good">
 				<scroll-view scroll-x="true" style="white-space:nowrap">
 					
-					<view v-for="(item,index) in miaoshaList" :key="index" @click="toDetail(item.id)">
+					<view v-for="(item,index) in miaoshaList" :key="index" @click="toDetail(item.goods_id)">
 						<miaoshaItem :item="item"></miaoshaItem>	
 					</view>
 				</scroll-view>
@@ -70,7 +70,7 @@
 			<view class="content" v-for="(item ,index) in specialList" :key="index">
 				<image class="banner" :src="item.brand_banner[0]" ></image>
 				<view class="special-good">
-					<view v-for="(gItem ,gIndex) in item.goodlist" :key="gIndex" @click="toDetail(item.id)">
+					<view v-for="(gItem ,gIndex) in item.goodlist" :key="gIndex" @click="toDetail(gItem.goods_id)">
 						<brandGoodItem :item="gItem"></brandGoodItem>
 				 </view>
 				</view>
@@ -165,6 +165,7 @@
 		},
 		methods: {
 			toDetail(id){
+				console.log(id)
 				wx.navigateTo({
 					url:'/pages/good/goodDetail?id='+id
 				})

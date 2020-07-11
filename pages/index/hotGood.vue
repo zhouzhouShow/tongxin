@@ -5,18 +5,11 @@
 		 mode=""></image>
 		<!-- </view> -->
 		<view class="classify-list">
-			<view class="item">
-				<image src="../../static/images/good/share_wechat.png" mode=""></image>
-				<view class="text">童婴</view>
+			<view class="item" @click="changeNav(item.id)" v-for="(item,index) in navList " :key="index">
+				<image :src="item.img" mode=""></image>
+				<view class="text">{{item.title}}</view>
 			</view>
-			<view class="item">
-				<image src="../../static/images/good/share_wechat.png" mode=""></image>
-				<view class="text">童婴</view>
-			</view>
-			<view class="item">
-				<image src="../../static/images/good/share_wechat.png" mode=""></image>
-				<view class="text">童婴</view>
-			</view>
+		
 
 		</view>
 		<view class="recommend-box">
@@ -27,7 +20,7 @@
 			</view>
 			<view class="list">
 				<block v-for="(item,index) in list" :key="index">
-					<view class="item" @click="toDetail(item.id)">
+					<view class="item" @click="toDetail(item.goods_id)">
 						<image class="i-img" :src="item.goods_images[0]" mode=""></image>
 						<view class="info flex-align-center">
 							<text class="name clamp">{{item.goods_title}}</text>
@@ -64,18 +57,37 @@
 					backTop: true,
 				},
 				list: [],
+				cNavId:0,//0 无  1婴童  2男童 3女童
+				navList: [{
+					title: '婴童',
+					img: '../../static/images/good/share_wechat.png',
+					id:1,
+				},{
+					title: '男童',
+					img: '../../static/images/good/share_wechat.png',
+					id:2,
+				},{
+					title: '女童',
+					img: '../../static/images/good/share_wechat.png',
+					id:3,
+				}]
 			};
 		},
-		onLoad(){
+		onLoad() {
 			this.getGood()
 		},
 		methods: {
 			share(e) {
 
 			},
-			toDetail(id){
+			changeNav(id){
+				this.cNavId = id
+				this.list = []
+				this.refreshLoad()
+			},
+			toDetail(id) {
 				wx.navigateTo({
-					url:'/pages/good/goodDetail?id='+id
+					url: '/pages/good/goodDetail?id=' + id
 				})
 			},
 			async getGood() {
@@ -84,6 +96,7 @@
 					page: this.page,
 					pageSize: this.pageSize,
 					goodsNav: 1,
+					goodsAge:this.cNavId
 				}
 				await this.$fly.post(this.$api.goodslist, params).then(res => {
 					let list = res.data.list
@@ -93,6 +106,9 @@
 					}
 				})
 				this.timeOutLoaded();
+			},
+			reachBottomCallBack(){
+				this.getGood();
 			},
 		},
 		onShareAppMessage() {

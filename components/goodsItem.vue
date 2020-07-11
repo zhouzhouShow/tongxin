@@ -4,25 +4,25 @@
 		<block v-if="itemtype=='timeLimite'">
 			<view class="item2">
 				<view class="g-img-box">
-					<image class="g-img" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg"
+					<image class="g-img" :src="item.goods_images[0]"
 					 mode=""></image>
-					<view class="time">剩余:1天20时20分</view>
+					<view class="time">剩余:{{formateDeadline}}</view>
 				</view>
 				<view class="g-info">
 					<p class="g-name">{{item.goods_title}}</p>
 					<p class="tips-text">抢购价</p>
-					<p class="pirce-box">
+					<p class="pirce-box" style="margin-top:0;">
 						<span class="n-price">
-							<span class="p-icon">¥</span>{{item.price}}
+							<span class="p-icon">¥</span>{{item.price_sale}}
 						</span>
-						<span class="o-pirce">¥{{item.oPrice}}</span>
+						<span class="o-pirce">¥{{item.price_market}}</span>
 						<view class="buy" @clickl.stop="buy">去购买</view>
 					</p>
 				</view>
 			</view>
 		</block>
 		<!-- 会场item -->
-		<block v-if="itemtype=='sessionItem'">
+		<block v-else-if="itemtype=='sessionItem'">
 			<view class="item" style="margin-bottom: 0;">
 				<view class="g-img-box">
 					<image class="g-img" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg"
@@ -89,15 +89,28 @@
 			}
 		},
 		computed: {
-
+			formateDeadline() {
+			  let leftTime = this.deadline * 1000; //计算剩余的毫秒数
+			  let days = parseInt(leftTime / 1000 / 60 / 60 / 24, 10); //计算剩余的天数
+			  let hours = parseInt(leftTime / 1000 / 60 / 60 % 24, 10); //计算剩余的小时
+			  let minutes = parseInt(leftTime / 1000 / 60 % 60, 10);//计算剩余的分钟
+			  let seconds = parseInt(leftTime / 1000 % 60, 10);//计算剩余的秒数
+			  days = this.checkTime(days);
+			  hours = this.checkTime(hours);
+			  minutes = this.checkTime(minutes);
+			  seconds = this.checkTime(seconds);
+			  return days + "天" + hours + "时" + minutes + "分" + seconds + "秒";
+			},
 		},
 		data() {
 			return {
 				detail: {},
-				deadline: this.$props.item.limit_deadline,
+				timer:null,
+				deadline: this.$props.item.limitgoods.deadline,
 			}
 		},
 		methods: {
+			
 			ellipsis() {
 				this.$emit('fhChangeEllipsis', this.myIndex)
 			},
@@ -132,7 +145,7 @@
 		},
 		mounted() {
 			/* 倒计时 */
-			if (this.deadline) {
+			if (this.itemtype=="timeLimite" && this.deadline) {
 				this.timer = setInterval(() => {
 					this.deadline = this.deadline - 1
 					if (this.deadline <= 0) {

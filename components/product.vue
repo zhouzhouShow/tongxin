@@ -1,16 +1,16 @@
 <!--产品组件-->
 <template>
   <div class="product1-goods-item"
-       v-if="product.title"
+       v-if="product.goods_title"
        @click="goProductDetail()">
     <div class="good-show">
-      <img mode="aspectFill" :lazy-load="true" class="good-show-img" v-if="product.pic_urls && product.pic_urls[0]"
-           :src="product.pic_urls || product.pic_urls[0]"/>
-			<!-- <img v-if="!hasVideo" class="video-icon" mode="aspectFill" :lazy-load="true" src="../static/images/play-btn.png"> -->
-      <img mode="aspectFill"
-           src="http://fulanpifa.oss-cn-shenzhen.aliyuncs.com/uploads/20180904/7f8cd2124f0a791b1e6626bce0e299d9.gif"
-           v-else>
-  
+      <img mode="aspectFill" :lazy-load="true" class="good-show-img" v-if="product.goods_images[0]"
+           :src="product.goods_images[0]"/>
+			<img mode="aspectFill"
+			     src="http://fulanpifa.oss-cn-shenzhen.aliyuncs.com/uploads/20180904/7f8cd2124f0a791b1e6626bce0e299d9.gif"
+			     v-else>
+			<img v-if="!hasVideo" class="video-icon" mode="aspectFill" :lazy-load="true" src="../static/images/play-btn.png">
+     
       <div class="video-icon" v-if="product.video_url">
         <img class="video-play-icon" src="../static/images/play-btn.png" alt="">
       </div>
@@ -18,15 +18,15 @@
     <div class="good-content">
       <div class="good-desc">
         <div class="good-desc-part1">
-					<span class="p-box"><span class="p-icon">¥</span>88</span>
-					<span class="mark-price">¥188</span>
+					<span class="p-box"><span class="p-icon">¥</span>{{product.price_sale}}</span>
+					<span class="mark-price">¥{{product.price_market}}</span>
         </div>
 				<div class="like">
 					<image src="../static/images/good/d-like.png" mode=""></image>
-					1000
+					{{product.likenum}}
 				</div>
       </div>
-			<div class="good-title clamp">{{product.title}}</div>
+			<div class="good-title clamp">{{product.goods_title}}</div>
     </div>
   </div>
 </template>

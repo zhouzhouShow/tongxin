@@ -12,8 +12,20 @@
 				"navigationStyle": "custom"
 			}
 		}, {
+			"path": "pages/auth/auth",
+			"style": {
+				"navigationBarTitleText": "授权"
+			}
+		}, {
 			"path": "pages/shopCart/shopCart",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "购物车"
+			}
+		}, {
+			"path": "pages/shopCart/shopCart2",
+			"style": {
+				"navigationBarTitleText": "购物车"
+			}
 		}, {
 			"path": "pages/seeding/seeding",
 			"style": {
@@ -73,7 +85,9 @@
 
 		, {
 			"path": "pages/index/season",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "秋冬上新"
+			}
 		}, {
 			"path": "pages/seeding/userpage",
 			"style": {

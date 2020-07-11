@@ -365,7 +365,12 @@ function getTestToken(){
 	.catch((err) => {})
 }
 
-
+function previewImage(list,index = 0){
+	uni.previewImage({
+		urls:list,
+		current:index
+	})
+}
 
 export default {
 	wepay,
@@ -382,5 +387,6 @@ export default {
 	code2goods,
 	makePhone,
 	setCenterTabBarBadge,
-	getTestToken
+	getTestToken,
+	previewImage
 }

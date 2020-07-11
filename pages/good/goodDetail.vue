@@ -9,7 +9,7 @@
 						<video class="video-swiper-item" :src="detail.goods_base.video_url"></video>
 					</swiper-item>
 				</view>
-				<view v-for="(item,index) in detail.goods_img" :key="index">
+				<view v-for="(item,index) in detail.goods_images" :key="index">
 					<swiper-item class="good-swiper-item">
 						<img  @click.stop="previewImage(index)" :src="item" class="slide-image" />
 					</swiper-item>
@@ -17,13 +17,13 @@
 			</swiper>
 		</view>
 		<!-- 秒杀 -->
-		<view class="sec-kill sec-kill-common" v-if="detail.iskill">
+		<view class="sec-kill sec-kill-common" >
 			<view class="sec-kill-title">
 				<text>¥</text>
-				<text >{{detail.killgood.price}}</text>
-				<text >¥{{detail.member_price[0].price}}</text>
+				<text >{{detail.price_sale}}</text>
+				<text >¥{{detail.price_market}}</text>
 				<image class="zhuan-icon" src="../../static/images/index/zhuan.png" mode=""></image>
-				<text class="zhuan">¥13.6</text>
+				<text class="zhuan">¥{{detail.commission}}</text>
 			</view>
 			<view class="sec-kill-con">
 				<block v-if="detail.iskill && detail.killgood.isdoing">
@@ -43,12 +43,12 @@
 		</view>
 		<view class="good-name-box">
 			<view class="good-name clamp-two">
-				【巴拉巴拉】草莓短袖女童连衣裙宝宝夏装纯棉背心裙2020新款儿童童装仔上衣仔上衣仔上衣仔上衣裙… 仔上衣
+				{{detail.goods_title}}
 			</view>
 			<view class="like-box">
-				<image class="like" src="../../static/images/good/d-like.png" mode=""></image>
+				<image class="like" @click.stop="collectOrLikeGood(1,detail.is_collect == 0? 0 : 1)" :src="detail.is_collect == 0 ?'../../static/images/good/d-like.png':'../../static/images/good/like.png'" mode=""></image>
 				<!-- <image class="like" src="../../static/images/good/like.png" mode=""></image> -->
-				<text>2000</text>
+				<text>{{detail.likenum}}</text>
 			</view>
 		</view>
 		<view class="good-area text-column-box" style="padding:40rpx 0">
@@ -81,7 +81,7 @@
 			</view>
 		</view>
 		<view class="color-box text-column-box">
-			<view class="row-box">
+			<view class="row-box" @click="showPopFun">
 				<text class="label">选择</text>
 				<text class="text">请选择颜色尺码</text>
 				<text class="iconfont iconyoujiantou" ></text>
@@ -92,10 +92,10 @@
 				<text class="iconfont iconyoujiantou" ></text>
 			</view>
 		</view>
-		<view class="brand row-box ">
-			<image class="b-img" src="../../static/images/icon/nav-item-2.png" mode=""></image>
+		<view class="brand row-box " v-if="detail.brandinfo">
+			<image class="b-img" :src="detail.brandinfo.brand_logo[0]" mode="aspectFill"></image>
 			<view class="name-box">
-				<text class="name">abc 鹅绒童装</text>
+				<text class="name">{{detail.brand_name}}</text>
 				<text class="area">中国</text>
 			</view>
 			<view class="r-text">进入品牌</view>
@@ -115,10 +115,10 @@
 			<view class="r-title">店铺推荐</view>
 			<!-- <view class="good-box"> -->
 			<scroll-view class="good-box" scroll-x="true" style="white-space: nowrap;"  >
-				<view class="item" v-for="(item,index) in recommendList" :key="index">
-					<image src="../../static/images/icon/nav-item-3.png" mode=""></image>
-					<view class="good-name clamp">草莓短袖女童连衣裙adfsadgasd宝宝夏装纯棉</view>
-					<view class="price">¥199.9</view>
+				<view class="item" v-for="(item,index) in detail.products_list" :key="index">
+					<image :src="item.goods_images[0]" mode="aspectFill"></image>
+					<view class="good-name clamp">{{item.spec_title}}</view>
+					<view class="price">¥{{item.price_sale}}</view>
 				</view>
 			</scroll-view>
 			<!-- </view> -->
@@ -138,8 +138,8 @@
 			<!-- <rich-text :nodes="detail.goods_detail" class="richClass"></rich-text> -->
 		</div>
 		<div class="buy-fixed-btn">
-			<div class="kefu">
-				<img class="kefu-icon" src="/static/images/good/kefu.png" alt="">
+			<div class="kefu" @click="toCart">
+				<img class="kefu-icon" src="/static/images/good/good-cart.png" alt="">
 				<div>购物车</div>
 			</div>
 			<div class="kefu">
@@ -170,18 +170,18 @@
 							<!-- <oneGoodPrice :totalPrice='detail.killgood.price' :skuNum='goodUnit'></oneGoodPrice> -->
 							</p>
 						<p class="store">库存: {{ inventoryNum || 0 }}</p>
-						<p>已选: {{newColorArr[colorChooseIndex].pack_title}}</p>
+						<p>已选: {{colorArr[colorChooseIndex].pack_title}}</p>
 					</div>
 				</div>
 				<div class="buy-pop-box-color" style="padding: 0rpx 30rpx 5rpx 30rpx;">
 					<div class="color-title">
-						颜色选择({{newColorArr.length}})
+						颜色选择({{colorArr.length}})
 					</div>
-					<div class="color-list" v-if="newColorArr.length">
-						<div class="color-item" v-for="(value,index) in newColorArr" :class="{ 'color_active' : value.pack_sku == curColorKey}"
+					<div class="color-list" v-if="colorArr.length">
+						<div class="color-item" v-for="(value,index) in colorArr" :class="{ 'color_active' : value.item == curColorKey}"
 						 @click.stop="curColorKeyFun(value,index)" :key="index">
 						 <image class="color-img" :src="good_img" mode=""></image>
-							<span>{{value.pack_title}}</span>
+							<span>{{value.item}}</span>
 							<!-- <span class="nums" v-if="value.choiceNum">{{value.choiceNum}}</span> -->
 						</div>
 					</div>
@@ -190,9 +190,10 @@
 					<div class="color-title">
 						参考身高
 					</div>
-					<div class="color-list" v-if="newColorArr.length">
-						<div class="color-item size-color active">
-							<span>{{goodSizeStr}}</span>
+					<div class="color-list" v-if="sizeArr.length">
+						<div class="color-item size-color"  v-for="(value,index) in sizeArr" :class="{ 'active' : value.item == curColorKey}"
+						 @click.stop="curColorKeyFun(value,index)" :key="index">
+							<span >{{value.item}}</span>
 							<!-- <span class="nums" v-if="value.choiceNum">{{value.choiceNum}}</span> -->
 						</div>
 					</div>
@@ -252,15 +253,27 @@
 			uniNumberBox,
 			popup
 		},
+		async onLoad(option){
+			this.id = option.id
+			this.$tip.loading()
+			let data = await this.getDetail()
+			// let a = {"status":1,"msg":"\u83b7\u53d6\u6210\u529f","data":{"goods_img":["https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/9700375b1229b042803ae80042376f61.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/1b60c1c8682d7254e92242096fe5178c.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/cd97ab49dd62dd1a2a7b017a4c09c3b4.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/56b78d7f092c22e89d2608c8ac56b44c.jpg"],"goods_base":{"id":"33030","brand_id":"197","class_id":"545","code":"dbk0616","comment_num":"0","every_pack":"","goods_type":"3","level_limit":"","level_limit_time":"0","price_market":"356.00","price_purchase":"10.00","price_sale":"29.90","price_wholesale":"0.00","salenum":"11123","shelves":"2","title":"\u8fea\u8d1d\u514b\u4e28\u4f11\u95f2\u65f6\u5c1a\u79cb\u5b63\u7cfb\u5217\u7ae5\u88c580-104,100-140","top_tpl":"0","bottom_tpl":"0","video_url":"","viewnum":"1467","wholesale_num":"1","is_free_shipping":"0","weight":"0.10","ext_attr":null,"kind_ratio":"\u88e4\u5b5031%\uff0c\u4e0a\u886364%\uff0c\u5916\u59575%","year_area_id":"30","child_gender_id":"3","brand_area_id":"45","brand_material_id":"25","season_id":"3","style":"10"},"goods_detail":"<p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/9700375b1229b042803ae80042376f61.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/1b60c1c8682d7254e92242096fe5178c.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/cd97ab49dd62dd1a2a7b017a4c09c3b4.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/56b78d7f092c22e89d2608c8ac56b44c.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/e305d3b844b7ffcbd5c0f661a7a9fd96.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/5d503baecfb6ab92c73698286d9a394d.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/6d564d4203a243adcba5862a9b6fe187.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/66b780f5d83d2345f7740c5c7410402b.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/3e1207d57665484389fb4fc5bff07159.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/6a0994307bc5d0a954f87b734b61c03c.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/bd3ef67bb8fd728bb7b310e1fc9fe21a.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/dfcda2abcbabf076215d81c6b54353d1.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p> <\/p>         ","goods_style":"\u4f11\u95f2","member_price":[{"level_name":"\u767d\u94f6\u4f1a\u5458","level":"7","price":29.9,"rate":"100"},{"level_name":"\u9ec4\u91d1\u4f1a\u5458","level":"10","price":29.3,"rate":"98"},{"level_name":"\u94c2\u91d1\u4f1a\u5458","level":"11","price":28.41,"rate":"95"},{"level_name":"\u94bb\u77f3\u4f1a\u5458","level":"12","price":26.91,"rate":"90"}],"seasion_name":"\u79cb","brand_name":"\u8fea\u8d1d\u514b","brand_info":{"id":"197","brand_name":"\u8fea\u8d1d\u514b","goods_class_id":"50","brand_logo":"","brand_description":"","sort":"0","recommend":"0","create_time":"1592297307","update_time":"1592460973","letter":"","brand_banner":"","video_url":"https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200618\/42b45bcf2a22740587419fad47f2fbd9.mp4","video_description":"","status":"0","path":null},"brand_area":"\u5c71\u4e1c","brand_material":"\u68c9","is_like":0,"is_collect":0,"iskill":1,"killgood":{"id":"2785","main_id":"1329","goods_id":"33030","price":"8.80","time_slot":"09:00","start_time":"1593997200","end_time":"1594051199","goods_type":"3","stock":"600","sale_num":"300","type":"1","limitnum":"0","deadline":23187,"isdoing":1},"lastmoney":29.3,"level_name":"\u9ec4\u91d1\u4f1a\u5458","level_id":"10"}}
+			this.detail = data.data
+			this.colorArr = this.detail.specList[0].specChildList
+			this.sizeArr = this.detail.specList[1].specChildList
+			this.$tip.loaded()
+		},
 		data() {
 			return {
-				recommendList:[1,2,3,4,5,5],
+				id:'',
+				recommendList:[],
 				showPopChoice:false,
 				inventoryNum:100,
 				colorChooseIndex:0,
 				sharePop:true,
 				goodSizeStr:'100/200',
-				newColorArr:[{pack_sku:'YX-PACK-33908_1',goods_id:324,code:123,pack_title:'蓝色',price:1231,sku_num:100,amount:123}],
+				colorArr:[{pack_sku:'YX-PACK-33908_1',goods_id:324,code:123,pack_title:'蓝色',price:1231,sku_num:100,amount:123}],
+				sizerArr:[{pack_sku:'YX-PACK-33908_1',goods_id:324,code:123,pack_title:'蓝色',price:1231,sku_num:100,amount:123}],
 				good_img:'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
 				detail: {
 					goods_base: '',
@@ -272,8 +285,30 @@
 			};
 		},
 		methods:{
+			toCart(){
+				wx.navigateTo({
+					url:'/pages/shopCart/shopCart2'
+				})
+			},
+			previewImage(num) {
+				let list = this.detail.goods_images
+				list.forEach((item, index) => {
+					list[index] = item
+				})
+				this.$tools.previewImage(this.detail.goods_images, num)
+			},
 			getNumberValue(e){
 				
+			},
+			// 收藏或者喜欢商品
+			collectOrLikeGood(type, collect_type) {
+				this.$fly.post(this.$api.addCollection, {
+					relateId: this.id,
+					type: type,
+					actionType: collect_type
+				}).then(res => {
+					this.detail.is_collect =  collect_type == 0 ? 1 : 0
+				})
 			},
 			closePop() {
 				this.showPopChoice = false
@@ -281,17 +316,21 @@
 			showPopFun(){
 				this.showPopChoice = true
 			},
+			async getDetail(){
+				
+				let data =  await this.$fly.post(this.$api.goodInfo,{goods_id:this.id})
+				
+				return data
+			},
 		},
-		onLoad(){
-			let a ={"status":1,"msg":"\u83b7\u53d6\u6210\u529f","data":{"goods_img":["https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/9700375b1229b042803ae80042376f61.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/1b60c1c8682d7254e92242096fe5178c.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/cd97ab49dd62dd1a2a7b017a4c09c3b4.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/56b78d7f092c22e89d2608c8ac56b44c.jpg"],"goods_base":{"id":"33030","brand_id":"197","class_id":"545","code":"dbk0616","comment_num":"0","every_pack":"","goods_type":"3","level_limit":"","level_limit_time":"0","price_market":"356.00","price_purchase":"10.00","price_sale":"29.90","price_wholesale":"0.00","salenum":"11123","shelves":"2","title":"\u8fea\u8d1d\u514b\u4e28\u4f11\u95f2\u65f6\u5c1a\u79cb\u5b63\u7cfb\u5217\u7ae5\u88c580-104,100-140","top_tpl":"0","bottom_tpl":"0","video_url":"","viewnum":"1467","wholesale_num":"1","is_free_shipping":"0","weight":"0.10","ext_attr":null,"kind_ratio":"\u88e4\u5b5031%\uff0c\u4e0a\u886364%\uff0c\u5916\u59575%","year_area_id":"30","child_gender_id":"3","brand_area_id":"45","brand_material_id":"25","season_id":"3","style":"10"},"goods_detail":"<p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/9700375b1229b042803ae80042376f61.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/1b60c1c8682d7254e92242096fe5178c.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/cd97ab49dd62dd1a2a7b017a4c09c3b4.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/56b78d7f092c22e89d2608c8ac56b44c.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/e305d3b844b7ffcbd5c0f661a7a9fd96.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/5d503baecfb6ab92c73698286d9a394d.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/6d564d4203a243adcba5862a9b6fe187.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/66b780f5d83d2345f7740c5c7410402b.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/3e1207d57665484389fb4fc5bff07159.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/6a0994307bc5d0a954f87b734b61c03c.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/bd3ef67bb8fd728bb7b310e1fc9fe21a.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/dfcda2abcbabf076215d81c6b54353d1.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p> <\/p>         ","goods_style":"\u4f11\u95f2","member_price":[{"level_name":"\u767d\u94f6\u4f1a\u5458","level":"7","price":29.9,"rate":"100"},{"level_name":"\u9ec4\u91d1\u4f1a\u5458","level":"10","price":29.3,"rate":"98"},{"level_name":"\u94c2\u91d1\u4f1a\u5458","level":"11","price":28.41,"rate":"95"},{"level_name":"\u94bb\u77f3\u4f1a\u5458","level":"12","price":26.91,"rate":"90"}],"seasion_name":"\u79cb","brand_name":"\u8fea\u8d1d\u514b","brand_info":{"id":"197","brand_name":"\u8fea\u8d1d\u514b","goods_class_id":"50","brand_logo":"","brand_description":"","sort":"0","recommend":"0","create_time":"1592297307","update_time":"1592460973","letter":"","brand_banner":"","video_url":"https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200618\/42b45bcf2a22740587419fad47f2fbd9.mp4","video_description":"","status":"0","path":null},"brand_area":"\u5c71\u4e1c","brand_material":"\u68c9","is_like":0,"is_collect":0,"iskill":1,"killgood":{"id":"2785","main_id":"1329","goods_id":"33030","price":"8.80","time_slot":"09:00","start_time":"1593997200","end_time":"1594051199","goods_type":"3","stock":"600","sale_num":"300","type":"1","limitnum":"0","deadline":23187,"isdoing":1},"lastmoney":29.3,"level_name":"\u9ec4\u91d1\u4f1a\u5458","level_id":"10"}}
-			this.detail = a.data
-		},
+		
 	}
 </script>
 
 <style lang="scss" scoped>
 	.good-detail {
 		background: #f3f3f3;
+		padding-bottom: 100rpx;
 	}
 	.share-pop{
 		height: 536rpx;
@@ -747,10 +786,9 @@
 			.buy-btn {
 				width:210rpx;
 				height:80rpx;
-				background:linear-gradient(90deg,rgba(251,172,60,1) 0%,rgba(247,114,16,1) 100%);
+				background:linear-gradient(90deg, #F77312 0%,#FAA638 100%);
 				border-radius:40rpx 0px 0px 40rpx;
 				font-size: 32rpx;
-				background: #F23030;
 				font-weight: 400;
 				color: #fff;
 				line-height: 80rpx;
@@ -903,7 +941,7 @@
 				justify-content: space-between;
 	
 				.num-tips {
-					font-size: 38rpx;
+					font-size: 30rpx;
 					color: #333;
 					font-weight: 500;
 				}
