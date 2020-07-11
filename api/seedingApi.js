@@ -25,6 +25,8 @@ const seedingApi = {
 	getSeedingBoughtList: '/api/topic/orderGoodsList', // 12.关联已买到的商品
 
 	getFeaturedList: '/api/topic/articlelist', // 13.精选
+	
+	updateCenterPageDesc: '/api/topic/editMyword', // 14.更新留言
 
 }
 

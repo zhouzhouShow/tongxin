@@ -1,8 +1,8 @@
 <template>
 	<view class="seeding_item">
-		<view class="item" v-for="(item,index) in list" :key="item.id">
+		<view @click.stop="handleToSeedingDetail(item.id)" class="item" v-for="(item,index) in list" :key="item.id">
 			<view class="item_master">
-				<view @click="handleToUserPage(item.user_id)" class="info">
+				<view @click.stop="handleToUserPage(item.user_id)" class="info">
 					<view class="info_avatar">
 						<image :src="item.userinfo.avatar" mode="scaleToFill"></image>
 					</view>
@@ -11,10 +11,10 @@
 						<text>{{item.userinfo.bio}}</text>
 					</view>
 				</view>
-				<view v-if="userId==item.userinfo.id" @click="mineControl(item.id)" class="ismine">
+				<view v-if="userId==item.userinfo.id" @click.stop="mineControl(item.id)" class="ismine">
 					<image src="@/static/images/seeding/icon_more.png" mode=""></image>
 				</view>
-				<view v-else-if="!item.isfollow && showFollow" @click="handleConcern(item.id)" class="concern">
+				<view v-else-if="!item.isfollow && showFollow" @click.stop="handleConcern(item.id)" class="concern">
 					<image src="@/static/images/seeding/icon_concern.png" mode="scaleToFill"></image>
 					<text>关注</text>
 					<!-- <text>{{item.master_info.is_follow?'已关注':'关注'}}</text> -->
@@ -24,7 +24,7 @@
 				<SeedingImages :imagesType="imagesType" :info="item.up_data" @previewImage="previewImage"></SeedingImages>
 			</view>
 			<view class="item_about">
-				<view @click="handleToDetail(item.goodsinfo[0].goods_id)" v-if="item.goodsinfo.length<=1" class="only">
+				<view @click.stop="handleToDetail(item.goodsinfo[0].goods_id)" v-if="item.goodsinfo.length<=1" class="only">
 					<view class="image">
 						<image :src="item.goodsinfo[0].goods_images[0]" mode="aspectFit"></image>
 					</view>
@@ -37,7 +37,7 @@
 						</view>
 					</view>
 				</view>
-				<view @click="showPopup(item,index)" v-else class="more">
+				<view @click.stop="showPopup(item,index)" v-else class="more">
 					<view class="images">
 						<view v-for="img in item.goodsinfo" :key="img.id" class="image">
 							<image :src="img.goods_images[0]" mode="aspectFit"></image>
@@ -62,15 +62,15 @@
 					</view>
 				</view>
 				<view class="right">
-					<view @click="handleLike(item.id)" class="like">
+					<view @click.stop="handleLike(item.id)" class="like">
 						<image :src="item.isfav?require('@/static/images/seeding/icon_like.png'):require('@/static/images/seeding/icon_unlike.png')"
 						 mode="scaleToFill"></image>
 						<text>({{item.likenum}})</text>
 					</view>
-					<view class="share">
+					<view @click.stop="handleShare(item.id)" class="share">
 						<image src="@/static/images/seeding/icon_share.png" mode="scaleToFill"></image>
 						<text>({{item.sharenum}})</text>
-						<button open-type="share"></button>
+						<button open-type="share" :data-id="item.id"></button>
 					</view>
 				</view>
 			</view>
@@ -78,10 +78,10 @@
 		<uni-popup @change="popupChange" ref="popup" type="bottom">
 			<view class="popup_header">
 				<text class="title">{{list[targetIndex].goodsinfo.length}}个关联商品</text>
-				<image @click="hidePopup" class="close" src="@/static/images/seeding/icon_close.png" mode="scaleToFill"></image>
+				<image @click.stop="hidePopup" class="close" src="@/static/images/seeding/icon_close.png" mode="scaleToFill"></image>
 			</view>
 			<view class="popup_list">
-				<view  @click="handleToDetail(el.goods_id)" v-for="(el,index) in list[targetIndex].goodsinfo" :key="index" class="popup_list_item">
+				<view  @click.stop="handleToDetail(el.goods_id)" v-for="(el,index) in list[targetIndex].goodsinfo" :key="index" class="popup_list_item">
 					<view class="left">
 						<image :src="el.goods_images[0]" mode="aspectFill"></image>
 					</view>
@@ -99,10 +99,10 @@
 		</uni-popup>
 		<uni-popup @change="btnPopupChange" ref="btnPopup" type="bottom">
 			<view class="btn_popup">
-				<view @click="handleDelete" class="delete">
+				<view @click.stop="handleDelete" class="delete">
 					<text>删除</text>
 				</view>
-				<view @click="hideBtnPopup" class="calcel">
+				<view @click.stop="hideBtnPopup" class="calcel">
 					<text>取消</text>
 				</view>
 			</view>
@@ -168,8 +168,14 @@
 			handleLike(id) {
 				this.$emit('handleLike', id)
 			},
+			handleToSeedingDetail(id){
+				this.$emit('handleToSeedingDetail', id)
+			},
 			handleToUserPage(id) {
 				this.$emit('handleToUserPage',id)
+			},
+			handleShare(id) {
+				this.$emit('handleShare',id)
 			},
 			showPopup(item, index) {
 				this.targetIndex = index || 0
@@ -420,7 +426,8 @@
 			}
 
 			&_desc {
-				margin-top: 30rpx;
+				// margin-top: 30rpx;
+				padding: 30rpx 0 50rpx 0;
 				width: 100%;
 				font-size: 28rpx;
 				font-family: PingFang SC;
@@ -436,7 +443,7 @@
 			}
 
 			&_theme {
-				margin-top: 50rpx;
+				// margin-top: 50rpx;
 				display: flex;
 				justify-content: space-between;
 

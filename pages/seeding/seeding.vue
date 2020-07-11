@@ -37,7 +37,8 @@
 		</view>
 		<view class="seeding_list">
 			<SeedingItem :list="list" :isTabBar="true" :userId="userInfo.id" @handleToDetail="handleToDetail" @handleDelete="handleDelete"
-			 @handleConcern="handleConcern" @previewImage="previewImage" @handleToUserPage="handleToUserPage" @handleLike="handleLike"></SeedingItem>
+			 @handleToSeedingDetail="handleToSeedingDetail" @handleConcern="handleConcern" @previewImage="previewImage"
+			 @handleToUserPage="handleToUserPage" @handleLike="handleLike"></SeedingItem>
 			<uni-load-more :status="loadingType"></uni-load-more>
 		</view>
 		<view @click="handleToCreate" class="seeding_create">
@@ -64,7 +65,7 @@
 		data() {
 			return {
 				loadingType: '1',
-				searchText: '',
+				searchText: '好',
 				isSearch: false,
 				userInfo: {},
 				navList: [{
@@ -74,8 +75,8 @@
 				nowIndex: 0,
 				targetIndex: 0,
 				list: [],
-				page:0,
-				pageSize:10
+				page: 0,
+				pageSize: 10
 			};
 		},
 		onReachBottom() {
@@ -88,24 +89,74 @@
 			this.getFeaturedList()
 		},
 		onReady() {
-			uni.$on('changeFollow',info=>{
-					let id = info.userId
-					let item = this.list.filter(v=>v.user_id==id)
-					item && (item[0].isfollow = info.isfollow)
+			uni.$on('changeFollow', info => {
+				let id = info.userId
+				let items = this.list.filter(v => v.user_id == id)
+				items.forEach(el=>{
+					el.isfollow = info.isfollow
+				})
 			})
-				
-			uni.$on('changeLike',info=>{
-					let id = info.id
-					let isfav = info.isfav
-					let likenum = info.likenum
-					let item = this.list.filter(v=>v.id==id)
-					item && (item[0].isfav = isfav)
-					item && (item[0].likenum = likenum)
+
+			uni.$on('changeLike', info => {
+				let id = info.id
+				let isfav = info.isfav
+				let likenum = info.likenum
+				let item = this.list.filter(v => v.id == id)
+				item && (item[0].isfav = isfav)
+				item && (item[0].likenum = likenum)
+			})
+
+			uni.$on('changeShare', info => {
+				let id = info.id
+				let sharenum = info.sharenum
+				let item = this.list.filter(v => v.id == id)
+				item && (item[0].sharenum = sharenum)
+			})
+			
+			uni.$on('deleteSeeding', id => {
+				this.list.forEach((item, index) => {
+					if (item.id == id) {
+						this.list.splice(index, 1)
+						this.userInfo.article_num = this.userInfo.article_num - 1
+					}
+				})
+			})
+			
+			uni.$on('hasCreate', ()=>{
+				this.userInfo.article_num = this.userInfo.article_num + 1
 			})
 		},
 		onUnload() {
 			uni.$off('changeFollow')
 			uni.$off('changeLike')
+			uni.$off('changeShare')
+			uni.$off('deleteSeeding')
+			uni.$off('hasCreate')
+		},
+		onShareAppMessage(res) {
+			if (res.from === 'button') {
+				// 通过按钮触发
+				var data = res.target.dataset
+				return {
+					// title: `${this.userInfo.nickname}给你分享种草精选`,
+					path: '/pages/seeding/productDetail?id=' + data.id,
+					success(res) {
+						// 转发成功
+						this.handleShare(data.id)
+						console.log('转发成功')
+					},
+					fail(res) {
+						// 转发失败
+						console.log('转发失败')
+					}
+				}
+			}
+			//通过右上角菜单触发
+			return {
+				// title: '开普勒小程序',
+				path: "/pages/seeding/seeding",
+				// imageUrl: '/images/aikepler-logo.jpeg'
+			};
 		},
 		methods: {
 			getPersonalCenterData() {
@@ -115,15 +166,15 @@
 			},
 			getFeaturedList() {
 				this.loadingType = 2
-				this.$fly.post(this.$api.getFeaturedList,{
-					keyword:this.searchText,
-					page:this.page,
-					pageSize:this.pageSize
+				this.$fly.post(this.$api.getFeaturedList, {
+					keyword: this.searchText,
+					page: this.page,
+					pageSize: this.pageSize
 				}).then(res => {
 					this.list = this.list.concat(res.data.list)
-					if(res.data.list.length<this.pageSize){
+					if (res.data.list.length < this.pageSize) {
 						this.loadingType = 3
-					}else{
+					} else {
 						this.loadingType = 1
 					}
 				})
@@ -134,21 +185,49 @@
 			},
 			handleConcern(id) {
 				let item = this.list.filter(v => v.id == id)[0] || {}
-				this.$fly.post(this.$api.seedingHandleFollow,{
-					relateId:item.user_id,
-					actionType:0
-				}).then(res=>{
+				this.$fly.post(this.$api.seedingHandleFollow, {
+					relateId: item.user_id,
+					actionType: 0
+				}).then(res => {
 					item.isfollow = true
 				})
 			},
+			handleShare(id) {
+				let item = this.list.filter(v => v.id == id)[0] || {}
+				this.$fly.post(this.$api.seedingShare, {
+					relateId: id
+				}).then(res => {
+					item.sharenum = item.sharenum + 1
+				})
+			},
 			handleDelete(id) {
-				this.list.forEach((item, index) => {
-					if (item.id == id) {
-						this.list.splice(index, 1)
-					}
+				uni.showLoading({
+					title:"删除中..."
+				})
+				this.$fly.post(this.$api.deleteSeeding,{
+					ids:id
+				}).then(res=>{
+					this.list.forEach((item, index) => {
+						if (item.id == id) {
+							this.list.splice(index, 1)
+							this.userInfo.article_num = this.userInfo.article_num - 1
+						}
+					})
+					uni.showToast({
+						title:'删除成功',
+						duration:1500
+					})
+					uni.hideLoading()
+				}).catch(err=>{
+					uni.hideLoading()
 				})
 			},
 			handleToDetail(id) {
+				wx.navigateTo({
+					url: "../good/goodDetail?id=" + id,
+				})
+			},
+			handleToSeedingDetail(id) {
 				wx.navigateTo({
 					url: "./productDetail?id=" + id,
 				})
@@ -172,10 +251,10 @@
 			},
 			handleLike(id) {
 				let item = this.list.filter(v => v.id == id)[0] || {}
-				this.$fly.post(this.$api.seedingHandleLike,{
-					relateId:id,
-					actionType:item.isfav?1:0
-				}).then(res=>{
+				this.$fly.post(this.$api.seedingHandleLike, {
+					relateId: id,
+					actionType: item.isfav ? 1 : 0
+				}).then(res => {
 					item.isfav = !item.isfav
 					item.likenum = item.isfav ? item.likenum + 1 : item.likenum - 1
 				})
@@ -183,21 +262,6 @@
 			handleToUserPage(id) {
 				wx.navigateTo({
 					url: "./userpage?writer_id=" + id,
-					// events:{
-					// 	changeFollow:info=>{
-					// 		let id = info.userId || info.id
-					// 		let item = this.list.filter(v=>v.user_id==id||v.id==id)
-					// 		item && (item[0].isfollow = info.isfollow)
-					// 	},
-					// 	changeLike:info=>{
-					// 		let id = info.id
-					// 		let isfav = info.isfav
-					// 		let likenum = info.likenum
-					// 		let item = this.list.filter(v=>v.id==id)
-					// 		item && (item[0].isfav = isfav)
-					// 		item && (item[0].likenum = likenum)
-					// 	}
-					// }
 				})
 			},
 			// 图片预览
@@ -322,7 +386,8 @@
 
 				&.hide {
 					width: 60rpx;
-					input{
+
+					input {
 						display: none;
 					}
 				}
@@ -345,8 +410,8 @@
 					line-height: 60rpx;
 					padding-right: 120rpx;
 				}
-				
-				.text{
+
+				.text {
 					position: absolute;
 					width: 90rpx;
 					overflow: hidden;

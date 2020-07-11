@@ -8,8 +8,10 @@
 				<text>{{masterInfo.nickname}}</text>
 			</view>
 			<view class="desc">
-				{{masterInfo.bio || '主人太懒了，什么也没留下'}}
-			</view>
+				<!-- {{masterInfo.bio || '主人太懒了，什么也没留下'}} -->
+				<textarea auto-height :focus="isEdit" :class="[isEdit?'active':'']" :disabled="!isEdit" placeholder-style="color:rgba(255,255,255,.8)"
+				 type="text" v-model="masterInfo.bio" placeholder="主人太懒了,什么也没留下" />
+				</view>
 			<view class="number">
 				<view class="left">
 					<text>种草数 {{masterInfo.article_num}}</text>
@@ -19,9 +21,9 @@
 					<text>粉丝 {{masterInfo.fans_num}}</text>
 				</view>
 			</view>
-			<view class="edit" v-if="masterInfo && !userId">
+			<view @click="changeEdit" class="edit" v-if="masterInfo && !userId">
 				<image src="../../static/images/seeding/icon_edit.png" mode="scaleToFill"></image>
-				<text>编辑</text>
+				<text>{{isEdit?'完成':'编辑'}}</text>
 			</view>
 		</view>
 		<view class="userpage_nav">
@@ -33,9 +35,9 @@
 			</view>
 		</view>
 		<view class="userpage_list">
-			<SeedingItem :list="nowIndex==0?seedingList:likeList" :isTabBar="false" :userId="userId==0?masterInfo.id:undefined" @handleToDetail="handleToDetail"
-			 @handleDelete="handleDelete" @handleConcern="handleConcern" @previewImage="previewImage"
-			 @handleLike="handleLike"></SeedingItem>
+			<SeedingItem :list="nowIndex==0?seedingList:likeList" :isTabBar="false" :userId="userId==0?masterInfo.id:undefined"
+			 @handleToDetail="handleToDetail" @handleToSeedingDetail="handleToSeedingDetail" @handleDelete="handleDelete"
+			 @handleConcern="handleConcern" @previewImage="previewImage" @handleLike="handleLike"></SeedingItem>
 			<uni-load-more :status="loadingType"></uni-load-more>
 		</view>
 		<view v-if="masterInfo && userId" class="userpage_btn">
@@ -62,6 +64,7 @@
 			return {
 				loadingType: '1',
 				userId: 0,
+				isEdit:false,
 				masterInfo: {},
 				navList: [{
 						id: 1,
@@ -72,8 +75,8 @@
 						text: '喜欢'
 					}
 				],
-				page:0,
-				pageSize:10,
+				page: 0,
+				pageSize: 10,
 				nowIndex: 0,
 				seedingList: [],
 				likeList: seedingJson,
@@ -82,9 +85,9 @@
 		onReachBottom() {
 			if (this.loadingType == 2 || this.loadingType == 3) return
 			this.page++
-			if(this.nowIndex==0){
+			if (this.nowIndex == 0) {
 				this.getSeedingCenterSeeding()
-			}else{
+			} else {
 				this.getSeedingCenterLike()
 			}
 		},
@@ -92,15 +95,40 @@
 			this.eventChannel = this.getOpenerEventChannel()
 			if (options.writer_id) {
 				this.userId = options.writer_id
-			}else{
+			} else {
 				this.userId = 0
 			}
 			let id = await this.getPersonalCenterData()
 			this.getSeedingCenterSeeding()
 		},
+		onShareAppMessage(res) {
+			if (res.from === 'button') {
+				// 通过按钮触发
+				var data = res.target.dataset
+				return {
+					// title: `${this.userInfo.nickname}给你分享种草精选`,
+					path: '/pages/seeding/productDetail?id=' + data.id,
+					success(res) {
+						// 转发成功
+						this.handleShare(data.id)
+						console.log('转发成功')
+					},
+					fail(res) {
+						// 转发失败
+						console.log('转发失败')
+					}
+				}
+			}
+			//通过右上角菜单触发
+			return {
+				// title: '开普勒小程序',
+				path: "/pages/seeding/userpage?writer_id=" + this.userId,
+				// imageUrl: '/images/aikepler-logo.jpeg'
+			};
+		},
 		methods: {
 			getPersonalCenterData() {
-				return new Promise((res,rej)=>{
+				return new Promise((res, rej) => {
 					let data = this.userId > 0 ? {
 						writer_id: this.userId
 					} : {}
@@ -109,7 +137,7 @@
 						this.masterInfo = rs.data || {}
 						uni.hideLoading()
 						res(rs.data)
-					}).catch(err=>{
+					}).catch(err => {
 						uni.hideLoading()
 						rej(err)
 					})
@@ -117,30 +145,30 @@
 			},
 			getSeedingCenterSeeding() {
 				this.loadingType = 2
-				this.$fly.post(this.$api.getSeedingCenterSeeding,{
-					page:this.page,
-					pageSize:this.pageSize,
-					writer_id:this.masterInfo.id
-				}).then(res=>{
+				this.$fly.post(this.$api.getSeedingCenterSeeding, {
+					page: this.page,
+					pageSize: this.pageSize,
+					writer_id: this.masterInfo.id
+				}).then(res => {
 					this.seedingList = this.seedingList.concat(res.data.list)
-					if(res.data.list.length<this.pageSize){
+					if (res.data.list.length < this.pageSize) {
 						this.loadingType = 3
-					}else{
+					} else {
 						this.loadingType = 1
 					}
 				})
 			},
 			getSeedingCenterLike() {
 				this.loadingType = 2
-				this.$fly.post(this.$api.getSeedingCenterLike,{
-					page:this.page,
-					pageSize:this.pageSize,
-					writer_id:this.masterInfo.id
-				}).then(res=>{
+				this.$fly.post(this.$api.getSeedingCenterLike, {
+					page: this.page,
+					pageSize: this.pageSize,
+					writer_id: this.masterInfo.id
+				}).then(res => {
 					this.likeList = this.likeList.concat(res.data.list)
-					if(res.data.list.length<this.pageSize){
+					if (res.data.list.length < this.pageSize) {
 						this.loadingType = 3
-					}else{
+					} else {
 						this.loadingType = 1
 					}
 				})
@@ -150,67 +178,118 @@
 				this.nowIndex = idx
 				this.page = 0
 				this.loadingType = 1
-				if(this.nowIndex==0){
+				if (this.nowIndex == 0) {
 					this.seedingList = []
 					this.getSeedingCenterSeeding()
-				}else{
+				} else {
 					this.likeList = []
 					this.getSeedingCenterLike()
 				}
 			},
+			handleShare(id) {
+				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
+				let item = list.filter(v => v.id == id)[0] || {}
+				this.$fly.post(this.$api.seedingShare, {
+					relateId: id
+				}).then(res => {
+					item.sharenum = item.sharenum + 1
+					uni.$emit('changeShare', {
+						id: id,
+						sharenum: item.sharenum
+					})
+				})
+			},
 			handleConcern(id) {
 				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
 				let item = list.filter(v => v.id == id)[0] || {}
-				this.$fly.post(this.$api.seedingHandleFollow,{
-					relateId:item.user_id,
-					actionType:0
-				}).then(res=>{
+				this.$fly.post(this.$api.seedingHandleFollow, {
+					relateId: item.user_id,
+					actionType: 0
+				}).then(res => {
 					item.isfollow = true
-					if(item.user_id==this.userId){
+					if (item.user_id == this.userId) {
 						this.masterInfo.isfollow = !this.masterInfo.isfollow
+						this.masterInfo.fans_num = this.masterInfo.isfollow?this.masterInfo.fans_num+1:this.masterInfo.fans_num-1
 					}
-					// this.eventChannel.emit('changeFollow',{
-					// 	id:id,
-					// 	isfollow:item.isfollow
-					// })
-					uni.$emit('changeFollow',{
-						userId:item.user_id,
-						isfollow:item.isfollow
+					uni.$emit('changeFollow', {
+						userId: item.user_id,
+						isfollow: item.isfollow
 					})
 				})
 			},
 			handleConcernUser() {
 				this.masterInfo.is_follow = !this.masterInfo.is_follow
-				this.$fly.post(this.$api.seedingHandleFollow,{
+				this.$fly.post(this.$api.seedingHandleFollow, {
 					relateId: this.userId,
-					actionType: this.masterInfo.isfollow?1:0
-				}).then(res=>{
+					actionType: this.masterInfo.isfollow ? 1 : 0
+				}).then(res => {
 					this.masterInfo.isfollow = !this.masterInfo.isfollow
+					this.masterInfo.fans_num = this.masterInfo.isfollow?this.masterInfo.fans_num+1:this.masterInfo.fans_num-1
 					let list = this.nowIndex == 0 ? this.seedingList : this.likeList
-					list.forEach(item=>{
-						if(item.user_id==this.masterInfo.id){
+					list.forEach(item => {
+						if (item.user_id == this.masterInfo.id) {
 							item.isfollow = this.masterInfo.isfollow
 						}
 					})
-					// this.eventChannel.emit('changeFollow',{
-					// 	userId:this.userId,
-					// 	isfollow:this.masterInfo.isfollow
-					// })
-					uni.$emit('changeFollow',{
-						userId:this.userId,
-						isfollow:this.masterInfo.isfollow
+					uni.$emit('changeFollow', {
+						userId: this.userId,
+						isfollow: this.masterInfo.isfollow
 					})
 				})
 			},
 			handleDelete(id) {
-				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
-				list.forEach((item, index) => {
-					if (item.id == id) {
-						list.splice(index, 1)
-					}
+				uni.showLoading({
+					title:"删除中..."
+				})
+				this.$fly.post(this.$api.deleteSeeding,{
+					ids:id
+				}).then(res=>{
+					let list = this.nowIndex == 0 ? this.seedingList : this.likeList
+					list.forEach((item, index) => {
+						if (item.id == id) {
+							list.splice(index, 1)
+							this.masterInfo.article_num = this.masterInfo.article_num - 1
+						}
+					})
+					uni.showToast({
+						title:'删除成功',
+						duration:1500
+					})
+					uni.hideLoading()
+					uni.$emit('deleteSeeding',id)
+				}).catch(err=>{
+					uni.hideLoading()
 				})
 			},
+			changeEdit(){
+				this.isEdit = !this.isEdit
+				if(!this.isEdit){
+					uni.showLoading({
+						title:'更新中...'
+					})
+					this.$fly.post(this.$api.updateCenterPageDesc,{
+						word:this.masterInfo.bio
+					}).then(res=>{
+						uni.hideLoading()
+						uni.showToast({
+							title:'更新成功',
+							duration:1500
+						})
+					}).catch(err=>{
+						this.isEdit = true
+						uni.showToast({
+							title:'更新失败，请重试',
+							duration:1500
+						})
+					})
+				}
+			},
 			handleToDetail(id) {
+				wx.navigateTo({
+					url: "../good/goodDetail?id=" + id,
+				})
+			},
+			handleToSeedingDetail(id) {
 				wx.navigateTo({
 					url: "./productDetail?id=" + id,
 				})
@@ -221,33 +300,28 @@
 			handleLike(id) {
 				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
 				let item = list.filter(v => v.id == id)[0] || {}
-				this.$fly.post(this.$api.seedingHandleLike,{
-					relateId:id,
-					actionType:item.isfav?1:0
-				}).then(res=>{
+				this.$fly.post(this.$api.seedingHandleLike, {
+					relateId: id,
+					actionType: item.isfav ? 1 : 0
+				}).then(res => {
 					item.isfav = !item.isfav
 					item.likenum = item.isfav ? item.likenum + 1 : item.likenum - 1
-					if(this.userId<=0){
-						if(this.nowIndex==0){
-							this.masterInfo.fav_num = item.isfav?this.masterInfo.fav_num+1: this.masterInfo.fav_num-1
-						}else{
-							this.masterInfo.fav_num = this.masterInfo.fav_num-1
-							this.likeList.forEach((item,index)=>{
-								if(item.id==id){
-									this.likeList.splice(index,1)
+					if (this.userId <= 0) {
+						if (this.nowIndex == 0) {
+							this.masterInfo.fav_num = item.isfav ? this.masterInfo.fav_num + 1 : this.masterInfo.fav_num - 1
+						} else {
+							this.masterInfo.fav_num = this.masterInfo.fav_num - 1
+							this.likeList.forEach((item, index) => {
+								if (item.id == id) {
+									this.likeList.splice(index, 1)
 								}
 							})
 						}
 					}
-					// this.eventChannel.emit('changeLike',{
-					// 	id:id,
-					// 	isfav:item.isfav,
-					// 	likenum:item.likenum
-					// })
-					uni.$emit('changeLike',{
-						id:id,
-						isfav:item.isfav,
-						likenum:item.likenum
+					uni.$emit('changeLike', {
+						id: id,
+						isfav: item.isfav,
+						likenum: item.likenum
 					})
 				})
 			},
@@ -309,14 +383,22 @@
 			}
 
 			.desc {
-				margin-top: 17rpx;
-				height: 24rpx;
-				font-size: 24rpx;
-				line-height: 24rpx;
-				font-family: PingFang SC;
-				font-weight: 400;
-				color: rgba(255, 255, 255, .8);
-			}
+				width: 100%;
+				display: flex;
+				textarea {
+					margin-top: 17rpx;
+					width: 100%;
+					text-align: center;
+					font-size: 24rpx;
+					line-height: 24rpx;
+					font-family: PingFang SC;
+					font-weight: 400;
+					color: rgba(255, 255, 255, .8);
+					&.active{
+						// border: 1rpx solid #fff;
+					}
+				}
+			}	
 
 			.number {
 				width: 750rpx;
