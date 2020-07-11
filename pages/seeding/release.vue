@@ -271,7 +271,10 @@
 						icon:'success',
 						duration:1500
 					})
-					wx.navigateBack()
+					uni.$emit('hasCreate')
+					setTimeout(()=>{
+						wx.navigateBack()
+					},1500)
 				}).catch(err=>{
 					uni.hideLoading()
 				})
