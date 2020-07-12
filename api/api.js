@@ -2,6 +2,7 @@ import index from './index'
 import good from './good'
 import seedingApi from './seedingApi'
 import centerApi from './centerApi'
+import order from './order'
 
 const api = {
   /* 登录 */
@@ -14,8 +15,9 @@ const api = {
 	
 }
 
-Object.assign(api,index)
-Object.assign(api,good)
+Object.assign(api, index)
+Object.assign(api, good)
 Object.assign(api, seedingApi);
 Object.assign(api, centerApi);
+Object.assign(api, order)
 export default api;

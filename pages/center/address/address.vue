@@ -1,68 +1,113 @@
 <template>
-	<view class="container">
-		<scroll-view scroll-y class="scroll-y">
+ <div class="container">
+		<scroll-div scroll-y class="scroll-y">
 			<radio-group @change='handleChooseDefault'>
-				<view class="address-item" v-for='item in addressList' :key='item.id'>
-					<view class="address-item-top" @click.stop="orderBindAddress(item.id)">
-						<view>{{item.realname}} {{item.mobile}}</view>
-						<view>{{item.prov_name}}{{item.city_name}}{{item.dist_name}}{{item.address}}</view>
-					</view>
-					<view class="address-item-bottom">
-						<view @click='changeDafaultAddress(item)'>
+				<div class="address-item" v-for='(item,index) in addressList' :key='index'>
+					<div class="address-item-top" @click.stop="chooseAddress(item.id,item.status)"
+           :key="item.id">
+						<div>{{item.realname}} {{item.mobile}}</div>
+						<div>{{item.provName}}{{item.cityName}}{{item.distName}}{{item.address}}</div>
+					</div>
+					<div class="address-item-bottom">
+						<!-- <div > -->
+						<div @click='changeDafaultAddress(item)'>
 							<label class="radio">
-								<radio :checked='item.status=="1"?true:false'>默认地址</radio>
+								<radio :value="item.id"  color="#F62A8A" :checked='item.status==1'>默认地址</radio>
 							</label>
-						</view>
-						<view>
-							<view class="yticon icon-bianji" @click='handleTo(item)'></view>
-							<view class="yticon icon-iconfontshanchu1" @click='delAddress(item)'></view>
-						</view>
-					</view>
-				</view>
+						</div>
+						<div>
+            <div class="addressEdit" @click.stop="toeditadress(item.id)">
+              <img  src="/static/images/icon/icon_edit.png" alt="">
+            </div>
+						<div class="delete">
+							<img @click='delAddress(item)'  src="../../../static/images/icon/delete_icon.png" mode="">	
+						</div>
+							<!-- <div class="yticon icon-bianji" @click='handleTo(item)'></div> -->
+							<!-- <div class="yticon icon-iconfontshanchu1" ></div> -->
+						</div>
+					</div>
+				</div>
 			</radio-group>
-		</scroll-view>
-		<view class="btn">
-			<view @click='handleTo(false)'>新建地址</view>
-		</view>
-	</view>
+		</scroll-div> 
+		<div class="btn">
+			<div @click.stop="editadress">新建地址</div>
+		</div>
+	</div>
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				type: 0,
-				loadFinish:false,
-				addressList: [],
-				again:false,
-				isOrder:0,
-			}
-		},
-		methods: {
-			handleChooseDefault(e) {
-				console.log(e)
-			},
-			handleTo(item) {
-				let url;
-				if(item){
-					url = `addressManage?item=${JSON.stringify(item)}&type=${this.type}`
-				}else{
-					url = `addressManage?type=${this.type}`
+  import loadMore from '@/components/uni-load-more/uni-load-more.vue'
+
+  var page = 1, pageSize = 10;
+  export default {
+    name: "my-address",
+    components: {
+       loadMore
+    },
+    data() {
+      return {
+        title: '',
+        addressType: 0,
+        isShop: 0,
+        addressList: [],
+        loadMore: 1,
+        cart_ids: '',
+        checkId:''
+      }
+    },
+    methods: {
+      handleChooseDefault(e){
+        let _this =this
+        // wx.showModal({
+        //   title:'提示',
+        //   content:'是否确认设为默认?',
+        //   success:(res)=>{
+        //     console.log(res)
+        //     if(res.confirm){
+               _this.addressSetDefault(e.target.value)
+
+        //       console.log(res)
+        //     }else{
+           
+        //     }
+        //   }
+        // })
+      },
+      changeDafaultAddress(item){
+        
+      },
+      //设置默认地址
+      addressSetDefault(id) {
+        return new Promise((resolve, reject) => {
+            this.$fly.post(this.$api.addressSetDefault, {
+              id: id
+            }).then(res => {
+              // this.checkId = id
+              this.addressList.forEach(val => {
+                val.status = 0;
+                if (val.id == id) {
+                  val.status = 1;
+                }
+              })
+              this.$tip.toast('设置成功');
+              resolve();
+            })
+        })
+      },
+      //chooseAddress
+      chooseAddress(id, status) {
+				if(this.isShop==1){
+					this.addressSetDefault(id, status).then(() => {
+					  wx.setStorageSync('address_id',id)
+					  // 跳转到提交订单页面
+					  // uni.navigateBack();
+					  uni.redirectTo({
+					    url: "/pages/shopAndOrder/settlement/submitOrder?address_id="+id+'&cart_ids='+this.cart_ids
+					  });
+					})
 				}
-				wx.navigateTo({
-					url
-				})
-			},
-			changeDafaultAddress(item) {
-				this.$request.post({
-					url: this.$api.addressSetDefault,
-					data: {
-						address_id: item.id
-					}
-				}).then(res => {
-					console.log('changeDefaultAddress', res)
-				})
-			},
+        
+      },
 			delAddress(item) {
 				let _this = this;
 				uni.showModal({
@@ -70,24 +115,12 @@
 					content: '您确定要删除此地址吗？',
 					success: function(res) {
 						if (res.confirm) {
-							_this.$request.post({
-								url: _this.$api.addressDel,
-								data: {
+							_this.$fly.post(_this.$api.addressDel,{
 									address_ids: item.id
 								}
-							}).then(rs => {
-								console.log('delAddress', rs)
-								_this.$request.post({
-									url: _this.$api.addressList,
-									data:{
-										page: 1,
-										pageSize: 10,
-										type: _this.type
-									}
-								}).then(r => {
-									console.log('addressList', r)
-									_this.addressList = r.list
-								})
+							).then(rs => {
+								this.addressList = []
+								this.getAddressList()
 							})
 						} else if (res.cancel) {
 							console.log('用户点击取消');
@@ -95,67 +128,92 @@
 					}
 				});
 			},
-			orderBindAddress(id){
-				if(this.isOrder == 1){
-					uni.setStorageSync('addressId', id);
-					wx.navigateBack({
-						delta:1
-					})
-				}
-			},
-			getAddressList() {
-				this.$request.post({
-					url: this.$api.addressList,
-					data:{
-						page: 1,
-						pageSize: 10,
-						type: this.type
-					}
-				}).then(res => {
-					console.log('addressList', res)
-					this.addressList = res.list
-				})
-			}
-		},
-		mounted() {
-			if(this.loadFinish){
-				this.getAddressList()
-			}
-		},
-		onShow() {
-			if(this.again){
-				this.getAddressList()
-			}
-			this.again = true;
-		},
-		onLoad(data){
-			if(data.type == 'receive'){
-				this.type = 0
-				this.loadFinish = true
-				uni.setNavigationBarTitle({
-				    title: '收货地址'
-				});
-			}else if(data.type == 'send'){
-				this.type = 1
-				this.loadFinish = true
-				uni.setNavigationBarTitle({
-				    title: '发货地址'
-				});
-			}
-			this.loadFinish = true;
-			this.isOrder = data.isOrder;
-		}
-	}
+      //编辑地址
+      toeditadress(id) {
+        uni.navigateTo({
+          url: '/pages/center/address/addressDetail?addressType='+this.addressType+'&type=2&id='+id
+        })
+      },
+      //新增地址
+      editadress() {
+        uni.navigateTo({
+          url: '/pages/center/address/addressDetail?addressType='+this.addressType+'&type=1'
+        })
+      },
+      //删除地址
+      addressDel(id, i) {
+        this.$tip.loading('正在删除')
+        this.$fly.post(this.$api.addressDel, {
+          address_ids: id + ''
+        }).then(res => {
+          this.addressList.splice(i, 1);
+          this.$tip.loaded();
+          this.$tip.toast('删除成功')
+        })
+      },
+      //获取地址列表
+      getAddressList() {
+        this.$fly.post(this.$api.addressList, {
+          params: {
+            page: page,
+            pageSize: 99,
+            type: this.addressType
+          }
+        }).then(res => {
+          if (page == 1) {
+            this.addressList = res.data.list;
+          } else {
+            if (res.data.list.length > 0) {
+              this.addressList = this.addressList.concat(res.data.list);
+            }
+          }
+          if (res.data.list.length < pageSize) {
+            this.loadMore = 3;
+          } else {
+            page++
+            this.loadMore = 1;
+          }
+          this.addressList.map((item)=>{
+            if(item.status==1){
+              this.checkId = item.id
+            }
+          })
+        })
+      },
+      initData(option) {
+        console.log(option)
+        this.addressType = option.addressType || 0;
+        this.isShop = option.isShop || 0;
+        this.cart_ids = option.cart_ids || '';
+        this.title = this.addressType == 0 ? '收货地址' : '发货地址';
+        wx.setNavigationBarTitle({
+          title: this.title
+        })
+      },
+    },
+    onLoad(option) {
+      this.initData(option);// 地址页面初始化
+    },
+    onShow() {
+      this.getAddressList();
+    },
+    onReachBottom() {
+      if (this.loadMore == 1) {
+        this.getAddressList();
+      }
+    },
+  }
 </script>
 
-<style lang="scss">
-	page {
+<style lang="scss" scoped>
+  	page {
 		height: 100%;
 		background: #F3F3F3;
 
 		.container {
 			height: 100%;
-
+			background: #f3f3f3;
+			padding-top: 20rpx;
 			.scroll-y {
 				height: calc(100% - 140rpx);
 
@@ -170,13 +228,13 @@
 						font-weight: 500;
 						overflow: hidden;
 
-						>view:nth-child(1) {
+						>div:nth-child(1) {
 							font-size: 32rpx;
 							color: #1E1F20;
 							margin: 30rpx 0;
 						}
 
-						>view:nth-child(2) {
+						>div:nth-child(2) {
 							font-size: 30rpx;
 							color: #666666;
 						}
@@ -191,34 +249,46 @@
 						color: #666666;
 						font-size: 30rpx;
 						font-weight: 500;
-
-						>view {
+						>div {
 							display: flex;
 							align-items: center;
-
-							>view {
+							.delete{
+								img{
+								  width:100%;
+								  height: 100%;
+								} 
+							}
+							>div {
 								width: 40rpx;
 								height: 40rpx;
 								font-size: 40rpx;
 								margin-left: 40rpx;
+								
+                img{
+                  width:100%;
+                  height: 100%;
+                } 
 							}
 						}
+           
 					}
 				}
 			}
 
 			.btn {
-				display: flex;
+				position: fixed;
+        bottom:0;
+        display: flex;
 				justify-content: center;
 				align-items: center;
 				padding: 26rpx 0;
-
-				>view {
+        width:100%;
+				>div {
 					width: 690rpx;
 					height: 88rpx;
-					background: #FF5152;
+					background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
 					color: white;
-					border-radius: 10rpx;
+					border-radius: 44rpx;
 					font-size: 32rpx;
 					font-weight: 500;
 					line-height: 88rpx;

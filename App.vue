@@ -52,15 +52,16 @@
 			}
 		},
 		created() {
-		  wx.hideTabBar(); //隐藏默认tab
+		  uni.hideTabBar({});
 		
 		},
 		onShow: function() {
 			console.log('App Show')
-			wx.hideTabBar(); //隐藏默认tab
+			uni.hideTabBar({});
 			
 		},
 		onHide: function() {
+			uni.hideTabBar({});
 			console.log('App Hide')
 		}
 	}

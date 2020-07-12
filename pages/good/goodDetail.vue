@@ -20,7 +20,7 @@
 		<view class="sec-kill sec-kill-common" >
 			<view class="sec-kill-title">
 				<text>¥</text>
-				<text >{{detail.price_sale}}</text>
+				<text >{{detail.price_last}}</text>
 				<text >¥{{detail.price_market}}</text>
 				<image class="zhuan-icon" src="../../static/images/index/zhuan.png" mode=""></image>
 				<text class="zhuan">¥{{detail.commission}}</text>
@@ -83,7 +83,7 @@
 		<view class="color-box text-column-box">
 			<view class="row-box" @click="showPopFun">
 				<text class="label">选择</text>
-				<text class="text">请选择颜色尺码</text>
+				<text class="text">{{(colorChooseIndex ===-1 && sizeChooseIndex ===-1) ? '请选择颜色尺码' :(colorArr[colorChooseIndex].item +sizeArr[sizeChooseIndex].item) }} </text>
 				<text class="iconfont iconyoujiantou" ></text>
 			</view>
 			<view class="setMargin row-box">
@@ -118,7 +118,7 @@
 				<view class="item" v-for="(item,index) in detail.products_list" :key="index">
 					<image :src="item.goods_images[0]" mode="aspectFill"></image>
 					<view class="good-name clamp">{{item.spec_title}}</view>
-					<view class="price">¥{{item.price_sale}}</view>
+					<view class="price">¥{{item.price_last}}</view>
 				</view>
 			</scroll-view>
 			<!-- </view> -->
@@ -166,11 +166,11 @@
 						<image :src="good_img" mode=""></image>
 					</div>
 					<div class="info-box">
-							<p class="price"><span class="p-icon">¥</span>12321
+							<p class="price"><span class="p-icon">¥</span>{{detail.price_last}}
 							<!-- <oneGoodPrice :totalPrice='detail.killgood.price' :skuNum='goodUnit'></oneGoodPrice> -->
 							</p>
 						<p class="store">库存: {{ inventoryNum || 0 }}</p>
-						<p>已选: {{colorArr[colorChooseIndex].pack_title}}</p>
+						<p>已选: {{ colorChooseIndex == -1? '未选择': colorArr[colorChooseIndex].item}}</p>
 					</div>
 				</div>
 				<div class="buy-pop-box-color" style="padding: 0rpx 30rpx 5rpx 30rpx;">
@@ -178,8 +178,8 @@
 						颜色选择({{colorArr.length}})
 					</div>
 					<div class="color-list" v-if="colorArr.length">
-						<div class="color-item" v-for="(value,index) in colorArr" :class="{ 'color_active' : value.item == curColorKey}"
-						 @click.stop="curColorKeyFun(value,index)" :key="index">
+						<div class="color-item" v-for="(value,index) in colorArr" :class="{ 'color_active' : index == colorChooseIndex}"
+						 @click.stop="curColorKeyFun('color',index)" :key="index">
 						 <image class="color-img" :src="good_img" mode=""></image>
 							<span>{{value.item}}</span>
 							<!-- <span class="nums" v-if="value.choiceNum">{{value.choiceNum}}</span> -->
@@ -191,8 +191,8 @@
 						参考身高
 					</div>
 					<div class="color-list" v-if="sizeArr.length">
-						<div class="color-item size-color"  v-for="(value,index) in sizeArr" :class="{ 'active' : value.item == curColorKey}"
-						 @click.stop="curColorKeyFun(value,index)" :key="index">
+						<div class="color-item size-color"  v-for="(value,index) in sizeArr" :class="{ 'active' : index == sizeChooseIndex}"
+						 @click.stop="curColorKeyFun('size',index)" :key="index">
 							<span >{{value.item}}</span>
 							<!-- <span class="nums" v-if="value.choiceNum">{{value.choiceNum}}</span> -->
 						</div>
@@ -203,7 +203,7 @@
 					<div class="num-right-box">
 						<!-- <span class="inventory">库存: {{ inventoryNum || 0 }}</span> -->
 						<div>
-						<uni-number-box :value='1' :max="10" @change="getNumberValue"
+						<uni-number-box :value='1' :min="1" :max="inventoryNum" @change="getNumberValue"
 						 :onlyKey="123"></uni-number-box>
 						
 						</div>
@@ -211,8 +211,8 @@
 				</div>
 				<div class="buy-sure-btn-container">
 					<div class="buy-sure-btn">
-						<div class="add-cart">加入购物车</div>
-						<div class="buy-now" @click.stop="subAddShopCart">立即购买</div>
+						<div class="add-cart"@click.stop="subAddShopCart(2)">加入购物车</div>
+						<div class="buy-now" @click.stop="subAddShopCart(1)">立即购买</div>
 					</div>
 				</div>
 			</div>
@@ -261,6 +261,10 @@
 			this.detail = data.data
 			this.colorArr = this.detail.specList[0].specChildList
 			this.sizeArr = this.detail.specList[1].specChildList
+			this.products_list = this.detail.products_list
+			// 获取库存
+			this.getSkuAndStock(this.colorArr[0].id+'_'+this.sizeArr[0].id)
+		
 			this.$tip.loaded()
 		},
 		data() {
@@ -268,23 +272,111 @@
 				id:'',
 				recommendList:[],
 				showPopChoice:false,
-				inventoryNum:100,
+				inventoryNum:100, //库存
 				colorChooseIndex:0,
+				sizeChooseIndex:0,
 				sharePop:true,
-				goodSizeStr:'100/200',
-				colorArr:[{pack_sku:'YX-PACK-33908_1',goods_id:324,code:123,pack_title:'蓝色',price:1231,sku_num:100,amount:123}],
-				sizerArr:[{pack_sku:'YX-PACK-33908_1',goods_id:324,code:123,pack_title:'蓝色',price:1231,sku_num:100,amount:123}],
+				chooseNum:1,
+				colorArr:[],
+				sizeArr:[],
+				skuStr:'', //sku
+				products_list:[], //规格列表
 				good_img:'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
-				detail: {
-					goods_base: '',
-					goods_img: [
-						'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
-						'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg'
-					]
-				}
+				detail: {}
 			};
 		},
 		methods:{
+			getSkuAndStock(strSku){ //获取sku和库存
+			let obj = {
+				inventoryNum :0,
+				sku : ''
+			}
+				this.products_list.forEach(item=>{
+					if(item.sku == strSku){
+						this.inventoryNum = item.stock
+						this.skuStr = item.sku
+						// obj.sku = item.sku
+						// obj.stock = item.stock
+						
+					}
+				})
+				return obj
+			},
+			curColorKeyFun(type,index){
+				if(type === 'size'){
+					this.sizeChooseIndex = index
+				}else if (type === 'color'){
+					this.colorChooseIndex = index
+				}
+				// 获取库存
+				this.getSkuAndStock(this.colorArr[this.colorChooseIndex].id+'_'+this.sizeArr[this.sizeChooseIndex].id)
+			},
+			/* 添加购物车 */
+			async subAddShopCart(optionType) {
+				let choiceGoods = [];
+				let goodObj = {
+					'color_id': 0,
+					'size_id': 0
+				}
+				if(this.sizeChooseIndex ==-1){
+						return this.$tip.toast('请选择身高!')
+						return
+				}
+				if(this.colorChooseIndex ==-1){
+						return this.$tip.toast('请选择颜色!')
+				}
+				if(!this.skuStr){
+					return this.$tip.toast('规格错误!')
+				}
+					goodObj.product_id = this.detail.goods_id
+					goodObj.goods_num = this.chooseNum 
+					goodObj.goods_id = this.detail.goods_id
+					goodObj.sku = this.skuStr
+					goodObj.size_id = this.sizeArr[this.sizeChooseIndex].size_id
+					goodObj.color_id = this.colorArr[this.colorChooseIndex].color_id
+					// let strKey = this.curColorKey + '-' + this.goodStock.sizeArr[0].size_id
+					// goodObj.sku = this.goodStock.stockarr[strKey].sku
+				
+				choiceGoods.push(goodObj)
+				console.log(choiceGoods)
+			
+				if (this.inventoryNum == 0) {
+					return this.$tip.toast('库存不足')
+				}
+			
+				this.showPopChoice = false;
+				this.$tip.loading('添加中')
+			
+				this.$fly.post(this.$api.addCart, {
+					jsonstr: JSON.stringify(choiceGoods),
+					type: optionType == 2 ? 1 : 2  // 1 添加  2编辑
+				}).then(res => {
+					console.log(optionType)
+					this.$tip.loaded()
+					if (optionType == 2) { //加入购物车 
+						this.$tip.toast('添加成功!')
+						// this.inventoryNum -= this.chooseNum //把库存减去
+					} else { //立即购买
+						this.$fly.post(this.$api.addressDefault).then(result => {
+							if (result.data.provName == null) {
+								//跳转添加地址
+								wx.navigateTo({
+									url: "/pages/center/address/myAddress?isShop=1&cart_ids=" + res.data.cart_id
+								});
+							} else {
+								wx.navigateTo({
+									url: '/pages/shopCart/submitOrder?cart_ids=' + res.data.cart_id + '&address_id=' +
+										result.data.id
+								})
+							}
+						})
+						// this.goShopCart();
+			
+					}
+				}).catch(e => {
+					this.$tip.loaded()
+				})
+			},
 			toCart(){
 				wx.navigateTo({
 					url:'/pages/shopCart/shopCart2'
@@ -298,7 +390,7 @@
 				this.$tools.previewImage(this.detail.goods_images, num)
 			},
 			getNumberValue(e){
-				
+				this.chooseNum = e.value
 			},
 			// 收藏或者喜欢商品
 			collectOrLikeGood(type, collect_type) {
@@ -986,7 +1078,7 @@
 					display: flex;
 					flex-wrap: wrap;
 					padding: 30rpx 0rpx;
-	
+					box-sizing: border-box;
 					div.size-color {
 						border: 1px solid rgba(238, 238, 238, 1);
 						border-radius: 8rpx;
@@ -999,6 +1091,7 @@
 						color: #F22732;
 					}
 					.color-item {
+						box-sizing: border-box;
 						width:200rpx;
 						margin-right: 20rpx;
 						border-radius:8rpx;
@@ -1028,6 +1121,7 @@
 						&.active {
 							background: rgba(254, 239, 239, 1);
 							color: #F23030;
+							border:1rpx solid rgba(242,39,50,1);
 						}
 					}
 				}

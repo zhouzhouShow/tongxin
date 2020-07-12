@@ -123,7 +123,7 @@
 					<image src="../../static/images/center/icon_chat.png" mode="scaleToFill"></image>
 					<text>帮助与客服</text>
 				</view>
-				<view class="item">
+				<view class="item" @click.stop="nav('/pages/center/address/address')">
 					<image src="../../static/images/center/icon_address.png" mode="scaleToFill"></image>
 					<text>收货地址</text>
 				</view>
@@ -187,6 +187,11 @@
 			this.getCenterIndex()
 		},
 		methods: {
+			nav(url){
+				wx.navigateTo({
+					url: url
+				})
+			},
 			getCenterIndex() {
 				this.$fly.post(this.$api.getCenterIndex).then(res=>{
 					console.log(res)

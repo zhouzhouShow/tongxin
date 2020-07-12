@@ -68,6 +68,9 @@
 				} else if (type === 'add') {
 					value += step
 				}
+				if(value > this.max){
+					this.$tip.toast('库存不足!')
+				}
 				if (value < this.min || value > this.max) {
 					return
 				}
@@ -143,7 +146,7 @@
 		&__minus,
 		&__plus {
 			margin: 0;
-			background-color: $uni-bg-color-grey;
+			// background-color: $uni-bg-color-grey;
 			width: $numbox-btn-width;
 			font-size: $uni-font-size-xxl;
 			height: 100%;
@@ -155,11 +158,13 @@
 
 		&__value {
 			position: relative;
-			background-color: $uni-bg-color;
+			// background-color: $uni-bg-color;
 			width: $numbox-input-width;
 			height: 100%;
 			text-align: center;
-
+			border-right: 1rpx solid #fff;
+			box-sizing: border-box;
+			font-size: 22upx;
 			&:after {
 				content: '';
 				position: absolute;

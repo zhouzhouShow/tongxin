@@ -59,7 +59,7 @@
 			}
 		},
 		{
-			"path": "pages/center/address/addressManage",
+			"path": "pages/center/address/addressDetail",
 			"style": {
 				"navigationBarTitleText": "编辑地址"
 			}
