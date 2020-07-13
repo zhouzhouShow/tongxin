@@ -1,35 +1,35 @@
 <template>
 	<view class="c_product_item">
 		<view class="cover">
-			<image :src="info.cover" mode="aspectFill"></image>
+			<image :src="info.goods_img[0]" mode="aspectFill"></image>
 		</view>
 		<view class="detail">
 			<view class="name">
-				<text>{{info.name}}</text>
+				<text>{{info.goods_name}}</text>
 			</view>
 			<view class="spec">
 				<view class="left">
-					<text>{{info.spec}}</text>
+					<text>{{info.spec_item_title}}</text>
 				</view>
 				<view v-if="showRefundBtn" class="right">
 					<button type="default">退货</button>
 				</view>
 			</view>
-			<view v-if="info.discountText" class="discount">
-				<text>{{info.discountText}}</text>
+			<view v-if="info.discount<100" class="discount">
+				<text>{{info.discount/10}}折</text>
 			</view>
 			<view class="price">
 				<view class="left">
 					<text>¥</text>
-					<text>{{info.price}}</text>
+					<text>{{info.goods_price}}</text>
 				</view>
 				<view v-if="showNumber" class="right">
 					<view v-if="!showRefundInfo" class="number">
 						<text>x</text>
-						<text>{{info.number}}</text>
+						<text>{{info.goods_num}}</text>
 					</view>
 					<view v-else class="refund">
-						<text>购买数量：{{info.number}}</text>
+						<text>购买数量：{{info.goods_num}}</text>
 						<text>申请数量：{{refundNumber}}</text>
 					</view>
 				</view>

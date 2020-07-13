@@ -35,7 +35,7 @@
 			</view>
 		</view>
 		<view class="userpage_list">
-			<SeedingItem :list="nowIndex==0?seedingList:likeList" :isTabBar="false" :userId="userId==0?masterInfo.id:undefined"
+			<SeedingItem :list="nowIndex==0?seedingList:likeList" :isTabBar="false" :userId="userId==0?masterInfo.id:undefined" :canDelete="nowIndex==1?false:true"
 			 @handleToDetail="handleToDetail" @handleToSeedingDetail="handleToSeedingDetail" @handleDelete="handleDelete"
 			 @handleConcern="handleConcern" @previewImage="previewImage" @handleLike="handleLike"></SeedingItem>
 			<uni-load-more :status="loadingType"></uni-load-more>

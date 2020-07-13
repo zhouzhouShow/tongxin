@@ -8,6 +8,10 @@ const centerApi = {
 	getMyStoreInfo: '/api/market/storeInfo', // 店铺数据
 	getVisitInfo: '/api/market/visitList', // 今日访客
 	
+	getCouponList: '/api/market/coupon_list', // 优惠券列表
+	getMyCoupon: '/api/market/mycoupon', // 我的优惠券
+	getMycouponNum: '/api/market/mycouponnum', // 优惠券数量
+	getCoupon: '/api/market/get_coupon', // 领取优惠券
 	
   areaList: '/api/index/areaList', //  地址信息
   addressList: '/api/user_address/addressList', // 我的地址列表

@@ -115,7 +115,7 @@
 				</view>
 			</view>
 			<view class="list">
-				<view class="item">
+				<view @click.stop="nav('/pagesA/couponList/couponList')" class="item">
 					<image src="../../static/images/center/icon_coupon.png" mode="scaleToFill"></image>
 					<text>优惠券</text>
 				</view>
@@ -211,6 +211,7 @@
 				})
 			},
 			handleToWithdraw() {
+				console.log(this.pageData)
 				wx.navigateTo({
 					url: './withdraw?balance='+this.pageData.balance
 				})

@@ -11,10 +11,10 @@
 						<text>{{item.userinfo.bio}}</text>
 					</view>
 				</view>
-				<view v-if="userId==item.userinfo.id" @click.stop="mineControl(item.id)" class="ismine">
+				<view v-if="userId==item.userinfo.id && canDelete" @click.stop="mineControl(item.id)" class="ismine">
 					<image src="@/static/images/seeding/icon_more.png" mode=""></image>
 				</view>
-				<view v-else-if="!item.isfollow && showFollow" @click.stop="handleConcern(item.id)" class="concern">
+				<view v-else-if="!item.isfollow && showFollow && userId!=item.userinfo.id" @click.stop="handleConcern(item.id)" class="concern">
 					<image src="@/static/images/seeding/icon_concern.png" mode="scaleToFill"></image>
 					<text>关注</text>
 					<!-- <text>{{item.master_info.is_follow?'已关注':'关注'}}</text> -->
@@ -145,6 +145,10 @@
 				default:false
 			},
 			showFollow:{
+				type:Boolean,
+				default:true
+			},
+			canDelete:{
 				type:Boolean,
 				default:true
 			}

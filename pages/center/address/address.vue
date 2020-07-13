@@ -130,13 +130,13 @@
 			},
       //编辑地址
       toeditadress(id) {
-        uni.navigateTo({
+        wx.navigateTo({
           url: '/pages/center/address/addressDetail?addressType='+this.addressType+'&type=2&id='+id
         })
       },
       //新增地址
       editadress() {
-        uni.navigateTo({
+        wx.navigateTo({
           url: '/pages/center/address/addressDetail?addressType='+this.addressType+'&type=1'
         })
       },
