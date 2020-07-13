@@ -102,24 +102,24 @@
 				let isfav = info.isfav
 				let likenum = info.likenum
 				let item = this.list.filter(v => v.id == id)
-				item && (item[0].isfav = isfav)
-				item && (item[0].likenum = likenum)
+				item && item[0] && (item[0].isfav = isfav)
+				item && item[0] && (item[0].likenum = likenum)
 			})
 
 			uni.$on('changeShare', info => {
 				let id = info.id
 				let sharenum = info.sharenum
 				let item = this.list.filter(v => v.id == id)
-				item && (item[0].sharenum = sharenum)
+				item && item[0] && (item[0].sharenum = sharenum)
 			})
 			
 			uni.$on('deleteSeeding', id => {
 				this.list.forEach((item, index) => {
 					if (item.id == id) {
 						this.list.splice(index, 1)
-						this.userInfo.article_num = this.userInfo.article_num - 1
 					}
 				})
+				this.userInfo.article_num = this.userInfo.article_num - 1
 			})
 			
 			uni.$on('hasCreate', ()=>{
@@ -247,7 +247,7 @@
 				this.getFeaturedList()
 			},
 			previewImage(item, num) {
-				this.imgPreview(item.product_info.images, num)
+				this.imgPreview(item, num)
 			},
 			handleLike(id) {
 				let item = this.list.filter(v => v.id == id)[0] || {}
@@ -268,9 +268,13 @@
 			imgPreview(list, idx) {
 				// list：图片 url 数组
 				if (list && list.length > 0) {
+					let newList = []
+					list.forEach(item=>{
+						newList.push(item.url)
+					})
 					uni.previewImage({
-						current: list[idx], //  传 Number H5端出现不兼容
-						urls: list
+						current: newList[idx], //  传 Number H5端出现不兼容
+						urls: newList
 					});
 				}
 			},

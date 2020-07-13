@@ -20,20 +20,50 @@
 		},
 		data() {
 			return {
-				userInfo: {
-					id: 99,
-					nickname: '呢子dayi',
-					avatar: require('../../static/images/seeding/icon_avatar.png'),
-					seeding: 2,
-					fans: 3200
-				},
-				productDetail: [seedingJson[0]]
+				userInfo: {},
+				productDetail: [],
+				fansNum:0
 			};
 		},
 		onLoad(options) {
 			let id = options.id
+			let fansNum = options.fansNum
+			this.fansNum = fansNum
 			this.getSeedingDetail(id)
 		},
+		onReady() {
+			uni.$on('changeFollow', info => {
+				let id = info.userId
+				let list = this.productDetail
+				let items = list.filter(v => v.user_id == id) || []
+				items.forEach(el=>{
+					el.isfollow = info.isfollow
+				})
+			})
+		
+			uni.$on('changeLike', info => {
+				let id = info.id
+				let isfav = info.isfav
+				let likenum = info.likenum
+				let list = this.productDetail
+				let item = list.filter(v => v.id == id) || []
+				item && item[0] && (item[0].isfav = isfav)
+				item && item[0] && (item[0].likenum = likenum)
+			})
+		
+			uni.$on('changeShare', info => {
+				let id = info.id
+				let sharenum = info.sharenum
+				let list = this.productDetail
+				let item = list.filter(v => v.id == id) || []
+				item && item[0] && (item[0].sharenum = sharenum)
+			})
+		},
+		// onUnload() {
+		// 	uni.$off('changeFollow')
+		// 	uni.$off('changeLike')
+		// 	uni.$off('changeShare')
+		// },
 		onShareAppMessage(res) {
 			if (res.from === 'button') {
 				// 通过按钮触发
@@ -54,7 +84,7 @@
 			}
 			//通过右上角菜单触发
 			return {
-				// title: '开普勒小程序',
+				// title: '',
 				path: '/pages/seeding/productDetail?id=' + data.id,
 				// imageUrl: '/images/aikepler-logo.jpeg'
 			};
@@ -100,7 +130,9 @@
 					item.isfollow = true
 					uni.$emit('changeFollow', {
 						userId: item.user_id,
-						isfollow: item.isfollow
+						isfollow: item.isfollow,
+						needUpdateFansNum:true,
+						fansNum:this.fansNum + 1
 					})
 				})
 			},
@@ -133,7 +165,7 @@
 				})
 			},
 			previewImage(item, num) {
-				this.imgPreview(item.product_info.images, num)
+				this.imgPreview(item, num)
 			},
 			handleLike(id) {
 				let item = this.productDetail.filter(v => v.id == id)[0] || {}
@@ -154,9 +186,13 @@
 			imgPreview(list, idx) {
 				// list：图片 url 数组
 				if (list && list.length > 0) {
+					let newList = []
+					list.forEach(item=>{
+						newList.push(item.url)
+					})
 					uni.previewImage({
-						current: list[idx], //  传 Number H5端出现不兼容
-						urls: list
+						current: newList[idx], //  传 Number H5端出现不兼容
+						urls: newList
 					});
 				}
 			}

@@ -79,7 +79,7 @@
 				pageSize: 10,
 				nowIndex: 0,
 				seedingList: [],
-				likeList: seedingJson,
+				likeList: [],
 			};
 		},
 		onReachBottom() {
@@ -101,6 +101,45 @@
 			let id = await this.getPersonalCenterData()
 			this.getSeedingCenterSeeding()
 		},
+		onReady() {
+			uni.$on('changeFollow', info => {
+				console.log(1)
+				let id = info.userId
+				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
+				let fansNum = info.fansNum
+				let items = list.filter(v => v.user_id == id) || []
+				items.forEach(el=>{
+					el.isfollow = info.isfollow
+				})
+				if(this.userId==id){
+					this.masterInfo.isfollow = info.isfollow
+					this.masterInfo.fans_num = fansNum
+				}
+			})
+		
+			uni.$on('changeLike', info => {
+				let id = info.id
+				let isfav = info.isfav
+				let likenum = info.likenum
+				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
+				let item = list.filter(v => v.id == id) || []
+				item && item[0] && (item[0].isfav = isfav)
+				item && item[0] && (item[0].likenum = likenum)
+			})
+		
+			uni.$on('changeShare', info => {
+				let id = info.id
+				let sharenum = info.sharenum
+				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
+				let item = list.filter(v => v.id == id) || []
+				item && item[0] && (item[0].sharenum = sharenum)
+			})
+		},
+		// onUnload() {
+		// 	uni.$off('changeFollow')
+		// 	uni.$off('changeLike')
+		// 	uni.$off('changeShare')
+		// },
 		onShareAppMessage(res) {
 			if (res.from === 'button') {
 				// 通过按钮触发
@@ -213,7 +252,8 @@
 					}
 					uni.$emit('changeFollow', {
 						userId: item.user_id,
-						isfollow: item.isfollow
+						isfollow: item.isfollow,
+						fansNum:this.masterInfo.fans_num
 					})
 				})
 			},
@@ -233,7 +273,8 @@
 					})
 					uni.$emit('changeFollow', {
 						userId: this.userId,
-						isfollow: this.masterInfo.isfollow
+						isfollow: this.masterInfo.isfollow,
+						fansNum:this.masterInfo.fans_num
 					})
 				})
 			},
@@ -291,11 +332,11 @@
 			},
 			handleToSeedingDetail(id) {
 				wx.navigateTo({
-					url: "./productDetail?id=" + id,
+					url: "./productDetail?id=" + id + '&fansNum=' + this.masterInfo.fans_num,
 				})
 			},
 			previewImage(item, num) {
-				this.imgPreview(item.product_info.images, num)
+				this.imgPreview(item, num)
 			},
 			handleLike(id) {
 				let list = this.nowIndex == 0 ? this.seedingList : this.likeList
@@ -329,9 +370,13 @@
 			imgPreview(list, idx) {
 				// list：图片 url 数组
 				if (list && list.length > 0) {
+					let newList = []
+					list.forEach(item=>{
+						newList.push(item.url)
+					})
 					uni.previewImage({
-						current: list[idx], //  传 Number H5端出现不兼容
-						urls: list
+						current: newList[idx], //  传 Number H5端出现不兼容
+						urls: newList
 					});
 				}
 			},
@@ -369,6 +414,7 @@
 				image {
 					width: 100%;
 					height: 100%;
+					border-radius: 50%;
 				}
 			}
 

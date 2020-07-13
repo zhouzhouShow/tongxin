@@ -3,15 +3,15 @@
 		<view class="visitors" style="background: url(../../static/images/center/store_top_bg.png) no-repeat;background-size: 100% 100%;">
 			<view class="list">
 				<view class="item">
-					<text class="num">200</text>
+					<text class="num">{{storeData.todayVisitNum || 0}}</text>
 					<text class="name">今日访客数</text>
 				</view>
 				<view class="item">
-					<text class="num">300</text>
+					<text class="num">{{storeData.weekVisitNum || 0}}</text>
 					<text class="name">本周访客数</text>
 				</view>
 				<view class="item">
-					<text class="num">500</text>
+					<text class="num">{{storeData.monVisitNum || 0}}</text>
 					<text class="name">本月访客数</text>
 				</view>
 			</view>
@@ -21,7 +21,7 @@
 				<view class="item">
 					<view class="num">
 						<text>¥</text>
-						<text>200</text>
+						<text>{{storeData.todaymoney || 0}}</text>
 					</view>
 					<view class="name">
 						<text>今日成交额</text>
@@ -30,7 +30,7 @@
 				<view class="item">
 					<view class="num">
 						<text>¥</text>
-						<text>1889</text>
+						<text>{{storeData.weekmoney || 0}}</text>
 					</view>
 					<view class="name">
 						<text>本周成交额</text>
@@ -39,7 +39,7 @@
 				<view class="item">
 					<view class="num">
 						<text>¥</text>
-						<text>3000</text>
+						<text>{{storeData.monmoney || 0}}</text>
 					</view>
 					<view class="name">
 						<text>本月成交额</text>
@@ -74,10 +74,10 @@
 						{{item.nickname}}
 					</view>
 					<view class="time">
-						<text>{{item.visit_time}}</text>
+						<text>{{$utils.formatTime(item.createtime*1000,'yyyy-MM-dd')}}</text>
 					</view>
 					<view class="total">
-						<text>{{item.total}}</text>
+						<text>{{item.buy_money}}</text>
 					</view>
 				</view>
 				<view class="loadmore">
@@ -97,34 +97,47 @@
 		},
 		data() {
 			return {
-				loadingType: 0,
-				list:[
-					{
-						id:1,
-						nickname:'nickname',
-						visit_time:'2020-06-30',
-						total:500
-					},
-					{
-						id:2,
-						nickname:'nick',
-						visit_time:'2020-06-30',
-						total:704
-					},
-					{
-						id:3,
-						nickname:'nams',
-						visit_time:'2020-06-30',
-						total:88.9
-					},
-					{
-						id:4,
-						nickname:'12323nams',
-						visit_time:'2020-06-30',
-						total:8821.99
-					}
-				]
+				loadingType: 1,
+				page:0,
+				pageSize:15,
+				storeData:{},
+				list:[]
 			};
+		},
+		mounted() {
+			this.getMyStoreInfo()
+			this.getVisitInfo()
+		},
+		onReachBottom() {
+			if (this.loadingType == 2 || this.loadingType == 3) return
+			this.page++
+			this.getVisitInfo()
+		},
+		methods:{
+			getMyStoreInfo(){
+				uni.showLoading()
+				this.$fly.post(this.$api.getMyStoreInfo).then(res=>{
+					this.storeData = res.data
+					uni.hideLoading()
+				}).catch(err=>{
+					uni.hideLoading()
+				})
+			},
+			getVisitInfo(){
+				this.loadingType = 2
+				this.$fly.post(this.$api.getVisitInfo,{
+					page:this.page,
+					pageSize:this.pageSize
+				}).then(res=>{
+					this.list = this.list.concat(res.data.list)
+					this.list = this.list.concat(res.data.list)
+					if(res.data.list.length<this.pageSize){
+						this.loadingType = 3
+					}else{
+						this.loadingType = 1
+					}
+				})
+			},
 		}
 	}
 </script>

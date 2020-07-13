@@ -13,7 +13,7 @@
 						{{userInfo.nickname}}
 					</view>
 					<view class="type">
-						<text>{{userInfo.is_vip?'代理会员':'普通会员'}}</text>
+						<text>{{userInfo.is_agent==1?'代理会员':'普通会员'}}</text>
 					</view>
 				</view>
 			</view>
@@ -37,7 +37,7 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="userInfo.is_vip" class="income">
+		<view v-if="userInfo.is_agent" class="income">
 			<view @click="handleToMyIncome" class="nav_box">
 				<view class="nav">
 					<view class="name">
@@ -52,22 +52,22 @@
 			<view class="content">
 				<view class="list">
 					<view class="item">
-						<text class="num">200</text>
+						<text class="num">{{pageData.todaymoney || 0}}</text>
 						<text class="name">今日</text>
 					</view>
 					<view class="item">
-						<text class="num">3000</text>
-						<text class="name">本日</text>
+						<text class="num">{{pageData.thismonmoney || 0}}</text>
+						<text class="name">本月</text>
 					</view>
 					<view class="item">
-						<text class="num">5000</text>
+						<text class="num">{{pageData.totalmoney || 0}}</text>
 						<text class="name">累计</text>
 					</view>
 				</view>
 				<view class="bottom">
 					<view class="total">
 						<text>可提现（元）：</text>
-						<text>88.88</text>
+						<text>{{pageData.balance || 0}}</text>
 					</view>
 					<view @click="handleToWithdraw" class="btn">
 						<button type="default">提现</button>
@@ -75,29 +75,29 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="userInfo.is_vip" class="store">
+		<view v-if="userInfo.is_agent" class="store">
 			<view class="nav_box">
 				<view class="nav">
 					<view class="name">
 						<text>我的店铺</text>
 					</view>
-					<view class="tip">
+<!-- 					<view class="tip">
 						<text>查看店铺详情</text>
 						<image src="../../static/images/center/icon_arrow-right-grey.png" mode="scaleToFill"></image>
-					</view>
+					</view> -->
 				</view>
 			</view>
 			<view class="list">
 				<view @click="handleToMemberList" class="item">
-					<text class="num">256</text>
+					<text class="num">{{pageData.mySubordinate || 0}}</text>
 					<text class="name">已邀会员</text>
 				</view>
 				<view @click="handleToStoreOrder" class="item">
-					<text class="num">700</text>
+					<text class="num">{{pageData.ordernum || 0}}</text>
 					<text class="name">店铺订单</text>
 				</view>
 				<view @click="handleToStoreData" class="item">
-					<text class="num">120</text>
+					<text class="num">{{pageData.viewnum || 0}}</text>
 					<text class="name">今日浏览</text>
 				</view>
 			</view>
@@ -108,10 +108,10 @@
 					<view class="name">
 						<text>我的服务</text>
 					</view>
-					<view class="tip">
+<!-- 					<view class="tip">
 						<text>查看全部服务</text>
 						<image src="../../static/images/center/icon_arrow-right-grey.png" mode="scaleToFill"></image>
-					</view>
+					</view> -->
 				</view>
 			</view>
 			<view class="list">
@@ -142,15 +142,8 @@
 		data() {
 			return {
 				paddingTop: 0,
-				userInfo: {
-					id: 99,
-					nickname: '呢子dayi',
-					avatar: require('../../static/images/center/icon_avatar.png'),
-					seeding: 2,
-					fans: 3200,
-					desc: '',
-					is_vip: true,
-				},
+				pageData:{},
+				userInfo: {},
 				orderNav: [{
 						ids: 0,
 						name: '全部',
@@ -194,7 +187,22 @@
 			},
 			getCenterIndex() {
 				this.$fly.post(this.$api.getCenterIndex).then(res=>{
-					console.log(res)
+					this.userInfo = res.data
+					
+					this.userInfo.is_agent = 1
+					
+					if(this.userInfo.is_agent){
+						this.getMyAssets()
+					}
+				})
+			},
+			getMyAssets() {
+				uni.showLoading()
+				this.$fly.post(this.$api.getMyAssets).then(res=>{
+					this.pageData = res.data
+					uni.hideLoading()
+				}).catch(err=>{
+					uni.hideLoading()
 				})
 			},
 			handleToMyIncome() {
@@ -204,7 +212,7 @@
 			},
 			handleToWithdraw() {
 				wx.navigateTo({
-					url: './withdraw'
+					url: './withdraw?balance='+this.pageData.balance
 				})
 			},
 			handleToMemberList() {

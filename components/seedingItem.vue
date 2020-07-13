@@ -53,7 +53,7 @@
 				<text>{{item.content}}</text>
 			</view>
 			<view class="item_theme">
-				<view class="left">
+				<view :class="['left',item.topicinfo.length<=0?'hide':'']">
 					<view v-if="item.topicinfo.length>0" class="icon">
 						<image src="@/static/images/seeding/icon_theme.png" mode=""></image>
 					</view>
@@ -340,6 +340,10 @@
 				justify-content: space-between;
 
 				.only {
+					width: 100%;
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
 					.image {
 						flex-basis: 80rpx;
 						width: 80rpx;
@@ -454,6 +458,10 @@
 					border-radius: 30rpx;
 					display: flex;
 					align-items: center;
+					
+					&.hide{
+						opacity: 0;
+					}
 
 					.icon {
 						width: 50rpx;
