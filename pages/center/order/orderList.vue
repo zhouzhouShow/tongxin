@@ -1,5 +1,5 @@
 <template>
-	<view class="orderList">
+	<view class="list">
 		<view class="search">
 			<searchBar @sureBtn="search" placeholder="搜索我的订单" btnText="搜索"></searchBar>
 		</view>
@@ -28,6 +28,12 @@
 			orderItem,
 			loadMore
 		},
+		onLoad(option) {
+		  this.nowNavIndex = option.idx || 0;
+		  this.list = []
+		  this.page = 1
+		  this.getOrderData();
+		},
 		data() {
 			return {
 				keyWord:'',
@@ -53,6 +59,8 @@
 						name: '已退款'
 					},
 				],
+				page:1,
+				pageSize:10,
 				nowNavIndex: 0,
 			};
 		},
@@ -60,16 +68,65 @@
 			changeNav(ids) {
 				this.nowNavIndex = ids
 			},
+			// 处理数据
+			dataToThin(data){
+				return data
+			},
+			//获取订单信息
+			getOrderData() {
+			  this.loadMore = 2;
+			  this.$fly.post(this.$api.myOrder, {
+			    page: this.page,
+			    pageSize: this.pageSize,
+			    statu_stype: this.itemAc,
+			    pay_type: this.pay_type
+			  }).then(res => {
+			    // initData = initData.concat(JSON.parse(JSON.stringify(res.data.list)));
+			    var data = this.dataToThin(res.data.list);
+			    // console.log(data)
+			    if (this.page == 1) {
+			      this.list = data;
+			    } else {
+			      if (data.length > 0) {
+			        this.list = this.list.concat(data);
+			      }
+			    }
+			    if (data.length < this.pageSize) {
+			      this.loadMore = 3;
+			    } else {
+			      this.page++
+			      this.loadMore = 1;
+			    }
+			  })
+			},
+			//取消订单 // 确定收货 //退款
+			changeStatus({id, status}) {
+			  this.$tip.loading('正在处理')
+			  this.$fly.post(this.$api.changeOrderStatus, {
+			    id: id,
+			    status: status
+			  }).then(res => {
+			    this.$tip.loaded();
+			    this.page = 1;
+			    this.getOrderData();
+			    this.$tip.toast(res.msg)
+			  })
+			},
 			search(e){
 				this.keyWord = e
 				console.log(e)
 			},
-		}
+		},
+			onReachBottom() {
+      if (this.loadMore == 1) {
+        this.getOrderData();
+      }
+    }
 	}
 </script>
 
 <style lang="scss" scoped>
-	.orderList{
+	.list{
 		min-height: 100vh;
 		background: #f3f3f3;
 	}

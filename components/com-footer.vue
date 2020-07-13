@@ -48,6 +48,7 @@
 		},
 		methods: {
 			navToTabPage(idx) {
+				uni.hideTabBar({})
 				if (idx != this.tabIdx) {
 					uni.switchTab({
 						url: this.tabList[idx].path

@@ -22,7 +22,8 @@
             wxname: e.target.userInfo.nickName,
             headimg: e.target.userInfo.avatarUrl,
             gender: e.target.userInfo.gender,
-						iv:e.target.iv
+						iv:e.target.iv,
+						encryptedData:e.target.encryptedData
           }).then(res => {
         
             if( wx.getStorageSync('JumpToPath') && wx.getStorageSync('JumpToPath') != '/pages/index/index' ){

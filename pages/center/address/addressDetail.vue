@@ -101,7 +101,9 @@ import mpvueCityPicker from '@/components/mpvue-citypicker/mpvueCityPicker.vue';
 				this.prov_name = e.cityName[0]
 				this.city_name = e.cityName[1]
 				this.dist_name = e.cityName[2]
-				this.addressId = e.cityCode
+				this.addressId[0] = e.cityCode.provCode
+				this.addressId[1] = e.cityCode.cityCode
+				this.addressId[2] = e.cityCode.distCode
 			},
 			onCancel (){},
       // picker
@@ -186,7 +188,7 @@ import mpvueCityPicker from '@/components/mpvue-citypicker/mpvueCityPicker.vue';
             .then(res => {
               this.$tip.loaded();
               this.$tip.toast('添加成功')
-              uni.navigateBack();
+              wx.navigateBack({});
             }).catch(e => {
             this.$tip.loaded();
           })

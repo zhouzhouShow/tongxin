@@ -1,19 +1,20 @@
 <template>
 	<view class="cart">
 		<view class="good-list">
-			<view class="good-brand-item">
+			<view class="good-brand-item" v-for="(item,index) in shopCarList" :key="index">
 				<view class="title-state-box flex-align-center">
 					<checkbox color="#17B948" :checked="isAll" />
 					<view class="brand-info flex-align-center">
-						<image class="b-img" src="../../static/images/good/d-like.png" mode=""></image>
-						<text class="brand-name">芭芭拉</text>
+						<image class="b-img" :src="item.brand_logo" mode=""></image>
+						<text class="brand-name">{{item.brand_name}}</text>
 						<text class="icon-arrow iconfont iconyoujiantou"></text>
 					</view>
 					<image class="delete" src="../../static/images/icon/icon_delete.png" mode=""></image>
 				</view>
 				<view class="good-box">
-					<cartItem :item="item"></cartItem>
-					<cartItem :item="item"></cartItem>
+					<block v-for="(itemG,indexG) in item.goodlist" :key="item.good_id">
+						<cartItem :item="itemG" @changeNum="goodsNumChanged"></cartItem>
+					</block>
 				</view>
 			</view>
 
@@ -26,7 +27,7 @@
 			<view class="total">
 				<text>不含运费</text>
 				<text>合计:</text>
-				<text class="p-box"><text class="p-icon">¥</text>8899</text>
+				<text class="p-box"><text class="p-icon">¥</text>{{totalPrice}}</text>
 			</view>
 			<view class="submit">
 				结算
@@ -37,6 +38,7 @@
 </template>
 
 <script>
+	let page= 1,pageSize=999
 	import comfooter from '@/components/com-footer.vue'
 	import cartItem from '@/components/shopCart/cartItem'
 	export default {
@@ -48,8 +50,12 @@
 			return {
 				isAll: false,
 				shopCarList: [],
-				noNumList:[]
+				noNumList:[],
+				totalPrice: 0, //总价
 			};
+		},
+		async onLoad(){
+			 this.shopCarList = await this.loadShopCarData('all')
 		},
 		methods:{
 			async loadShopCarData(type = 'all') {
@@ -66,89 +72,74 @@
 					params.page = page;
 					params.pageSize = pageSize;
 				}
-				var data = await this.$fly.post(this.$api.myCart, params);
-				// console.log(data)
-				if (data.data.length > 0) {
+				var result = await this.$fly.post(this.$api.myCart, params);
+				var data = result.data
+				console.log(data)
+				if (data.list.length > 0) {
 					page++
 				} else {
 					this.soleOutListLoadmore = false
 				}
-				this.allShopTotalPrice = data.totalPrice * 100
-				this.allShopNum = data.counts
-				data.data.forEach((items) => {
+				// this.allShopTotalPrice = data.totalPrice 
+				this.allShopNum = data.totalCount
+				data.list.forEach((items) => {
 					let itemsAllPrice = 0,
 						itemsAllNum = 0,
 						itemsAllUnit = 0,
 						itemOnePrice = 0,
 						itemCheckedNum = 0;
-			
 					if (this.allPickChecked) {
-						items[0].allChecked = true;
-						if (items[0].goods_type == 1) {
-							items.forEach((item) => {
-								itemsAllPrice += item.price * item.goods_num
-								itemsAllNum += item.sku_num * item.goods_num
-								itemsAllUnit += item.goods_num
-								item["checked"] = true;
-							});
-						} else if (items[0].goods_type == 3) {
-							items.forEach((item) => {
-								// itemsAllPrice+=item.price*item.goods_num
+						items.goodlist[0].allChecked = true;
+							items.goodlist.forEach((item) => {
+								itemsAllPrice += item.goods_price * item.goods_num
 								itemsAllNum += item.goods_num
-								itemsAllUnit += item.goods_num / item.color
 								item["checked"] = true;
 							});
-						}
 			
 					} else {
-						items[0].allChecked = false;
-						items.forEach((item) => {
+						items.goodlist[0].allChecked = false;
+						items.goodlist.forEach((item) => {
 			
 							item["checked"] = false;
 						});
 						itemsAllPrice = 0
 						itemsAllNum = 0
-						itemsAllUnit = 0
 					}
-					items[0].allPrice = itemsAllPrice
-					items[0].allNum = Number(itemsAllNum)
-					items[0].totalUnit = Number(itemsAllUnit)
-					items[0].totalCheckedNum = 0
-					if (items[0].goods_type == 3) {
-						items[0].onePrice = items[0].price
-					} else if (items[0].goods_type == 1) {
-						items[0].onePrice = (items[0].price / items[0].sku_num).toFixed(2)
-					}
+					items.goodlist[0].allPrice = itemsAllPrice
+					items.goodlist[0].allNum = Number(itemsAllNum)
+					items.goodlist[0].totalCheckedNum = 0
+					
+					items.goodlist[0].onePrice = items.goodlist[0].goods_price
 				});
-				let list = data.data
+				let list = data.list
 				let noDataList = []
-				for (let index = 0; index < list.length; index++) {
-					let forList = JSON.parse(JSON.stringify(list[index]))
-					forList.filter((item, index2,array) => {
-						if (Number(item.stokcnum) == 0 || Number(item.shelves) != 2) {
-							noDataList.push(forList[index2])
-							if (list[index].length == 1) {
-								list.splice(index, 1) //数组的内容删除了,需要减去下标
-									--index
-							} else {
-								list[index].splice(index2, 1)
-							}
+			// 	for (let index = 0; index < list.length; index++) {
+			// 		let forList = JSON.parse(JSON.stringify(list[index]))
+			// 		forList.filter((item, index2,array) => {
+			// 			if (Number(item.stokcnum) == 0 || Number(item.shelves) != 2) {
+			// 				noDataList.push(forList[index2])
+			// 				if (list[index].length == 1) {
+			// 					list.splice(index, 1) //数组的内容删除了,需要减去下标
+			// 						--index
+			// 				} else {
+			// 					list[index].splice(index2, 1)
+			// 				}
 			
-							return null
-						} else {
-							// 乘以虚拟库存,如果没有虚拟库存则直接 返回item
-							if (item.goods_type == 1) {
-								item.stokcnum = item.stokcnum * this.VStock
-							}
-							return item
-						}
-					})
-				}
+			// 				return null
+			// 			} else {
+			// 				// 乘以虚拟库存,如果没有虚拟库存则直接 返回item
+			// 				if (item.goods_type == 1) {
+			// 					item.stokcnum = item.stokcnum * this.VStock
+			// 				}
+			// 				return item
+			// 			}
+			// 		})
+			// 	}
 			
 				this.noNumList = this.noNumList.concat(noDataList)
 				// 获取所有购物车的id,用于全选删除
-				this.getAllId()
-				// console.log(list)
+				// this.getAllId()
+				console.log(list)
 			
 				return list;
 			},
@@ -175,7 +166,7 @@
 				this.$tip.loaded();
 			},
 			toGoodDetail(id) {
-				uni.navigateTo({
+				wx.navigateTo({
 					url: '/pages/good/goodDetail?id=' + id
 				})
 			},
@@ -268,11 +259,11 @@
 					if (result.data.prov_name == null) {
 						console.log('selected_items', selected_items)
 						//跳转添加地址
-						uni.navigateTo({
+						wx.navigateTo({
 							url: "/pages/center/address/myAddress?isShop=1&cart_ids=" + selected_items
 						});
 					} else {
-						uni.navigateTo({
+						wx.navigateTo({
 							url: "/pages/shopAndOrder/settlement/submitOrder?address_id=" + result.data.id + '&cart_ids=' +
 								selected_items
 						});

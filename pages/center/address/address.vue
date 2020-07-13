@@ -100,9 +100,9 @@
 					this.addressSetDefault(id, status).then(() => {
 					  wx.setStorageSync('address_id',id)
 					  // 跳转到提交订单页面
-					  // uni.navigateBack();
-					  uni.redirectTo({
-					    url: "/pages/shopAndOrder/settlement/submitOrder?address_id="+id+'&cart_ids='+this.cart_ids
+					  // wx.navigateBack();
+					  wx.redirectTo({
+					    url: "/pages/shopCart/submitOrder?address_id="+id+'&cart_ids='+this.cart_ids
 					  });
 					})
 				}
@@ -119,8 +119,8 @@
 									address_ids: item.id
 								}
 							).then(rs => {
-								this.addressList = []
-								this.getAddressList()
+								_this.addressList = []
+								_this.getAddressList()
 							})
 						} else if (res.cancel) {
 							console.log('用户点击取消');
@@ -130,13 +130,13 @@
 			},
       //编辑地址
       toeditadress(id) {
-        uni.navigateTo({
+        wx.navigateTo({
           url: '/pages/center/address/addressDetail?addressType='+this.addressType+'&type=2&id='+id
         })
       },
       //新增地址
       editadress() {
-        uni.navigateTo({
+        wx.navigateTo({
           url: '/pages/center/address/addressDetail?addressType='+this.addressType+'&type=1'
         })
       },

@@ -3,35 +3,36 @@
 		<!-- <view class="top-bg"></view> -->
 		<view class="content">
 			<view class="area-box" @click="modifyAddress">
-				<view class="user"><text>张小飞</text><text>19888883213</text></view>
+				<view class="user"><text>{{addressInfo.realname}}</text><text>{{addressInfo.mobile}}</text></view>
 				<view class="area-info">
 					<image class="a-icon" src="../../static/images/icon/area_icon.png" mode=""></image>
-					<text class="area">广东省广州市天河区华观路1993万科广场 A栋407A</text>
+					<text class="area">{{addressInfo.prov_name+addressInfo.city_name+addressInfo.dist_name+addressInfo.address}}</text>
 					<text class="iconfont iconyoujiantou"></text>
 				</view>
 			</view>
 			<view class="good-box">
-				<view class="brand-box">
+				<view class="brand-box" v-for="(item ,index) in payOrderData.cartlist.list" >
 					<view class="brand-info flex-align-center">
-						<image class="b-img" src="../../static/images/good/d-like.png" mode=""></image>
-						<text class="brand-name">芭芭拉</text>
+						<image class="b-img" :src="item.brand_logo[0]" mode=""></image>
+						<text class="brand-name">{{item.brand_name}}</text>
 					</view>
 					<view class="good-box-list">
-						<cartItem type='order' :item="item"></cartItem>
-						<cartItem type='order' :item="item"></cartItem>
+						<block v-for="(itemC,indexC) in item.goodlist" :key="indexC">
+							<cartItem type='order' :item="itemC" ></cartItem>
+						</block>
 					</view>
 				</view>
 				<view class="expressage flex-align-center">
 					<text class="label">配送方式</text>
 					<text>普通配送</text>
-					<text class="e-money">快递 ￥6.00</text>
+					<text class="e-money">{{payOrderData.freight == 0 ?'包邮' : '快递 ￥'+payOrderData.freight}}</text>
 					<image class="arrow" src="../../static/images/seeding/icon_arrow-right-grey.png" mode=""></image>
 				</view>
 				<view class="tips1">工作日/节假日均可送货</view>
 				<view class="expressage flex-align-center" @click="chooseCoupon">
 					<text class="label">优惠券</text>
-					<text>省5元：69-5</text>
-					<text class="r-money">- ￥6.00</text>
+					<text>{{(payOrderData.coupon.length<=0|| !payOrderData.coupon) ? '无优惠券可以用' : choosedCoupon.name}}</text>
+					<text class="r-money"  :style="{visibility: !choosedCoupon?'hidden':'inherit'}">- ￥{{choosedCoupon.money}}</text>
 					<image class="arrow" src="../../static/images/seeding/icon_arrow-right-grey.png" mode=""></image>
 				</view>
 				<view class="desc flex-align-center">
@@ -42,12 +43,12 @@
 			<view class="price-detail-box">
 				<view class="item">
 					<span>商品金额：</span>
-
-					<span>￥{{totalPrice}}</span>
+				<!-- 选中优惠券了吧减去优惠券的价格 -->
+					<span>¥{{totalPrice}}</span>
 				</view>
 				<view class="item">
 					<span>运费：</span>
-					<span>¥6</span>
+					<span>{{payOrderData.freight == 0 ? '包邮' : '¥'+payOrderData.freight}}</span>
 				</view>
 				<!-- <view class="item" v-if="choosedCoupon">
 					<span>优惠券抵扣：</span>
@@ -58,11 +59,11 @@
 		<view class="fixed-bottom">
 
 			<view class="total">
-				<text>共2件</text>
+				<text>共{{payOrderData.goods_num}}件</text>
 				<text>合计:</text>
-				<text class="p-box"><text class="p-icon">¥</text>8899</text>
+				<text class="p-box"><text class="p-icon">¥</text>{{choosedCoupon ? (totalPrice*100 - choosedCoupon.money*100)/100 : totalPrice}}</text>
 			</view>
-			<view class="submit">
+			<view class="submit" @click="confirmPay">
 				提交订单
 			</view>
 		</view>
@@ -128,6 +129,7 @@
 				choosedCoupon: null, //选中优惠券的信息
 				couponId: null, //选中优惠券的id
 				orderId: "",
+				payWay:1, //1:微信支付
 			};
 		},
 		 async onLoad(option){
@@ -149,6 +151,9 @@
 				this.totalPrice = result.data.total_price;
 				this.orderGoodsList = result.data.goods;
 			}
+			this.addressInfo = result.data.address;
+			this.deliveryTips = result.data.shippings;
+			this.payOrderData = result.data
 			this.$tip.loaded();
 		},
 		methods: {
@@ -165,18 +170,72 @@
 					this.popup = false
 				}, 200)
 			},
+			async confirmPay() {
+					this.$tip.loading('提交订单中...')
+			
+					if(!this.orderId){ //订单id不存在 ,提交订单,获取id
+						let orderInfo =  await this.payOrder() //提交订单
+						console.log(orderInfo)
+						if(orderInfo.code){
+							 this.orderId = orderInfo.data.order_id
+						}
+					}
+					var result = await this.$fly.post(this.$api.orderPay, {
+						order_id: this.orderId,
+						coupon_id: this.couponId || '',
+					});
+					this.$tip.loaded()
+			
+					 if (this.payWay == 1) {
+						console.log(result)
+						if (result.data.is_finish == 1) {
+							uni.redirectTo({
+								url: "/pages/shopAndOrder/settlement/orderDetail?order_id=" + result.data.order_id
+							});
+						} else {
+							var payMentResult = await this.$fly.post(this.$api.getJsApiData, {
+								order_id: result.data.order_id,
+							});
+							// 微信支付
+							wx.requestPayment({
+								timeStamp: payMentResult.data.timeStamp,
+								nonceStr: payMentResult.data.nonceStr,
+								package: payMentResult.data.package,
+								signType: 'MD5',
+								paySign: payMentResult.data.paySign,
+								success: (res) => {
+									// 推送订阅消息
+									uni.redirectTo({
+										url: "/pages/center/order/orderDetail?order_id=" + result.data.order_id
+									});
+								},
+								fail: (res) => {
+									this.$tip.toast("支付失败");
+								}
+							})
+						}
+					} else {
+						uni.redirectTo({
+							url: "/pages/shopAndOrder/settlement/payResult?order_id=" + result.data.order_id + '&status=' + result.status
+						});
+					}
+				
+					this.$store.dispatch('getCartNum')
+			
+			
+			
+			},
 			async payOrder() {
-				return await this.$fly.post(this.$api.submitOrder, {
+				return await this.$fly.post(this.$api.orderBegin, {
 					cart_ids: this.shopCarIds,
 					address_id: this.addressId,
-					remarks: this.remark,
-					shipping: this.getType,
+					remarks: this.desc,
 					// coupon_id: this.couponId || ''
 				});
 
 			},
 			modifyAddress() {
-				uni.navigateTo({
+				wx.navigateTo({
 					url: "/pages/center/address/myAddress?isShop=1&cart_ids=" + this.shopCarIds
 				});
 			},
@@ -218,7 +277,6 @@
 	.submitOrder {
 		min-height: 100vh;
 		background: #f3f3f3;
-		padding-bottom: 118rpx;
 		background: linear-gradient(to bottom, #DF464E 0%, #df464e 5%, #f3f3f3 30%, #f3f3f3 100%);
 
 		.top-bg {
@@ -234,7 +292,7 @@
 		.content {
 			padding: 0 20rpx;
 			padding-top: 20rpx;
-
+			padding-bottom: 118rpx;
 			.price-detail-box {
 				padding: 30rpx;
 				font-size: 26rpx;

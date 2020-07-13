@@ -2,7 +2,7 @@
 	<view class="good-detail" v-if="detail">
 		<!-- 轮播图 -->
 		<view class="good-swiper-container">
-			<swiper :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval" :duration="duration"
+			<swiper :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="3000" @change="swiperChange" :duration="1000"
 			 indicator-active-color="#FF0000" class="good-swiper">
 				<view>
 					<swiper-item class="good-swiper-item" v-if="detail.goods_base.video_url">
@@ -15,9 +15,12 @@
 					</swiper-item>
 				</view>
 			</swiper>
+			<view class="dot-container" v-if="detail.goods_images.length>0">
+				<swiperDot :current='current' :length="detail.goods_images.length"></swiperDot>
+			</view>
 		</view>
 		<!-- 秒杀 -->
-		<view class="sec-kill sec-kill-common" >
+		<view class="sec-kill "  :class="detail.islimit ? 'sec-kill-common': 'sec-no-common'">
 			<view class="sec-kill-title">
 				<text>¥</text>
 				<text >{{detail.price_last}}</text>
@@ -25,9 +28,9 @@
 				<image class="zhuan-icon" src="../../static/images/index/zhuan.png" mode=""></image>
 				<text class="zhuan">¥{{detail.commission}}</text>
 			</view>
-			<view class="sec-kill-con">
-				<block v-if="detail.iskill && detail.killgood.isdoing">
-					<view class="sec-kill-text" style="line-height: 1;margin-bottom: 10rpx;"><text>距结束</text></view>
+			<view class="sec-kill-con ">
+				<block v-if="detail.islimit && detail.islimit">
+					<view class="sec-kill-text " style="line-height: 1;margin-bottom: 10rpx;"><text class="title-tips">距结束</text></view>
 					<view class="flex-box">
 						<view class="sec-kill-time"><text>{{formateDeadline.hours}}</text></view>
 						<view class="sec-kill-text"><text>:</text></view>
@@ -37,7 +40,7 @@
 					</view>
 				</block>
 				<block v-else>
-					<view class="sec-kill-text" style="padding-right:32rpx;">即将开抢,敬请期待!</view>
+					<view class="sec-kill-text" >即将开抢,敬请期待!</view>
 				</block>
 			</view>
 		</view>
@@ -92,32 +95,32 @@
 				<text class="iconfont iconyoujiantou" ></text>
 			</view>
 		</view>
-		<view class="brand row-box " v-if="detail.brandinfo">
+		<view class="brand row-box " v-if="detail.brandinfo" @click.stop="toBrand">
 			<image class="b-img" :src="detail.brandinfo.brand_logo[0]" mode="aspectFill"></image>
 			<view class="name-box">
-				<text class="name">{{detail.brand_name}}</text>
-				<text class="area">中国</text>
+				<text class="name">{{detail.brandinfo.brand_name}}</text>
+				<!-- <text class="area">中国</text> -->
 			</view>
 			<view class="r-text">进入品牌</view>
 			<text style="margin-left:0" class="iconfont iconyoujiantou" ></text>
 		</view>
-		<view class="seeding row-box">
-			<view class="seeding-img">
-				<image class="b-img" src="../../static/images/icon/nav-item-2.png" mode=""></image>
-				<image class="b-img" src="../../static/images/icon/nav-item-2.png" mode=""></image>
-				<image class="b-img" src="../../static/images/icon/nav-item-2.png" mode=""></image>
+		<view class="seeding row-box" @click="toSeeding">
+			<view class="seeding-img" >
+				<image class="b-img" v-if="grassmanList[0] && grassmanList[0].avatar" :src="grassmanList[0].avatar" mode=""></image>
+				<image class="b-img" v-if="grassmanList[1] && grassmanList[1].avatar" :src="grassmanList[1].avatar" mode=""></image>
+				<image class="b-img" v-if="grassmanList[2] && grassmanList[2].avatar" :src="grassmanList[2].avatar" mode=""></image>
 			</view>
-			<text class="tips">大家都在种草</text>
+			<text class="tips" >大家都在种草</text>
 			<view class="r-text">去看看</view>
 			<text style="margin-left:0" class="iconfont iconyoujiantou" ></text>
 		</view>
-		<view class="recommend">
+		<view class="recommend" v-if="recommendList.length">
 			<view class="r-title">店铺推荐</view>
 			<!-- <view class="good-box"> -->
 			<scroll-view class="good-box" scroll-x="true" style="white-space: nowrap;"  >
-				<view class="item" v-for="(item,index) in detail.products_list" :key="index">
+				<view class="item" v-for="(item,index) in recommendList" :key="index" @click.stop="toDetail(item.good_id)">
 					<image :src="item.goods_images[0]" mode="aspectFill"></image>
-					<view class="good-name clamp">{{item.spec_title}}</view>
+					<view class="good-name clamp">{{item.goods_title}}</view>
 					<view class="price">¥{{item.price_last}}</view>
 				</view>
 			</scroll-view>
@@ -163,7 +166,7 @@
 			<div class="buy-pop-box" :class="showPopChoice?'showPop':'hidePop'">
 				<div class="choose-good-box">
 					<div class="img-box">
-						<image :src="good_img" mode=""></image>
+						<image :src="chooseImg" mode=""></image>
 					</div>
 					<div class="info-box">
 							<p class="price"><span class="p-icon">¥</span>{{detail.price_last}}
@@ -175,12 +178,12 @@
 				</div>
 				<div class="buy-pop-box-color" style="padding: 0rpx 30rpx 5rpx 30rpx;">
 					<div class="color-title">
-						颜色选择({{colorArr.length}})
+						{{colorTitle}}选择({{colorArr.length}})
 					</div>
 					<div class="color-list" v-if="colorArr.length">
 						<div class="color-item" v-for="(value,index) in colorArr" :class="{ 'color_active' : index == colorChooseIndex}"
 						 @click.stop="curColorKeyFun('color',index)" :key="index">
-						 <image class="color-img" :src="good_img" mode=""></image>
+						 <image class="color-img" :src="value.img" mode=""></image>
 							<span>{{value.item}}</span>
 							<!-- <span class="nums" v-if="value.choiceNum">{{value.choiceNum}}</span> -->
 						</div>
@@ -188,7 +191,7 @@
 				</div>
 				<div class="buy-pop-box-color">
 					<div class="color-title">
-						参考身高
+						{{sizeTitle}}
 					</div>
 					<div class="color-list" v-if="sizeArr.length">
 						<div class="color-item size-color"  v-for="(value,index) in sizeArr" :class="{ 'active' : index == sizeChooseIndex}"
@@ -211,7 +214,7 @@
 				</div>
 				<div class="buy-sure-btn-container">
 					<div class="buy-sure-btn">
-						<div class="add-cart"@click.stop="subAddShopCart(2)">加入购物车</div>
+						<div class="add-cart" @click.stop="subAddShopCart(2)">加入购物车</div>
 						<div class="buy-now" @click.stop="subAddShopCart(1)">立即购买</div>
 					</div>
 				</div>
@@ -247,25 +250,66 @@
 	import parser from "@/components/jyf-Parser/index.vue"
 	import uniNumberBox from "@/components/uni-number-box/uni-number-box.vue"
 	import popup from '@/components/uni-popup/uni-popup.vue'
+	import swiperDot from '@/components/index/swiper-dot.vue'
 	export default {
 		components:{
 			parser,
 			uniNumberBox,
-			popup
+			popup,
+			swiperDot
 		},
 		async onLoad(option){
 			this.id = option.id
 			this.$tip.loading()
 			let data = await this.getDetail()
-			// let a = {"status":1,"msg":"\u83b7\u53d6\u6210\u529f","data":{"goods_img":["https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/9700375b1229b042803ae80042376f61.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/1b60c1c8682d7254e92242096fe5178c.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/cd97ab49dd62dd1a2a7b017a4c09c3b4.jpg","https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200616\/56b78d7f092c22e89d2608c8ac56b44c.jpg"],"goods_base":{"id":"33030","brand_id":"197","class_id":"545","code":"dbk0616","comment_num":"0","every_pack":"","goods_type":"3","level_limit":"","level_limit_time":"0","price_market":"356.00","price_purchase":"10.00","price_sale":"29.90","price_wholesale":"0.00","salenum":"11123","shelves":"2","title":"\u8fea\u8d1d\u514b\u4e28\u4f11\u95f2\u65f6\u5c1a\u79cb\u5b63\u7cfb\u5217\u7ae5\u88c580-104,100-140","top_tpl":"0","bottom_tpl":"0","video_url":"","viewnum":"1467","wholesale_num":"1","is_free_shipping":"0","weight":"0.10","ext_attr":null,"kind_ratio":"\u88e4\u5b5031%\uff0c\u4e0a\u886364%\uff0c\u5916\u59575%","year_area_id":"30","child_gender_id":"3","brand_area_id":"45","brand_material_id":"25","season_id":"3","style":"10"},"goods_detail":"<p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/9700375b1229b042803ae80042376f61.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/1b60c1c8682d7254e92242096fe5178c.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/cd97ab49dd62dd1a2a7b017a4c09c3b4.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/56b78d7f092c22e89d2608c8ac56b44c.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/e305d3b844b7ffcbd5c0f661a7a9fd96.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/5d503baecfb6ab92c73698286d9a394d.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/6d564d4203a243adcba5862a9b6fe187.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/66b780f5d83d2345f7740c5c7410402b.jpg\" data-filename=\"filename\" style=\"width: 600px;\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/3e1207d57665484389fb4fc5bff07159.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/6a0994307bc5d0a954f87b734b61c03c.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/bd3ef67bb8fd728bb7b310e1fc9fe21a.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p><br><\/p><p><img src=\" http:\/\/img.yoyoxp.com\/uploads\/20200616\/dfcda2abcbabf076215d81c6b54353d1.jpg\" style=\"width: 600px;\" data-filename=\"filename\"><\/p><p> <\/p>         ","goods_style":"\u4f11\u95f2","member_price":[{"level_name":"\u767d\u94f6\u4f1a\u5458","level":"7","price":29.9,"rate":"100"},{"level_name":"\u9ec4\u91d1\u4f1a\u5458","level":"10","price":29.3,"rate":"98"},{"level_name":"\u94c2\u91d1\u4f1a\u5458","level":"11","price":28.41,"rate":"95"},{"level_name":"\u94bb\u77f3\u4f1a\u5458","level":"12","price":26.91,"rate":"90"}],"seasion_name":"\u79cb","brand_name":"\u8fea\u8d1d\u514b","brand_info":{"id":"197","brand_name":"\u8fea\u8d1d\u514b","goods_class_id":"50","brand_logo":"","brand_description":"","sort":"0","recommend":"0","create_time":"1592297307","update_time":"1592460973","letter":"","brand_banner":"","video_url":"https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200618\/42b45bcf2a22740587419fad47f2fbd9.mp4","video_description":"","status":"0","path":null},"brand_area":"\u5c71\u4e1c","brand_material":"\u68c9","is_like":0,"is_collect":0,"iskill":1,"killgood":{"id":"2785","main_id":"1329","goods_id":"33030","price":"8.80","time_slot":"09:00","start_time":"1593997200","end_time":"1594051199","goods_type":"3","stock":"600","sale_num":"300","type":"1","limitnum":"0","deadline":23187,"isdoing":1},"lastmoney":29.3,"level_name":"\u9ec4\u91d1\u4f1a\u5458","level_id":"10"}}
 			this.detail = data.data
 			this.colorArr = this.detail.specList[0].specChildList
 			this.sizeArr = this.detail.specList[1].specChildList
+			this.colorTitle = this.detail.specList[0].name
+			this.sizeTitle = this.detail.specList[1].name
 			this.products_list = this.detail.products_list
+			if(this.detail.islimit){
+				this.deadline = this.detail.limitgoods.deadline
+			}
+			uni.setNavigationBarTitle({
+				title:this.detail.goods_title
+			})
+			this.getSkuImg(this.colorArr,this.sizeArr,this.products_list)
 			// 获取库存
 			this.getSkuAndStock(this.colorArr[0].id+'_'+this.sizeArr[0].id)
-		
+			this.chooseImg = this.colorArr[0].img
+			// 倒计时
+			this.timer = setInterval(() => {
+				this.deadline = this.deadline - 1
+				if (this.deadline <= 0) {
+					clearInterval(this.timer)
+					this.timer = null
+				}
+			}, 1000)
 			this.$tip.loaded()
+			this.recommendList =  await this.recommondGoodslist()
+			this.grassmanList  = await this.grassman()
+		},
+		computed:{
+			formateDeadline() {
+				let leftTime = this.deadline * 1000; //计算剩余的毫秒数
+				// console.log(leftTime)
+				// let days = parseInt(leftTime / 1000 / 60 / 60 / 24, 10); //计算剩余的天数
+				let hours = parseInt(leftTime / 1000 / 60 / 60, 10); //计算剩余的小时
+				let minutes = parseInt(leftTime / 1000 / 60 % 60, 10); //计算剩余的分钟
+				let seconds = parseInt(leftTime / 1000 % 60, 10); //计算剩余的秒数
+				// days = this.checkTime(days);
+				hours = this.checkTime(hours);
+				minutes = this.checkTime(minutes);
+				seconds = this.checkTime(seconds);
+				// return days + "天" + hours + "时" + minutes + "分" + seconds + "秒";
+				return {
+					// days,
+					hours,
+					minutes,
+					seconds
+				}
+			},
 		},
 		data() {
 			return {
@@ -280,12 +324,65 @@
 				colorArr:[],
 				sizeArr:[],
 				skuStr:'', //sku
+				skuId:'', //skuId
 				products_list:[], //规格列表
-				good_img:'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
-				detail: {}
+				chooseImg:'',
+				sizeTitle:'',//尺寸title
+				colorTitle:'', // 颜色title
+				detail: {},
+				timer:null,
+				deadline:0,
+				grassmanList:[],//随机种草人
+				current:0
 			};
 		},
 		methods:{
+			toBrand(id){
+				wx.navigateTo({
+					url:'/pages/index/brandDetail?id='+this.detail.brandinfo.id
+				})
+			},
+			swiperChange(e){
+				this.current = e.detail.current
+			},
+			toSeeding(id){
+				wx.switchTab({
+					url:'/pages/seeding/seeding'
+				})
+			},
+			toDetail(id){
+				wx.navigateTo({
+					url:"/pages/good/goodDetail?id="+id
+				})
+			},
+			checkTime(number) { //将0-9的数字前面加上0，例1变为01
+				if (number < 10) {
+					number = "0" + number;
+				}
+				return number;
+			},
+			async grassman(){
+				let data = await this.$fly.post(this.$api.grassman,{goods_id:this.id})
+				return data.data
+			},
+			async recommondGoodslist(){
+				let data = await this.$fly.post(this.$api.goodslist,{goodsNav:0,page:1,pageSize:10,is_recommend:1})
+				return data.data.list
+			},
+			// 通过color和size 的id  拿sku的图片
+			getSkuImg(colorArr,sizeArr,skulist){
+				colorArr.forEach((itemC)=>{
+					sizeArr.forEach((itemS)=>{
+						let skuKey = itemC.id+'_'+itemS.id
+						for(let itemK of skulist){
+							if(itemK.sku == skuKey){
+								console.log(itemK.goods_images[0])
+								itemC.img = itemK.goods_images[0]
+							}
+						}
+					})
+				})
+			},
 			getSkuAndStock(strSku){ //获取sku和库存
 			let obj = {
 				inventoryNum :0,
@@ -295,6 +392,7 @@
 					if(item.sku == strSku){
 						this.inventoryNum = item.stock
 						this.skuStr = item.sku
+						this.skuId = item.id
 						// obj.sku = item.sku
 						// obj.stock = item.stock
 						
@@ -325,10 +423,10 @@
 				if(this.colorChooseIndex ==-1){
 						return this.$tip.toast('请选择颜色!')
 				}
-				if(!this.skuStr){
+				if(!this.skuStr || !this.skuId){
 					return this.$tip.toast('规格错误!')
 				}
-					goodObj.product_id = this.detail.goods_id
+					goodObj.product_id = this.skuId
 					goodObj.goods_num = this.chooseNum 
 					goodObj.goods_id = this.detail.goods_id
 					goodObj.sku = this.skuStr
@@ -476,12 +574,16 @@
 	}
 	.good-swiper-container {
 		background: #fff;
-
+		position: relative;
 		.good-swiper {
 			width: 100%;
 			height: 650rpx;
 		}
-
+		.dot-container{
+			position: absolute;
+			right: 30px;
+			bottom: 20rpx;
+		}
 		.slide-image {
 			width: 100%;
 			height: 650rpx;
@@ -735,6 +837,7 @@
 			}
 		}
 	}
+	
 	// 秒杀
 	.sec-kill {
 		display: flex;
@@ -750,11 +853,14 @@
 		&-common {
 			background: url(../../static/images/seckill_bg_common.png) top center no-repeat;
 			background-size: 100% 100%;
-	
+			text.title-tips{
+				color: #F12732;
+			}
 			.sec-kill-text,
 			.sec-kill-time {
 				text {
-					color: #FB120F;
+					font-weight: 400;
+					color: #fff;
 				}
 			}
 		}
@@ -820,6 +926,36 @@
 			text-align: center;
 			line-height: 40rpx;
 			font-size: 26rpx;
+		}
+	}
+	.sec-no-common{
+		background: #fff;
+		.sec-kill-title {
+			
+			text:first-child {
+				color:#F22732 ;
+			}
+			
+			text:nth-child(2) {
+				color:#F22732 ;
+			}
+			
+			text:nth-child(3) {
+				color: #999999;
+			}
+			.zhuan-icon{
+				margin-left: 15rpx;
+				margin-right: 4rpx;
+				width: 28rpx;
+				height: 28rpx;
+				vertical-align: middle;
+			}
+			.zhuan{
+				// display: inline-block;
+				font-size: 26rpx;
+				color: #FBDF98;
+				
+			}
 		}
 	}
 	// 购买按钮

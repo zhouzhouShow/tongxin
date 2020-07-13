@@ -1,21 +1,21 @@
 <template>
 	<view class="item flex-align-center">
-		<checkbox class="c-checkbox" color="#17B948" :checked="isAll" v-if="type=='cart'" />
-		<image class="g-img" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg"
+		<checkbox @click="clickCheckBox" class="c-checkbox" color="#17B948" :checked="item.checked" v-if="type=='cart'" />
+		<image class="g-img" :src="item.goods_images[0]"
 		 mode=""></image>
 		<view class="g-info">
-			<p class="g-name clamp-two">{{'2020新款木马短袖女童连衣裙宝宝夏装纯棉 '}}</p>
+			<p class="g-name clamp-two">{{item.goods_title}}</p>
 			<p class="g-spec flex-justify-center">
-				<text>粉色;120cm</text>
+				<text>{{item.spec_item_title | split}}</text>
 				<text v-if="type=='cart'" class="iconfont iconarrow"></text>
 			</p>
-			<p class="discount">9.2折</p>
+			<!-- <p class="discount">9.2折</p> -->
 			<p class="pirce-box flex-align-center">
 				<span class="n-price">
-					<span class="p-icon">¥</span>{{213}}
+					<span class="p-icon">¥</span>{{item.goods_price}}
 				</span>
-				<span class="num" v-if="type=='order'">x1</span>
-				<uni-number-box v-if="type=='cart'" :value='1' :max="10" @change="getNumberValue" :onlyKey="123"></uni-number-box>
+				<span class="num" v-if="type=='order'">x{{item.goods_num}}</span>
+				<uni-number-box v-if="type=='cart'" :value='item.goods_num' :max="item.stock" min="1" @change="getNumberValue" :onlyKey="123"></uni-number-box>
 			</p>
 		</view>
 	</view>
@@ -30,17 +30,32 @@
 		props:{
 			item:{
 				type:Object,
-				default:null
+				default:()=>{}
 			},
 			type:{
 				type:String,
 				default:'cart'
 			}
 		},
+		filters:{
+			split(str){
+				return  str.replace('_',' : ');
+			},
+		},
 		data() {
 			return {
 
 			};
+		},
+	
+		methods:{
+			getNumberValue(e){
+				this.$emit('changeNum',e.value)
+				this.chooseNum = e.value
+			},
+			clickCheckBox(){
+				this.$emit('onePick')
+			},
 		}
 	}
 </script>

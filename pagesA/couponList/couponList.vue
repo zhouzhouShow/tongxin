@@ -184,7 +184,7 @@
 					pageSize: this.pageSize,
 					ctype: type == 'used' ? 1 : 2
 				}).then(res => {
-					if (res.status) {
+					if (res.code) {
 						if (this.page == 1) {
 							this.couponList = res.data.list
 						} else {
@@ -206,7 +206,7 @@
 					page: this.page,
 					pageSize: this.pageSize
 				}).then(res => {
-					if (res.status) {
+					if (res.code) {
 						if (this.page == 1) {
 							this.couponList = res.data.list
 						} else {
@@ -225,7 +225,7 @@
 			},
 			getNum() {
 				this.$fly.post(this.$api.mycouponnum).then(res => {
-					if (res.status) {
+					if (res.code) {
 						this.noUsedNum = Number(res.data.new)
 						this.usedNum = Number(res.data.oldnum)
 						this.timeOutNum = Number(res.data.deadnum)
@@ -237,7 +237,7 @@
 				this.$fly.post(this.$api.getCoupon, {
 					c_id: id
 				}).then((res) => {
-					if (res.status) {
+					if (res.code) {
 						this.couponList[index].isget = 1
 						this.$tip.toast(res.msg)
 					} else {
@@ -385,7 +385,7 @@
 						text-align: center;
 						height: 56rpx;
 						line-height: 56rpx;
-						background: linear-gradient(90deg, rgba(251, 9, 9, 1), rgba(255, 103, 73, 1));
+						background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
 						box-shadow: 0px 8rpx 16rpx 0px rgba(255, 103, 73, 0.3);
 						border-radius: 28rpx;
 						font-size: 24rpx;
