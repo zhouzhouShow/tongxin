@@ -3,7 +3,7 @@
 		<view class="good-list">
 			<view class="good-brand-item" v-for="(item,index) in shopCarList" :key="index">
 				<view class="title-state-box flex-align-center">
-					<checkbox color="#17B948" :checked="isAll" />
+					<checkbox color="#17B948" :checked="item.allChecked" />
 					<view class="brand-info flex-align-center">
 						<image class="b-img" :src="item.brand_logo" mode=""></image>
 						<text class="brand-name">{{item.brand_name}}</text>
@@ -13,7 +13,7 @@
 				</view>
 				<view class="good-box">
 					<block v-for="(itemG,indexG) in item.goodlist" :key="item.good_id">
-						<cartItem :item="itemG" @changeNum="goodsNumChanged"></cartItem>
+						<cartItem :item="itemG" @changeNum="goodsNumChanged($event,index,indexG)" @onePick="onePick(index,indexG)"></cartItem>
 					</block>
 				</view>
 			</view>
@@ -52,6 +52,8 @@
 				shopCarList: [],
 				noNumList:[],
 				totalPrice: 0, //总价
+				allShopTotalPrice:0,
+				allShopTotalPrice:0,
 			};
 		},
 		async onLoad(){
@@ -89,7 +91,7 @@
 						itemOnePrice = 0,
 						itemCheckedNum = 0;
 					if (this.allPickChecked) {
-						items.goodlist[0].allChecked = true;
+						items.allChecked = true;
 							items.goodlist.forEach((item) => {
 								itemsAllPrice += item.goods_price * item.goods_num
 								itemsAllNum += item.goods_num
@@ -97,19 +99,26 @@
 							});
 			
 					} else {
-						items.goodlist[0].allChecked = false;
+						items.allChecked = false;
 						items.goodlist.forEach((item) => {
 			
 							item["checked"] = false;
 						});
+						
+						items.goodlist.forEach((item) => {
+							itemsAllPrice += item.goods_price * item.goods_num
+							itemsAllNum += item.goods_num
+							item["checked"] = true;
+						});
+						this.allShopTotalPrice = itemsAllPrice
 						itemsAllPrice = 0
 						itemsAllNum = 0
 					}
-					items.goodlist[0].allPrice = itemsAllPrice
-					items.goodlist[0].allNum = Number(itemsAllNum)
-					items.goodlist[0].totalCheckedNum = 0
+					items.allPrice = itemsAllPrice
+					items.allNum = Number(itemsAllNum)
+					items.totalCheckedNum = 0
 					
-					items.goodlist[0].onePrice = items.goodlist[0].goods_price
+					items.onePrice = items.goodlist[0].goods_price
 				});
 				let list = data.list
 				let noDataList = []
@@ -142,6 +151,38 @@
 				console.log(list)
 			
 				return list;
+			},
+			onePick(index1, index2) { //
+				this.$set(this.shopCarList[index1].goodlist[index2], 'checked', !this.shopCarList[index1].goodlist[index2].checked);
+				var idx = this.shopCarList[index1].goodlist.findIndex((val) => {
+					return val.checked == false;
+				})
+				let goodObj = this.shopCarList[index1]
+				if (idx == -1) {
+					this.$set(goodObj, 'allChecked', true);
+				} else {
+					this.$set(goodObj, 'allChecked', false);
+				}
+				var idxs = this.shopCarList.findIndex((val) => {
+					return val.allChecked == false;
+				})
+				this.allPickChecked = idxs == -1 ? true : false;
+				var val = this.shopCarList[index1].goodlist[index2];
+				var allPrice = goodObj.allPrice;
+				if (this.shopCarList[index1].goodlist[index2].checked) {
+						goodObj.allPrice = ((goodObj.allPrice * 100 + val.goods_price * val.goods_num * 100) / 100).toFixed(2)
+						goodObj.allNum = ((goodObj.allNum * 100 +  val.goods_num * 100) / 100)
+				} else {
+						goodObj.allPrice = ((goodObj.allPrice * 100 - val.goods_price * val.goods_num * 100) / 100).toFixed(2)
+						goodObj.allNum = ((goodObj.allNum * 100 -  val.goods_num * 100) / 100)
+				}
+			
+				if (this.allPickChecked) {
+					this.totalPrice = this.allShopTotalPrice;
+				} else {
+					this.totalPrice = (Number(this.totalPrice) + Number(goodObj.allPrice) - allPrice).toFixed(2);
+				}
+			
 			},
 			// 删除购物车
 			async deleteCartId() {

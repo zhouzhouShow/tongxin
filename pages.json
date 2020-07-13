@@ -167,12 +167,11 @@
 		}, {
 			"path": "pages/center/refund/refundDetail",
 			"style": {}
+		}, {
+			"path": "pages/center/order/storeOrderDetail",
+			"style": {}
 		}
-	    ,{
-            "path" : "pages/center/order/storeOrderDetail",
-            "style" : {}
-        }
-    ],
+	],
 	"subPackages": [{
 		"root": "pagesA",
 		"pages": [{
