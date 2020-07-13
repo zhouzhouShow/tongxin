@@ -3,7 +3,7 @@
 		<view class="good-list">
 			<view class="good-brand-item" v-for="(item,index) in shopCarList" :key="index">
 				<view class="title-state-box flex-align-center">
-					<checkbox color="#17B948" :checked="item.allChecked" />
+					<checkbox color="#17B948" :checked="item.allChecked" @click="allPickClick" />
 					<view class="brand-info flex-align-center">
 						<image class="b-img" :src="item.brand_logo" mode=""></image>
 						<text class="brand-name">{{item.brand_name}}</text>
@@ -12,7 +12,7 @@
 					<image class="delete" src="../../static/images/icon/icon_delete.png" mode=""></image>
 				</view>
 				<view class="good-box">
-					<block v-for="(itemG,indexG) in item.goodlist" :key="item.good_id">
+					<block v-for="(itemG,indexG) in item.goodlist"  :key="item.good_id">
 						<cartItem :item="itemG" @changeNum="goodsNumChanged($event,index,indexG)" @onePick="onePick(index,indexG)"></cartItem>
 					</block>
 				</view>
@@ -21,7 +21,7 @@
 		</view>
 		<view class="fixed-bottom">
 			<label class="radio">
-				<checkbox color="#17B948" :checked="isAll" />
+				<checkbox color="#17B948" :checked="isAll"  @click.stop="allPickClick" />
 				<text>全选</text>
 			</label>
 			<view class="total">
@@ -29,7 +29,7 @@
 				<text>合计:</text>
 				<text class="p-box"><text class="p-icon">¥</text>{{totalPrice}}</text>
 			</view>
-			<view class="submit">
+			<view class="submit" @click.stop="onSubmitOrder">
 				结算
 			</view>
 		</view>
@@ -53,7 +53,7 @@
 				noNumList:[],
 				totalPrice: 0, //总价
 				allShopTotalPrice:0,
-				allShopTotalPrice:0,
+			
 			};
 		},
 		async onLoad(){
@@ -104,11 +104,10 @@
 			
 							item["checked"] = false;
 						});
-						
+						// 计算总的价格
 						items.goodlist.forEach((item) => {
 							itemsAllPrice += item.goods_price * item.goods_num
 							itemsAllNum += item.goods_num
-							item["checked"] = true;
 						});
 						this.allShopTotalPrice = itemsAllPrice
 						itemsAllPrice = 0
@@ -152,6 +151,82 @@
 			
 				return list;
 			},
+			allPick(index) {
+				let goodObj = this.shopCarList[index]
+				this.$set(goodObj, 'allChecked', !goodObj.allChecked)
+				let itemsAllPrice = 0,
+					itemsAllNum = 0;
+				if (goodObj.allChecked) {
+					var idx = this.shopCarList.findIndex((val) => {
+						return val.allChecked == false;
+					})
+					this.allPickChecked = idx == -1 ? true : false;
+					if (goodObj.goods_type == 1) { //普通商品
+						this.shopCarList[index].forEach((val, index) => {
+							val.checked = true
+			
+							itemsAllPrice += val.goods_price * val.goods_num 
+							itemsAllNum += val.goods_num
+						})
+					} 
+			
+				} else {
+			
+					if (this.allPickChecked) {
+						this.allPickChecked = false
+					}
+					this.shopCarList[index].forEach((val, index) => {
+						val.checked = false
+					})
+					itemsAllPrice = 0
+					itemsAllNum = 0
+				}
+			
+				var allPrice = goodObj.allPrice;
+				goodObj.allPrice = (itemsAllPrice ).toFixed(2)
+				goodObj.allNum = Number(itemsAllNum)
+				// goodObj.onePrice = goodObj.price
+				if (this.allPickChecked) {
+					this.totalPrice = this.allShopTotalPrice;
+				} else {
+					if (goodObj.allChecked) {
+						this.totalPrice = this.totalPrice + goodObj.allPrice - allPrice ;
+					} else {
+						this.totalPrice = this.totalPrice - allPrice;
+					}
+				}
+		
+			},
+			async allPickClick() {
+			
+				this.allPickChecked = !this.allPickChecked
+				this.$tip.loading();
+				// this.getAllId()
+				// console.time()
+				this.totalPrice = this.allPickChecked ? this.allShopTotalPrice : 0
+				await this.shopCarList.forEach(items => {
+					items.allChecked = this.allPickChecked;
+					let itemsAllPrice = 0,
+						itemsAllNum = 0;
+					if (this.allPickChecked) {
+						items.goodlist.forEach((item) => {
+							itemsAllPrice += item.goods_price * item.goods_num * 100
+							itemsAllNum += item.goods_num
+					
+							item["checked"] = true;
+						});
+					} else {
+						items.goodlist.forEach((item) => {
+							item["checked"] = false;
+						});
+						itemsAllPrice = 0
+						itemsAllNum = 0
+					}
+					items.allPrice = (itemsAllPrice / 100).toFixed(2)
+					items.allNum = Number(itemsAllNum)
+				});
+				this.$tip.loaded();
+			},
 			onePick(index1, index2) { //
 				this.$set(this.shopCarList[index1].goodlist[index2], 'checked', !this.shopCarList[index1].goodlist[index2].checked);
 				var idx = this.shopCarList[index1].goodlist.findIndex((val) => {
@@ -163,10 +238,13 @@
 				} else {
 					this.$set(goodObj, 'allChecked', false);
 				}
+			
 				var idxs = this.shopCarList.findIndex((val) => {
 					return val.allChecked == false;
 				})
 				this.allPickChecked = idxs == -1 ? true : false;
+					console.log(idxs == -1,this.allPickChecked  )
+				
 				var val = this.shopCarList[index1].goodlist[index2];
 				var allPrice = goodObj.allPrice;
 				if (this.shopCarList[index1].goodlist[index2].checked) {
@@ -245,172 +323,138 @@
 				}).catch(err => {
 					console.log(err)
 				});
-			}
-		},
-		async onSubmitOrder(event) {
-		
-			const {
-				type
-			} = event.mp;
-			if (type === "submit") {
-		
-				this.$tip.loading();
-		
-				// if (!this.isMeetConditions()) {
-				//   this.$tip.loaded();
-				//   this.$tip.toast("商品不足起批量");
-				//   return;
-				// }
-		
-				// if (this.isSoldOut()) {
-				//   this.$tip.loaded();
-				//   this.$tip.toast("无库存商品不可下单");
-				//   return;
-				// }
-		
-				var selected_items = "";
-		
-				for (let i = 0; i < this.shopCarList.length; i++) {
-					for (let j = 0; j < this.shopCarList[i].length; j++) {
-						if (this.shopCarList[i][j].checked) {
-							selected_items = selected_items.concat(this.shopCarList[i][j].carts_id + ",");
+			},
+			async onSubmitOrder() {
+				
+			
+					this.$tip.loading();
+			
+					// if (!this.isMeetConditions()) {
+					//   this.$tip.loaded();
+					//   this.$tip.toast("商品不足起批量");
+					//   return;
+					// }
+			
+					// if (this.isSoldOut()) {
+					//   this.$tip.loaded();
+					//   this.$tip.toast("无库存商品不可下单");
+					//   return;
+					// }
+			
+					var selected_items = "";
+			
+					for (let i = 0; i < this.shopCarList.length; i++) {
+						for (let j = 0; j < this.shopCarList[i].goodlist.length; j++) {
+							console.log(this.shopCarList[i].goodlist[j].checked)
+							if (this.shopCarList[i].goodlist[j].checked) {
+								selected_items = selected_items.concat(this.shopCarList[i].goodlist[j].cart_id + ",");
+							}
 						}
 					}
-				}
-		
-				selected_items = selected_items.substr(0, selected_items.length - 1);
-		
-				if (selected_items.length <= 0) {
-					this.$tip.loaded();
-					this.$tip.toast("还没选中结算商品");
-				} else {
-					var result = await this.getDefaultAddress();
-					this.$tip.loaded();
-					if (this.allShopNum < pageSize) { //购物车数量超过每页的数量,就按循环的来 ,超过了比如大于100按循环的来的话就会卡顿
-						selected_items = selected_items
+			
+					selected_items = selected_items.substr(0, selected_items.length - 1);
+				
+					if (selected_items.length <= 0) {
+						this.$tip.loaded();
+						this.$tip.toast("还没选中结算商品");
 					} else {
-						if (this.allPickChecked) {
-							selected_items = this.allCartId
-						} else {
+						var result = await this.getDefaultAddress();
+						this.$tip.loaded();
+						if (this.allShopNum < pageSize) { //购物车数量超过每页的数量,就按循环的来 ,超过了比如大于100按循环的来的话就会卡顿
 							selected_items = selected_items
+						} else {
+							if (this.allPickChecked) {
+								selected_items = this.allCartId
+							} else {
+								selected_items = selected_items
+							}
 						}
-					}
-		
-		
-					if (result.data.prov_name == null) {
+			 
 						console.log('selected_items', selected_items)
-						//跳转添加地址
-						wx.navigateTo({
-							url: "/pages/center/address/myAddress?isShop=1&cart_ids=" + selected_items
-						});
-					} else {
-						wx.navigateTo({
-							url: "/pages/shopAndOrder/settlement/submitOrder?address_id=" + result.data.id + '&cart_ids=' +
-								selected_items
-						});
-					}
-				}
-		
-			}
-		},
-		goodsNumChanged(goods_num, index, itemIndex, addType, oldValue) {
-			// console.log(goods_num, index, itemIndex, addType, oldValue)
-			this.$tip.loading();
-			// let num = oldValue - goods_num
-			let item = this.shopCarList[index][itemIndex]
-			if (this.shopCarList[index][itemIndex].checked) {
-				let good0 = this.shopCarList[index][0]
-				let wholesalePriceArr = good0.wholesale_price_arr //价格区间
-				if (item.goods_type == 1) { //普通商品
-					if (addType == 'add') {
-						this.totalPrice = this.totalPrice + item.price * 100
-						good0.allPrice = ((good0.allPrice * 100 + Number(item.price * 100)) / 100).toFixed(2)
-						good0.allNum += 1 * item.sku_num//增加一手件数到总件数
-						good0.totalUnit += 1 
-					} else {
-						this.totalPrice = this.totalPrice - item.price * 100
-						good0.allPrice = ((good0.allPrice * 100 - Number(item.price * 100)) / 100).toFixed(2)
-						good0.allNum -= 1 * item.sku_num //减少一手件数到总件数
-						good0.totalUnit -= 1 
-					}
-				} else if (item.goods_type == 3) { //份货商品
-					let lastPrice = good0.allPrice //没有增加的总价价格
-					let spread = 0 //差价
-					if (addType == 'add') {
-						good0.allNum += 1 * item.color//增加一份件数到总件数
-						good0.totalUnit += 1 
-						let intervalPrice
-						if(good0.main_id >0){ //份货秒杀的计算,不取区间价格,直接用秒杀价
-							intervalPrice = good0.price
-						}else{
-							intervalPrice = this.getSectionPrice(wholesalePriceArr, good0.allNum)
+						if (result.data.provName == null) {
+							//跳转添加地址
+							wx.navigateTo({
+								url: "/pages/center/address/myAddress?isShop=1&cart_ids=" + selected_items
+							});
+						} else {
+							wx.navigateTo({
+								url: "/pages/shopCart/submitOrder?address_id=" + result.data.id + '&cart_ids=' +
+									selected_items
+							});
 						}
-						good0.allPrice = (intervalPrice*good0.allNum).toFixed(2)
-						spread = good0.allPrice -lastPrice //增加过后的价格减去上次的价格等于差价
-						
-						this.totalPrice = this.totalPrice + spread*100 //总价等于上次总价+差价
-						
-						good0.onePrice = intervalPrice == 0 ? good0.price : intervalPrice //单间价格等于区间价格
-					} else {
-						good0.allNum -= 1 * item.color//减少一份件数到总件数
-						good0.totalUnit -= 1 
-						let intervalPrice
-						if(good0.main_id >0){ //份货秒杀的计算,不取区间价格,直接用秒杀价
-							intervalPrice = good0.price
-						}else{
-							intervalPrice = this.getSectionPrice(wholesalePriceArr, good0.allNum)
-						}
-						good0.allPrice = (intervalPrice*good0.allNum).toFixed(2)
-						good0.onePrice = intervalPrice == 0 ? good0.price : intervalPrice //单间价格等于区间价格
-						spread = lastPrice - good0.allPrice //上次的价格减去增加过后的价格等于差价
-						console.log(spread)
-						this.totalPrice = this.totalPrice - spread*100 //总价等于上次总价-差价
 					}
+			
+				
+			},
+			async getDefaultAddress() {
+				return await this.$fly.post(this.$api.addressDefault, {});
+			},
+			goodsNumChanged(event, index, itemIndex) {
+				let {goods_num, addType, oldValue} = event
+				console.log(event)
+				// console.log(goods_num, index, itemIndex, addType, oldValue)
+				this.$tip.loading();
+				// let num = oldValue - goods_num
+				let item = this.shopCarList[index].goodlist[itemIndex]
+				if (this.shopCarList[index].goodlist[itemIndex].checked) {
+					let good0 = this.shopCarList[index]
+					
+						if (addType == 'add') {
+							this.totalPrice = (Number(this.totalPrice) + Number(item.goods_price)).toFixed(2)
+							good0.allPrice = ((good0.allPrice * 100 + Number(item.goods_price * 100)) / 100).toFixed(2)
+							good0.allNum += 1//增加一手件数到总件数
+						
+						} else {
+							this.totalPrice = Number(this.totalPrice - item.goods_price).toFixed(2)
+							good0.allPrice = ((good0.allPrice * 100 - Number(item.goods_price * 100)) / 100).toFixed(2)
+							good0.allNum -= 1 //减少一手件数到总件数
+						
+						}
+		
+			
 				}
-		
-			}
-		
-			if (item.goods_type == 1) { //普通商品
+			
 				item.goods_num = goods_num;
-			} else if (item.goods_type == 3) { //份货商品
-				item.goods_num = goods_num * item.color;
-			}
-			var goodsNum = parseInt(goods_num === "" ? 1 : goods_num);
-			var stockNum = parseInt(item.stokcnum);
-			if (goodsNum > stockNum) {
-				item.is_no_stock = 1;
-			} else {
-				item.is_no_stock = 0;
-			}
-			let numN = item.goods_num === "" ? 1 : item.goods_num
-		
-			let itemObj = [{
-				goods_id: item.goods_id,
-				goods_num: numN,
-				sku: item.sku,
-				color_id: item.color_id,
-				size_id: item.size_id
-			}];
-			let itemJson = JSON.stringify(itemObj);
-			this.$fly.post(this.$api.addOrEditShopCar, {
-				jsonstr: itemJson,
-				type: "2"
-			}).then(res => {
-				this.$tip.loaded();
-				if (addType == 'add') {
-					this.allShopTotalPrice += this.shopCarList[index][itemIndex].price * 100
+				
+				var goodsNum = parseInt(goods_num === "" ? 1 : goods_num);
+				var stockNum = parseInt(item.stokcnum);
+				if (goodsNum > stockNum) {
+					item.is_no_stock = 1;
 				} else {
-					this.allShopTotalPrice -= this.shopCarList[index][itemIndex].price * 100
+					item.is_no_stock = 0;
 				}
-			}).catch(() => {
-				this.$tip.loaded();
-			});
-		
+				let numN = item.goods_num === "" ? 1 : item.goods_num
+			
+				let itemObj = [{
+					goods_id: item.goods_id,
+					goods_num: numN,
+					sku: item.sku,
+					color_id: item.color_id,
+					size_id: item.size_id,
+					product_id:item.product_id
+				}];
+				let itemJson = JSON.stringify(itemObj);
+				this.$fly.post(this.$api.addCart, {
+					jsonstr: itemJson,
+					type: "2"
+				}).then(res => {
+					this.$tip.loaded();
+					if (addType == 'add') {
+						this.allShopTotalPrice += Number(this.shopCarList[index].goodlist[itemIndex].price_sale)
+					} else {
+						this.allShopTotalPrice -= Number(this.shopCarList[index].goodlist[itemIndex].price_sale)
+					}
+				}).catch(() => {
+					this.$tip.loaded();
+				});
+			
+			},
+			
+			deleteGoods(index, itemIndex) {
+				this.shopCarList[index].splice(itemIndex, 1);
+			},
 		},
 		
-		deleteGoods(index, itemIndex) {
-			this.shopCarList[index].splice(itemIndex, 1);
-		},
 		
 	}
 </script>

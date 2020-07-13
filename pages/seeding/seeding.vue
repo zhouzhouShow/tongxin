@@ -44,17 +44,20 @@
 		<view @click="handleToCreate" class="seeding_create">
 			<image src="../../static/images/seeding/icon_create.png" mode=""></image>
 		</view>
+		<comfooter :tabIdx="1" ></comfooter>
 	</view>
 </template>
 
 <script>
+	import comfooter from'@/components/com-footer.vue'
 	import SeedingItem from '@/components/seedingItem.vue'
 	import uniLoadMore from "@/components/uni-load-more/uni-load-more.vue"
 	export default {
 		name: "seeding",
 		components: {
 			SeedingItem,
-			uniLoadMore
+			uniLoadMore,
+			comfooter
 		},
 		onShareAppMessage: function() {
 			return {

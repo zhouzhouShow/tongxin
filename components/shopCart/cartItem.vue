@@ -15,7 +15,7 @@
 					<span class="p-icon">¥</span>{{item.goods_price}}
 				</span>
 				<span class="num" v-if="type=='order'">x{{item.goods_num}}</span>
-				<uni-number-box v-if="type=='cart'" :value='item.goods_num' :max="item.stock" min="1" @change="getNumberValue" :onlyKey="123"></uni-number-box>
+				<uni-number-box v-if="type=='cart'" :isFor="true" :value='item.goods_num' :max="item.stock" min="1" @change="getNumberValue" :onlyKey="123"></uni-number-box>
 			</p>
 		</view>
 	</view>
@@ -50,7 +50,8 @@
 	
 		methods:{
 			getNumberValue(e){
-				this.$emit('changeNum',e.value)
+				console.log(e)
+				this.$emit('changeNum',{goods_num:e.inputValue,addType:e.addType,oldValue:e.oldValue})
 				this.chooseNum = e.value
 			},
 			clickCheckBox(){

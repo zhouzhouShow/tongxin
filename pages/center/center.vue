@@ -133,12 +133,17 @@
 				</view>
 			</view>
 		</view>
+		<comfooter :tabIdx="3" ></comfooter>
 	</view>
 </template>
 
 <script>
+	import comfooter from'@/components/com-footer.vue'
 	export default {
 		name: "center",
+		components:{
+			comfooter
+		},
 		data() {
 			return {
 				paddingTop: 0,

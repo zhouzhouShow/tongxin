@@ -11,7 +11,7 @@
 				</view>
 			</view>
 			<view class="good-box">
-				<view class="brand-box" v-for="(item ,index) in payOrderData.cartlist.list" >
+				<view class="brand-box" v-for="(item ,index) in payOrderData.cartlist.list" :key="index" >
 					<view class="brand-info flex-align-center">
 						<image class="b-img" :src="item.brand_logo[0]" mode=""></image>
 						<text class="brand-name">{{item.brand_name}}</text>
@@ -76,7 +76,7 @@
 					</p>
 					<!-- &&payOrderData.coupon.length>0 -->
 					<scroll-view scroll-y='true' class="couponList" v-if="payOrderData">
-						<!-- <radio-group class="radio-group" @change.stop="couponChange" >
+						<radio-group class="radio-group" @change.stop="couponChange" >
 							<label :for="'st'+index" v-for="(item,index) in payOrderData.coupon" :key="index">
 								<view class="item"  @click.stop=''>
 									<image class="bg" src="../../../static/images/coupon/coupon_bg.png" mode=""></image>
@@ -100,7 +100,7 @@
 									</view>
 								</view>
 							</label>
-						</radio-group> -->
+						</radio-group>
 					</scroll-view>
 					<view class="noCoupon" v-else>
 						亲,您暂无优惠券!
@@ -157,6 +157,19 @@
 			this.$tip.loaded();
 		},
 		methods: {
+			str(item) {
+				return JSON.stringify(item)
+			},
+			parseIntNum(num) {
+				if (num) {
+					return parseInt(num)
+				}
+			},
+			formTime(time) {
+				if (time) {
+					return this.$utils.formatTime(time * 1000, 'yyyy-MM-dd hh:mm')
+				}
+			},
 			sureChooseCoupon() {
 				this.couponId = null
 				this.choosedCoupon = null

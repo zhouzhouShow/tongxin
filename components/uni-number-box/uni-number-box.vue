@@ -32,7 +32,12 @@
 			onlyKey: {
 				type: String,
 				default: ''
-			}
+			},
+			isFor: {
+				type: Boolean,
+				default: false
+			},
+			
 		},
 		data() {
 			return {
@@ -75,10 +80,22 @@
 					return
 				}
 				this.inputValue = value / scale;
-				this.$emit('change', {
-					value: value,
-					onlyKey: this.onlyKey
-				});
+				if (this.isFor) { //循环的,根据下标改数据
+					console.log(this.inputValue,this.value)
+					this.$emit('change', {
+						value: value,
+						onlyKey: this.onlyKey,
+						inputValue: this.inputValue,
+						addType: type,
+						oldValue: this.value
+					});
+				} else {
+					this.$emit('change', {
+						value: value,
+						onlyKey: this.onlyKey
+					});
+				}
+				
 			},
 			_getDecimalScale() {
 				let scale = 1
