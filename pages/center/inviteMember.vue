@@ -3,15 +3,15 @@
 		<view class="info" style="background: url(../../static/images/center/invite_top_bg.png) no-repeat;background-size: 100% 100%;">
 			<view class="list">
 				<view class="item">
-					<text class="num">200</text>
+					<text class="num">{{numberInfo.todayVisitNum}}</text>
 					<text class="name">今日浏览量</text>
 				</view>
 				<view class="item">
-					<text class="num">300</text>
+					<text class="num big">{{numberInfo.userNum}}</text>
 					<text class="name">已邀会员</text>
 				</view>
 				<view class="item">
-					<text class="num">25</text>
+					<text class="num">{{numberInfo.yesUserNum}}</text>
 					<text class="name">昨日新增会员</text>
 				</view>
 			</view>
@@ -23,7 +23,7 @@
 			<view class="input">
 				<input type="text" v-model="searchText" placeholder="搜索昵称" />
 			</view>
-			<view class="btn">
+			<view @click="handleSearch" class="btn">
 				<text>搜索</text>
 			</view>
 		</view>
@@ -34,22 +34,22 @@
 				</view>
 			</view>
 			<view @click="handleChangeTimeSort" class="item border">
-				<view :class="['name',sortType==0 || sortType==1?'active':'']">
+				<view :class="['name',sortType==1 || sortType==2?'active':'']">
 					<text>注册时间</text>
 				</view>
 				<view class="arrow">
-					<image v-if="sortType==0" src="../../static/images/center/arrow_top_active.png" mode=""></image>
+					<image v-if="sortType==2" src="../../static/images/center/arrow_top_active.png" mode=""></image>
 					<image v-else src="../../static/images/center/arrow_top.png" mode=""></image>
 					<image v-if="sortType==1" src="../../static/images/center/arrow_bottom_active.png" mode=""></image>
 					<image v-else src="../../static/images/center/arrow_bottom.png" mode=""></image>
 				</view>
 			</view>
 			<view @click="handleChangeAmountSort" class="item">
-				<view :class="['name',sortType==2||sortType==3?'active':'']">
+				<view :class="['name',sortType==3||sortType==4?'active':'']">
 					<text>购买金额</text>
 				</view>
 				<view class="arrow">
-					<image v-if="sortType==2" src="../../static/images/center/arrow_top_active.png" mode=""></image>
+					<image v-if="sortType==4" src="../../static/images/center/arrow_top_active.png" mode=""></image>
 					<image v-else src="../../static/images/center/arrow_top.png" mode=""></image>
 					<image v-if="sortType==3" src="../../static/images/center/arrow_bottom_active.png" mode=""></image>
 					<image v-else src="../../static/images/center/arrow_bottom.png" mode=""></image>
@@ -62,10 +62,10 @@
 					{{item.nickname}}
 				</view>
 				<view class="time">
-					<text>{{item.register_time}}</text>
+					<text>{{$utils.formatTime(item.createtime*1000,'yyyy-MM-dd')}}</text>
 				</view>
 				<view class="total">
-					<text>{{item.total}}</text>
+					<text>{{item.buy_money}}</text>
 				</view>
 			</view>
 			<uni-load-more :status="loadingType"></uni-load-more>
@@ -82,40 +82,59 @@
 		},
 		data() {
 			return {
-				loadingType: 0,
+				loadingType: 1,
 				searchText: '',
-				sortTypeList: ['timeup', 'timedown', 'amountup', 'amountdown'],
 				sortType: 1,
-				list:[
-					{
-						id:1,
-						nickname:'nickname',
-						register_time:'2020-06-30',
-						total:500
-					},
-					{
-						id:2,
-						nickname:'nick',
-						register_time:'2020-06-30',
-						total:704
-					},
-					{
-						id:3,
-						nickname:'nams',
-						register_time:'2020-06-30',
-						total:88.9
-					}
-				]
+				page:0,
+				pageSize:15,
+				numberInfo:{},
+				list:[]
 			};
 		},
+		mounted() {
+			this.getMyMemberNumLog()
+			this.getMyMemberList()
+		},
+		onReachBottom() {
+			if (this.loadingType == 2 || this.loadingType == 3) return
+			this.page++
+			this.getMyMemberList()
+		},
 		methods: {
+			getMyMemberNumLog() {
+				uni.showLoading()
+				this.$fly.post(this.$api.getMyMemberNumLog).then(res=>{
+					this.numberInfo = res.data
+					uni.hideLoading()
+				}).catch(err=>{
+					uni.hideLoading()
+				})
+			},
+			getMyMemberList(){
+				this.loadingType = 2
+				this.$fly.post(this.$api.getMyMemberList,{
+					page:this.page,
+					pageSize:this.pageSize,
+					ordertype:this.sortType,
+					nickname:this.searchText
+				}).then(res=>{
+					this.list = this.list.concat(res.data.list)
+					if(res.data.list.length<this.pageSize){
+						this.loadingType = 3
+					}else{
+						this.loadingType = 1
+					}
+				})
+			},
+			handleSearch() {
+				this.page = 0
+				this.list = []
+				this.getMyMemberList()
+			},
 			handleChangeTimeSort() {
 				switch (this.sortType) {
-					case 0:
-						this.sortType = 1
-						break;
 					case 1:
-						this.sortType = 0
+						this.sortType = 2
 						break;
 					case 2:
 						this.sortType = 1
@@ -123,16 +142,19 @@
 					case 3:
 						this.sortType = 1
 						break;
+					case 4:
+						this.sortType = 1
+						break;
 					default:
 						this.sortType = 1
 						break;
 				}
+				this.page = 0
+				this.list = []
+				this.getMyMemberList()
 			},
 			handleChangeAmountSort() {
 				switch (this.sortType) {
-					case 0:
-						this.sortType = 3
-						break;
 					case 1:
 						this.sortType = 3
 						break;
@@ -140,12 +162,18 @@
 						this.sortType = 3
 						break;
 					case 3:
-						this.sortType = 2
+						this.sortType = 4
+						break;
+					case 4:
+						this.sortType = 3
 						break;
 					default:
 						this.sortType = 3
 						break;
 				}
+				this.page = 0
+				this.list = []
+				this.getMyMemberList()
 			},
 		}
 	}
@@ -179,6 +207,9 @@
 						font-weight: 500;
 						color: rgba(255, 255, 255, 1);
 						line-height: 26rpx;
+						&.big{
+							font-size: 48rpx;
+						}
 					}
 
 					.name {

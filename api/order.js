@@ -7,7 +7,7 @@ const order = {
 	myOrder : '/api/order/myOrder',//我的订单
 	changeOrderStatus : '/api/order/changeOrderStatus',// 订单操作
 	getJsApiData : '/api/order/getJsApiData',//微信支付
-	mySubOrder : '/api/order/mySubOrder',// 我子级的订单
+  getMySubOrder: '/api/order/mySubOrder', //店铺订单
 	
 	
 }

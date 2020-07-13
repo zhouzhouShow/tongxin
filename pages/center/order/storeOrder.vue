@@ -4,31 +4,31 @@
 			<orderNav :navList="navList" @change="changeNav"></orderNav>
 		</view>
 		<view class="list">
-			<view v-for="item in list" :key="item.id" class="item">
+			<view @click="handleToDetail(item.id)" v-for="item in list" :key="item.id" class="item">
 				<view class="header">
 					<view class="userinfo">
-						<text>{{item.userInfo.nickname}}</text>
-						<text>{{item.userInfo.mobile}}</text>
+						<text>{{item.userinfo.nickname}}</text>
+						<text>{{item.userinfo.mobile}}</text>
 					</view>
 					<view class="status">
-						<text>{{status[item.status]}}</text>
+						<text>{{status[item.final_flag]}}</text>
 					</view>
 				</view>
 				<view class="product">
 					<list>
-						<view v-for="el in item.productList" :key="el.id" class="product_item">
-							<productItem :info="el"></productItem>
+						<view v-for="(el,num) in item.products_list" :key="num" class="product_item">
+							<productItem v-for="(e,s) in el.goodlist" :key="s" :info="e"></productItem>
 						</view>
 					</list>
 				</view>
 				<view class="total">
 					<view class="left">
 						<text>总价</text>
-						<text>¥ 88</text>
+						<text>¥ {{item.price_sum}}</text>
 					</view>
 					<view class="right">
 						<text>实付款</text>
-						<text>¥ 88</text>
+						<text>¥ {{item.last_money}}</text>
 					</view>
 				</view>
 			</view>
@@ -73,33 +73,47 @@
 					},
 				],
 				nowNavIndex: 0,
-				status: ['待付款', '待收货', '已收货', '已退款'],
-				list: [{
-					id: 1,
-					userInfo: {
-						nickname: 'nickname',
-						mobile: '185****2525',
-						avatar: ''
-					},
-					status: 1,
-					total: 88,
-					pay: 88,
-					productList: [{
-						id: 1,
-						cover: 'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg',
-						name: '2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 ',
-						number: 1,
-						price: 88,
-						discount: 0.7,
-						discountText: '7折',
-						spec: '粉色；120cm'
-					}]
-				}]
+				status: ['全部','待付款','待发货', '待收货', '已收货', '已取消'],
+				page:0,
+				pageSize:15,
+				list: []
 			};
 		},
+		onReachBottom() {
+			if (this.loadingType == 2 || this.loadingType == 3) return
+			this.page++
+			this.getMySubOrder()
+		},
+		mounted(){
+			this.getMySubOrder()
+		},
 		methods: {
+			handleToDetail(id) {
+				wx.navigateTo({
+					url:'./storeOrderDetail?id='+id
+				})
+			},
+			getMySubOrder(){
+				this.loadingType = 2
+				this.$fly.post(this.$api.getMySubOrder,{
+					page:this.page,
+					pageSize:this.pageSize,
+					statu_stype:this.nowNavIndex
+				}).then(res=>{
+					this.list = this.list.concat(res.data.list)
+					if(res.data.list.length<this.pageSize){
+						this.loadingType = 3
+					}else{
+						this.loadingType = 1
+					}
+				})
+			},
 			changeNav(ids) {
+				if(this.nowNavIndex==ids) return
 				this.nowNavIndex = ids
+				this.page = 0
+				this.list = []
+				this.getMySubOrder()
 			}
 		}
 	}

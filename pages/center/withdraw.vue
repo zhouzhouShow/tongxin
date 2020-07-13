@@ -23,9 +23,12 @@
 		name: "withdraw",
 		data() {
 			return {
-				total: 99.99,
+				total: 0,
 				withdrawNum: ''
 			};
+		},
+		onLoad(options) {
+			this.total = options.balance || 0
 		},
 		methods: {
 			handleWithdraw() {
@@ -42,7 +45,19 @@
 						duration: 1500
 					})
 				} else {
-
+					uni.showLoading()
+					this.$fly.post(this.$api.handleWithdraw,{
+						money:this.withdrawNum
+					}).then(res=>{
+						uni.hideLoading()
+						uni.showToast({
+							title:res.msg || '提现成功',
+							duration:1500
+						})
+						setTimeout(()=>wx.navigateBack(),1000)
+					}).catch(err=>{
+						uni.hideLoading()
+					})
 				}
 			}
 		}

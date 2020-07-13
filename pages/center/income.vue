@@ -9,13 +9,13 @@
 		<view class="info">
 			<view class="info_box" style="background: url(../../static/images/center/income_top_bg.png) no-repeat;background-size: 100% 100%;">
 				<view class="title">
-					<text>今日收入（元）</text>
+					<text>{{headerNav[headerNavIndex-1].name}}收入（元）</text>
 				</view>
 				<view class="date">
-					<text>2020-06-28</text>
+					<text>{{$utils.formatTime(new Date().getTime(),'yyyy-MM-dd')}}</text>
 				</view>
 				<view class="total">
-					<text>200.00</text>
+					<text>{{total}}</text>
 				</view>
 				<view class="tip">
 					<text>返利说明</text>
@@ -30,25 +30,26 @@
 		<view class="list">
 			<view v-for="item in list" :key="item.id" class="item">
 				<view class="icon">
-					<image v-if="item.type==1" src="../../static/images/center/icon_income.png" mode="scaleToFill"></image>
-					<image v-else-if="item.type==2" src="../../static/images/center/icon_cash.png" mode="scaleToFill"></image>
-					<image v-else-if="item.type==3" src="../../static/images/center/icon_refund.png" mode="scaleToFill"></image>
+					<image v-if="item.type=='commission'" src="../../static/images/center/icon_income.png" mode="scaleToFill"></image>
+					<image v-else-if="item.type=='widthdraw'" src="../../static/images/center/icon_cash.png" mode="scaleToFill"></image>
+					<image v-else-if="item.type=='custom_refund'" src="../../static/images/center/icon_refund.png" mode="scaleToFill"></image>
 				</view>
 				<view class="detail">
 					<view class="about">
 						<view class="name">
-							<text>{{item.name}}</text>
+							<text>{{item.type_name}}</text>
 						</view>
 						<view class="time">
-							<text>{{item.create_time}}</text>
+							<text>{{$utils.formatTime(item.add_time*1000,'yyyy-MM-dd')}}</text>
 						</view>
 					</view>
 					<view class="number">
 						<view class="total">
-							<text>{{item.total}}</text>
+							<text class="cut" v-if="item.balance_change.includes('-')">{{item.balance_change}}</text>
+							<text v-else>+{{item.balance_change}}</text>
 						</view>
 						<view class="balance">
-							{{item.balance}}
+							{{item.balance_new}}
 						</view>
 					</view>
 				</view>
@@ -67,78 +68,91 @@
 		},
 		data() {
 			return {
-				loadingType: 0,
+				loadingType: 1,
 				headerNav: [{
-						ids: 0,
+						ids: 1,
 						name: '今日',
 					},
 					{
-						ids: 1,
+						ids: 2,
 						name: '本周',
 					},
 					{
-						ids: 2,
+						ids: 3,
 						name: '本月',
 					},
 					{
-						ids: 3,
+						ids: 4,
 						name: '累计',
 					}
 				],
-				headerNavIndex: 0,
+				headerNavIndex: 1,
 				listNav: [{
-						ids: 0,
+						ids: '',
 						name: '全部'
 					},
 					{
-						ids: 1,
+						ids: 'commission',
 						name: '收入'
 					},
 					{
-						ids: 2,
+						ids: 'widthdraw',
 						name: '提现'
 					},
 					{
-						ids: 3,
+						ids: 'custom_refund',
 						name: '退款'
 					},
 				],
-				listNavIndex: 0,
-				list: [{
-						id: 1,
-						name: '收入',
-						create_time: '2020-06-20',
-						type: 1,
-						total: 500,
-						balance: 2000
-					},
-					{
-						id: 2,
-						name: '提现',
-						create_time: '2020-06-20',
-						type: 2,
-						total: 500,
-						balance: 2000
-					},
-					{
-						id: 3,
-						name: '退款',
-						create_time: '2020-06-20',
-						type: 3,
-						total: 500,
-						balance: 2000
-					}
-				],
+				listNavIndex: '',
+				page:0,
+				pageSize:15,
+				total:0,
+				list: [],
 			};
 		},
+		mounted(){
+			this.getMyIncomeLog()
+		},
+		onReachBottom() {
+			if (this.loadingType == 2 || this.loadingType == 3) return
+			this.page++
+			this.getMyIncomeLog()
+		},
 		methods: {
+			getMyIncomeLog() {
+				this.loadingType = 2
+				let time_type = this.headerNavIndex
+				let log_type = this.listNavIndex
+				this.$fly.post(this.$api.getMyIncomeLog,{
+					time_type:time_type,
+					log_type:log_type,
+					page:this.page,
+					pageSize:this.pageSize
+				}).then(res=>{
+					if(time_type!=this.headerNavIndex || log_type!=this.listNavIndex) return
+					this.list = this.list.concat(res.data.list)
+					this.total = res.data.tobalance
+					if(res.data.list.length<this.pageSize){
+						this.loadingType = 3
+					}else{
+						this.loadingType = 1
+					}
+				})
+			},
 			changeHeaderNav(ids) {
 				if (this.headerNavIndex == ids) return
 				this.headerNavIndex = ids
+				this.page = 0
+				this.list = []
+				this.getMyIncomeLog()
 			},
 			changeListNav(ids) {
 				if (this.listNavIndex == ids) return
 				this.listNavIndex = ids
+				this.page = 0
+				this.list = []
+				this.getMyIncomeLog()
 			}
 		}
 	}
@@ -336,6 +350,9 @@
 							font-weight: 500;
 							color: rgba(255, 180, 79, 1);
 							line-height: 26rpx;
+							.cut{
+								color: #333333;
+							}
 						}
 
 						.balance {

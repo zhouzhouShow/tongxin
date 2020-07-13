@@ -11,10 +11,10 @@
 						<text>{{item.userinfo.bio}}</text>
 					</view>
 				</view>
-				<view v-if="userId==item.userinfo.id" @click.stop="mineControl(item.id)" class="ismine">
+				<view v-if="userId==item.userinfo.id && canDelete" @click.stop="mineControl(item.id)" class="ismine">
 					<image src="@/static/images/seeding/icon_more.png" mode=""></image>
 				</view>
-				<view v-else-if="!item.isfollow && showFollow" @click.stop="handleConcern(item.id)" class="concern">
+				<view v-else-if="!item.isfollow && showFollow && userId!=item.userinfo.id" @click.stop="handleConcern(item.id)" class="concern">
 					<image src="@/static/images/seeding/icon_concern.png" mode="scaleToFill"></image>
 					<text>关注</text>
 					<!-- <text>{{item.master_info.is_follow?'已关注':'关注'}}</text> -->
@@ -53,7 +53,7 @@
 				<text>{{item.content}}</text>
 			</view>
 			<view class="item_theme">
-				<view class="left">
+				<view :class="['left',item.topicinfo.length<=0?'hide':'']">
 					<view v-if="item.topicinfo.length>0" class="icon">
 						<image src="@/static/images/seeding/icon_theme.png" mode=""></image>
 					</view>
@@ -145,6 +145,10 @@
 				default:false
 			},
 			showFollow:{
+				type:Boolean,
+				default:true
+			},
+			canDelete:{
 				type:Boolean,
 				default:true
 			}
@@ -340,6 +344,10 @@
 				justify-content: space-between;
 
 				.only {
+					width: 100%;
+					display: flex;
+					justify-content: space-between;
+					align-items: center;
 					.image {
 						flex-basis: 80rpx;
 						width: 80rpx;
@@ -454,6 +462,10 @@
 					border-radius: 30rpx;
 					display: flex;
 					align-items: center;
+					
+					&.hide{
+						opacity: 0;
+					}
 
 					.icon {
 						width: 50rpx;

@@ -1,13 +1,13 @@
 <template>
 	<view class="seeding_images">
-		<view v-if="info&&info[0]&&info[0].type=='video'" class="images_video">
+		<view @click.stop="" v-if="info&&info[0]&&info[0].type=='video'" class="images_video">
 			<video :src="info.product_info.video" controls></video>
 		</view>
 		<view v-else-if="imagesType=='swiper'" class="images_swiper">
 			<swiper class="swiper" @change="swiperChange" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval"
 			 :duration="duration">
 				<swiper-item v-for="(s,n) in info" :key="n">
-					<image @click="previewImage(n)" :src="s.url" mode="aspectFill"></image>
+					<image @click.stop="previewImage(n)" :src="s.url" mode="aspectFill"></image>
 				</swiper-item>
 			</swiper>
 			<view class="dots" style="background: url(../../static/images/seeding/swiper_point.png) no-repeat;background-size: 100% 100%;">
@@ -17,22 +17,22 @@
 			</view>
 		</view>
 		<view v-else-if="info.length<=1" class="images_once">
-			<image @click="previewImage(0)" :src="info[0].url" mode="aspectFill"></image>
+			<image @click.stop="previewImage(0)" :src="info[0].url" mode="aspectFill"></image>
 		</view>
 		<view v-else-if="info.length<=2" class="images_double">
-			<image @click="previewImage(num)" v-for="(image,num) in info" :key="num" :src="image.url" mode="aspectFill"></image>
+			<image @click.stop="previewImage(num)" v-for="(image,num) in info" :key="num" :src="image.url" mode="aspectFill"></image>
 		</view>
 		<view v-else class="images_more">
 			<view class="left">
-				<image @click="previewImage(0)" :src="info[0].url" mode="aspectFill"></image>
+				<image @click.stop="previewImage(0)" :src="info[0].url" mode="aspectFill"></image>
 			</view>
 			<view class="right">
 				<view class="top">
-					<image @click="previewImage(1)" :src="info[1].url" mode="aspectFill"></image>
+					<image @click.stop="previewImage(1)" :src="info[1].url" mode="aspectFill"></image>
 				</view>
 				<view class="bottom">
-					<image @click="previewImage(2)" :src="info[2].url" mode="aspectFill"></image>
-					<view @click="previewImage(2)" v-if="info.length>3" class="num">
+					<image @click.stop="previewImage(2)" :src="info[2].url" mode="aspectFill"></image>
+					<view @click.stop="previewImage(2)" v-if="info.length>3" class="num">
 						<text>+{{info.length - 3}}</text>
 					</view>
 				</view>
