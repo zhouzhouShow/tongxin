@@ -8,7 +8,7 @@
 			<div class="flex flex-align-center resBox">
 				<p class="g-spec flex-justify-center">
 					<text>{{item.spec_item_title | split}}</text>
-					<text v-if="type=='cart'" class="iconfont iconarrow"></text>
+					<!-- <text v-if="type=='cart'" class="iconfont iconarrow"></text> -->
 				</p>
 				<p v-if="reFoundBtn" class="reFoundBtn" @click="handleToRefund">退货</p>
 			</div>

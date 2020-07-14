@@ -119,10 +119,10 @@
 					<image src="../../static/images/center/icon_coupon.png" mode="scaleToFill"></image>
 					<text>优惠券</text>
 				</view>
-				<view class="item">
+				<button class="contact item" open-type="contact" >
 					<image src="../../static/images/center/icon_chat.png" mode="scaleToFill"></image>
 					<text>帮助与客服</text>
-				</view>
+				</button>
 				<view class="item" @click.stop="nav('/pages/center/address/address')">
 					<image src="../../static/images/center/icon_address.png" mode="scaleToFill"></image>
 					<text>收货地址</text>
@@ -401,7 +401,13 @@
 				align-items: center;
 				padding: 20rpx 0 30rpx 0;
 				background-color: #fff;
-
+				.contact{
+					box-shadow: none;
+					background: transparent;
+					margin: 0;
+					padding: 0;
+					border: none;
+				}
 				.item {
 					flex: 1;
 					display: flex;

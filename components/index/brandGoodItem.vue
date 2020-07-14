@@ -14,7 +14,7 @@
 		</view>
 		<view class="good-name">{{item.goods_title}}</view>
 		<view class="price-box">
-			<text class="n-price">¥{{item.price_sale}}</text>
+			<text class="n-price">¥{{item.price_last}}</text>
 			<text class="o-price">¥{{item.price_market}}</text>
 		</view>
 

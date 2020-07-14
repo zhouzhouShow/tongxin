@@ -221,6 +221,12 @@
 				// 分享
 				
 			},
+			onShareAppMessage(){
+				return {
+				 title: '童心优选',
+					path: '/pages/index/index'
+				}
+			},
 			toBrandDetail (){	
 				wx.navigateTo({
 					url:'/pages/search/search'
@@ -237,6 +243,7 @@
 			reachBottomCallBack(){
 				this.brandlist();
 			},
+			
 		},
 		
 	}

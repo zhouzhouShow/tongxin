@@ -30,7 +30,7 @@
 					<text>商品已退回，等待商家退款</text>
 				</view>
 				<view class="tip red">
-					<text>申通快递：ST00000000000000</text>
+					<text>{{orderDetail.back_express}}快递：{{orderDetail.back_express_id}}</text>
 				</view>
 			</view>
 			<view v-else-if="orderDetail.status==4">
@@ -38,7 +38,7 @@
 					<text>退款成功</text>
 				</view>
 				<view class="tip">
-					<text>2020-07-09 15:13</text>
+					<text>{{$utils.formatTime(orderDetail.over_time*1000,'yyyy-MM-dd hh:mm:ss')}}</text>
 				</view>
 			</view>
 			<view v-else-if="orderDetail.status==5">
@@ -46,7 +46,7 @@
 					<text>退款失败</text>
 				</view>
 				<view class="tip">
-					<text>2020-07-09 15:13</text>
+					<text>{{$utils.formatTime(orderDetail.createtime*1000,'yyyy-MM-dd hh:mm:ss')}}</text>
 				</view>
 			</view>
 		</view>
@@ -191,13 +191,14 @@
 				}
 			}
 		},
+	
 		data() {
 			return {
 				id: 0,
 				businessInformation: {
-					name: '蓝盈盈',
-					mobile: '18375825365',
-					address: '广东省广州市天河区华观路1993万科广场负一楼B1区101'
+					name: '',
+					mobile: '',
+					address: ''
 				},
 				orderDetail: {},
 				images: [
@@ -215,11 +216,22 @@
 				}
 			};
 		},
-		onLoad(options) {
+		async onLoad(options) {
+			this.$tip.loading()
 			this.id = options.id
-			this.getRefundOrderInfo()
+			await this.getRefundOrderInfo()
+			await this.getRefundConfig()
+			this.$tip.loaded()
 		},
 		methods: {
+			getRefundConfig() {
+				this.$fly.post(this.$api.getRefundConfig).then(res => {
+					this.businessInformation.name = res.data.recman
+					this.businessInformation.mobile = res.data.mobile
+					this.businessInformation.address = res.data.address
+					
+				})
+			},
 			submitExpressInfo(){
 				this.$fly.post(this.$api.submitExpressInfo,{
 					express_company:this.logistic.name,

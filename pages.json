@@ -157,16 +157,23 @@
 			}
 		}, {
 			"path": "pages/center/refund/applyRefund",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "退货/售后申请"
+			}
 		}, {
 			"path": "pages/center/refund/refundResult",
 			"style": {}
 		}, {
 			"path": "pages/center/refund/refundOrder",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "退款/售后"
+			}
 		}, {
 			"path": "pages/center/refund/refundDetail",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "退款售后详情"
+				
+			}
 		}, {
 			"path": "pages/center/order/storeOrderDetail",
 			"style": {}

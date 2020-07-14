@@ -1,6 +1,6 @@
 <template>
 	<view class="member">
-		<view class="info" style="background: url(../../static/images/center/invite_top_bg.png) no-repeat;background-size: 100% 100%;">
+		<view class="info" style="background: url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200714/68e88b7e46ad3c7ac6d97c460c88df4b.png) no-repeat;background-size: 100% 100%;">
 			<view class="list">
 				<view class="item">
 					<text class="num">{{numberInfo.todayVisitNum}}</text>

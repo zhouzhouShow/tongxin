@@ -10,5 +10,6 @@ const order = {
   getMySubOrder: '/api/order/mySubOrder', //店铺订单
   getLogistics: '/api/order/getLogistics', //获取物流
 	
+	
 }
 export default order;

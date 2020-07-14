@@ -15,7 +15,7 @@
 			<orderNav :navList="navList" @change="changeNav"></orderNav>
 		</view>
 		<view class="list">
-			<view v-for="item in list" :key="item.id" class="item">
+			<view v-for="(item,index) in list" :key="item.id" class="item">
 				<block v-for="(el,num) in item.products_list" :key="num">
 					<view class="store">
 						<view class="info">
@@ -38,7 +38,7 @@
 					<text>¥{{getRefundTotal(item)}}</text>
 				</view>
 				<view class="btns">
-					<button v-if="item.status==4" class="to_delete" type="default">删除记录</button>
+					<button v-if="item.status==4" @click="deleteLog(item.id,index)" class="to_delete" type="default">删除记录</button>
 					<button @click="handleToDetail(item)" class="to_detail" type="default">查看详情</button>
 					<button @click="showPopup(item)" v-if="item.status==2" class="to_fillin" type="default">填写物流</button>
 				</view>
@@ -143,6 +143,19 @@
 			}
 		},
 		methods: {
+			deleteLog(id,index){
+				this.$tip.modal('确认删除此记录吗？','删除确认').then((res) => {
+					// on confirm
+					this.$fly.post(this.$api.returnOrderStatus,{
+						return_id:id
+					}).then(res=>{
+						this.$tip.toast('删除成功!')
+						this.list.splice(index,1)
+					})
+				}).catch(() => {
+					// on cancel
+				});
+			},
 			submitExpressInfo(){
 				if(!this.logistic.number || !this.logistic.name){
 					return this.$tip.toast('请填写完整!')
@@ -153,6 +166,7 @@
 					return_id:this.logisticId
 				}).then(res=>{
 					if(res.code){
+						this.hidePopup()
 						this.page = 1
 						this.getRefundList()
 					}

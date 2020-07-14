@@ -32,11 +32,11 @@
 				<block v-if="detail.islimit && detail.islimit">
 					<view class="sec-kill-text " style="line-height: 1;margin-bottom: 10rpx;"><text class="title-tips">距结束</text></view>
 					<view class="flex-box">
+						<view class="sec-kill-time"><text>{{formateDeadline.days}}</text></view>
+						<view class="sec-kill-text"><text>:</text></view>
 						<view class="sec-kill-time"><text>{{formateDeadline.hours}}</text></view>
 						<view class="sec-kill-text"><text>:</text></view>
 						<view class="sec-kill-time"><text>{{formateDeadline.minutes}}</text></view>
-						<view class="sec-kill-text"><text>:</text></view>
-						<view class="sec-kill-time"><text>{{formateDeadline.seconds}}</text></view>
 					</view>
 				</block>
 				<block v-else>
@@ -343,19 +343,20 @@
 		},
 		computed:{
 			formateDeadline() {
-				let leftTime = this.deadline * 1000; //计算剩余的毫秒数
+				let leftTime = this.deadline*1000; //计算剩余的毫秒数
 				// console.log(leftTime)
-				// let days = parseInt(leftTime / 1000 / 60 / 60 / 24, 10); //计算剩余的天数
-				let hours = parseInt(leftTime / 1000 / 60 / 60, 10); //计算剩余的小时
-				let minutes = parseInt(leftTime / 1000 / 60 % 60, 10); //计算剩余的分钟
+				let days = parseInt(leftTime / 1000 / 60 / 60 / 24, 10); //计算剩余的天数
+				let hours = parseInt(leftTime / 1000 / 60 / 60 % 24, 10); //计算剩余的小时
+				let minutes = parseInt(leftTime / 1000 / 60 % 60, 10);//计算剩余的分钟
 				let seconds = parseInt(leftTime / 1000 % 60, 10); //计算剩余的秒数
-				// days = this.checkTime(days);
+				days = this.checkTime(days);
 				hours = this.checkTime(hours);
 				minutes = this.checkTime(minutes);
 				seconds = this.checkTime(seconds);
+				
 				// return days + "天" + hours + "时" + minutes + "分" + seconds + "秒";
 				return {
-					// days,
+					days,
 					hours,
 					minutes,
 					seconds

@@ -82,18 +82,18 @@
 			</div>
 			<div class="order-info-container">
 				<span>订单号：<span>{{orderDetail.order_code}}</span></span>
-				<span >支付状态：<span>{{(orderDetail.pay_status < 2 ? '待支付' : ' 支付成功')}}</span></span>
+				<span >支付状态：<span>{{(orderDetail.pay_state < 2 ? '未支付' : ' 支付成功')}}</span></span>
 
 		<!-- 		0，未付款；1，付款中；2，已付款 3, 已付预付款
 				<span v-if="orderDetail.pay_type ==4 && orderDetail.final_flag != 8" :class="orderDetail.underline_pay == 0 ? 'no-pay':''">
-					线下支付 ：<span>￥{{orderDetail.last_money+' ('+ (orderDetail.pay_status < 2 ? '待支付' : ' 已支付')+')'}} </span></span> -->
+					线下支付 ：<span>￥{{orderDetail.last_money+' ('+ (orderDetail.pay_state < 2 ? '待支付' : ' 已支付')+')'}} </span></span> -->
 
 				<!-- <span v-if="orderDetail.pay_type == 1">微信支付：￥{{orderDetail.last_money}}</span> -->
 			<!-- 	<span v-if="orderDetail.balance > 0">UU币：￥{{orderDetail.balance}}</span>
 				<span v-if="orderDetail.balance_2 > 0">余额：￥{{orderDetail.balance_2}}</span> -->
 				<span v-if="orderDetail.final_flag != 8">创建时间：<span>{{orderDetail.createtime}}</span></span>
 		
-			<span>付款{{orderDetail.final_flag ==8?'尾款':''}}时间：<span :class="orderDetail.pay_status < 2 ? 'no-pay':''">{{orderDetail.pay_status < 2 ? '-' : orderDetail.paytime}}
+			<span>付款{{orderDetail.final_flag ==8?'尾款':''}}时间：<span :class="orderDetail.pay_state < 2 ? 'no-pay':''">{{orderDetail.pay_state < 2 ? '-' : orderDetail.paytime}}
 				</span></span>
 				<span v-if="orderDetail.final_flag ==4 ">成交时间：<span>{{orderDetail.overtime}}</span></span>
 				<!-- <span v-html="'配送方式：'+orderDetail.shipping_name.info"></span> -->
@@ -105,10 +105,10 @@
 				<span class="redBg" v-if="orderDetail.final_flag == 1" @click.stop="toPay(orderDetail.id)">立即付款</span>
 				<span class="" v-if="orderDetail.final_flag == 2" @click.stop="goIndex">返回</span>
 				<!-- <span v-if="orderDetail.final_flag == 2 && orderDetail.ship_status != 3 " @click.stop="changeStatus(orderDetail.id,4)">申请退款</span> -->
-				<span v-if="orderDetail.final_flag == 4" @click="changeStatus(orderDetail.id,1)">删除订单</span>
+				<span v-if="orderDetail.final_flag == 4 ||orderDetail.final_flag == 5" @click="changeStatus(orderDetail.id,1)">删除订单</span>
 				<span v-if="orderDetail.final_flag == 3" @click.stop="getLogistics">查看物流</span>
 				<span class="redBg" v-if="orderDetail.final_flag == 3 && orderDetail.receipt == 1" @click.stop="changeStatus(orderDetail.id,3)">确认收货</span>
-				<span class="redBg" v-if="orderDetail.final_flag == 4"  @click="addCart">加入购物车</span>
+				<span class="redBg" v-if="orderDetail.final_flag == 4 || orderDetail.final_flag == 5"  @click.stop="addCart(orderGoodsList)">加入购物车</span>
 			</block>
 			<!-- <span @click.stop="goIndex">返回</span> -->
 		</div>
@@ -268,7 +268,7 @@
 					case 5:
 						this.orderHeader.title = "已取消";
 						this.orderHeader.subTitle = "您取消了订单~~";
-						this.orderHeader.img = require("@/static/images/order-status-box.png");
+						this.orderHeader.img = require("@/static/images/cancel_icon.png");
 						break;
 					case 6:
 						if (this.orderDetail.refund_status == 0) {
@@ -296,11 +296,8 @@
 			},
 
 			changeStatus(id, status) {
-				if (status == 4) {
-					this.$tip.modal({
-						title: '退款确认',
-						message: '确认真的不要宝贝了吗？'
-					}).then(() => {
+				if (status == 1) {
+					this.$tip.modal('确认删除订单吗？','删除确认').then(() => {
 						// on confirm
 						this.submitChangeStatus(id, status);
 					}).catch(() => {
@@ -325,6 +322,34 @@
 						uni.navigateBack({})
 					}
 					this.$tip.toast(res.msg);
+				})
+			},
+			addCart(item){
+				let data = []
+				item.forEach(item=>{
+					let goods = item.goodlist
+					goods.forEach(el=>{
+						data.push({
+							goods_id:el.goods_id,
+							goods_num:el.goods_num,
+							product_id:el.product_id
+						})
+					})
+				})
+				uni.showLoading({
+					title:'请稍后'
+				})
+				this.$fly.post(this.$api.addCart,{
+					jsonstr:JSON.stringify(data),
+					type:1
+				}).then(res=>{
+					uni.showToast({
+						title:res.msg || '加入成功',
+						duration:1500
+					})
+					uni.hideLoading()
+				}).catch(err=>{
+					uni.hideLoading()
 				})
 			},
 			//获取订单物流信息
@@ -402,7 +427,7 @@
 					flex-direction: column;
 					align-items: flex-start;
 					justify-content: center;
-					padding-left: rpx(19);
+					padding-left: rpx(50);
 					flex-grow: 1;
 					font-weight:400;
 					color:rgba(255,255,255,1);
@@ -418,6 +443,7 @@
 
 					>span:nth-child(2) {
 						font-size: rpx(24);
+						margin-top:20rpx;
 					}
 				}
 
