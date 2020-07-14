@@ -1,30 +1,9 @@
 <!--专场 -->
 <template>
 	<view class="session">
-		<div class="header-bar">
-			<div class="header-item" @click="changeIndex(1)">
-				<div class="header-item-text" :class="activeIndex==1?'item-active':''">人气</div>
-				<div :class="activeIndex?'':'active-line'"></div>
-			</div>
-			<div class="header-item" @click="changeIndex(3)">
-				<div class="header-item-text" :class="activeIndex==3?'item-active':''">销量</div>
-				<div :class="activeIndex?'':'active-line'"></div>
-			</div>
-			<div class="header-item" @click="changeIndex(4)">
-				<div class="header-item-text" :class="activeIndex==4?'item-active':''">价格</div>
-				<div :class="activeIndex?'active-line':''"></div>
-				<div class="order-arrows">
-					<div class="up-arrow" :class="activeIndex==4&&!priceOrder?'up-arrow-active':''"></div>
-					<div class="down-arrow" :class="activeIndex==4&&priceOrder?'down-arrow-active':''"></div>
-				</div>
-			</div>
-			<div class="header-item" @click="changeIndex(6)">
-				<div class="header-item-text" :class="activeIndex==6?'item-active':''">筛选</div>
-				<div :class="activeIndex?'':'active-line'"></div>
-			</div>
-		</div>
+		<searchNav @changeType="changeType"></searchNav>
 		<div class="good-list">
-			<div v-for="(item,index) in list"  :key="index" @click="toDetail(item.id)">
+			<div v-for="(item,index) in list"  :key="index" @click="toDetail(item.goods_id)">
 				<goodItem itemtype="sessionItem" :item="item"></goodItem>
 			</div>
 			<load-more  :status="loadMore"></load-more>
@@ -33,6 +12,8 @@
 </template>
 
 <script>
+	
+	import searchNav from '@/components/searchNav'
 	import goodItem from '@/components/goodsItem.vue'
 	import loadMore from '@/components/uni-load-more/uni-load-more.vue'
 	import loadMoreData from '@/mixins/loadmore.js'
@@ -40,7 +21,8 @@
 		mixins:[loadMoreData],
 		components:{
 			goodItem,
-			loadMore
+			loadMore,
+			searchNav
 		},
 		data() {
 			return {
@@ -48,102 +30,75 @@
 				ordertype: 1,
 				nav_id: '', //导航id
 				catid: '', //
+				goodsAge:'',
+				filter:{}, //筛选
 				type: 0, //0:普通搜索进来,1:分类点击进来 
 				priceOrder: true, //false是默认顺序即升序 true是降序
 				loadMore: 1,
-				list:[
-					{
-						name :'分阿里交付的拉丝粉',
-						desc:'2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice:199,
-						price:80,
-					},
-					{
-						name :'分阿里交付的拉丝粉',
-						desc:'2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice:199,
-						price:80,
-					},
-					{
-						name :'分阿里交付的拉丝粉',
-						desc:'2020新款木马短袖女童连衣裙宝宝夏装纯棉',
-						oPrice:199,
-						price:80,
-					}
-				],
+				list:[],
 			};
 		},
+		onLoad(option) {
+			this.list = [];
+			this.goodsAge = option.goodsAge || ''
+			wx.setNavigationBarTitle({
+				title:option.title
+			})
+			this.getDataList()
+		},
+		onUnload() {
+			// 接触全局监听
+			uni.$off('filterGood')
+		},
+		onReady(){
+			uni.$on('filterGood',(res)=>{
+				this.filter = res
+				this.page = 1
+				this.keyWordSearch()
+				console.log(res)
+			})
+		},
 		methods:{
-			changeIndex(index) {
-				switch (index) {
-					case 1:
-						this.priceOrder = true;
-						this.activeIndex = index
-						this.ordertype = index
-						page = 1;
-						this.getDataList()
-						break;
-					case 3:
-						this.priceOrder = true;
-						this.activeIndex = index
-						this.ordertype = index
-						page = 1;
-						this.getDataList()
-						break;
-					case 4:
-						this.activeIndex = index
-						this.priceOrder = !this.priceOrder;
-						if (this.priceOrder == false) {
-							this.ordertype = 4; //4价格顺序
-						}
-						if (this.priceOrder == true) {
-							this.ordertype = 5; //5价格倒序
-						}
-						page = 1;
-						this.getDataList()
-						break;
-					case 6:
-				
-						wx.navigateTo({
-							url:'/pages/search/searchFilters'
-						})
-						break;
-					default:
-						break;
+			toDetail (id){
+				uni.navigateTo({
+					url:'/pages/good/goodDetail?id='+id
+				})
+			},
+			keyWordSearch() {
+				this.loadMore = 2;
+				let params = {
+					page: this.page,
+					pageSize: this.pageSize,
+					cateId:this.filter.cateId || '', //分类
+					goodsNav:0, ////0 全部  1 晴妈推荐 2 爆款好物 3 上新
+					ordertype: this.ordertype, ////1 销量倒序2 价格顺序 3 价格倒序 4 设置的排序 5 时间倒序 6 销量顺序 7 有货  8 人气
+					brandId:this.filter.brandId || '', //品牌
+					gender:this.filter.gender || '', //0 不限  1男 2女
+					priceMin:this.filter.priceMin || '',
+					priceMax:this.filter.priceMax || '',
+					goodsAge:this.goodsAge //0 无  1婴童  2男童 3女童
 				}
-				// this.activeIndex=index;
-				// if(this.activeIndex==4){
-				//   this.priceOrder=!this.priceOrder;
-				//   if(this.priceOrder==false){
-				//     this.ordertype=4;   //4价格顺序
-				//     page=1;
-				//     this.keyWordSearch();
-				//   }
-				//   if(this.priceOrder==true){
-				//     this.ordertype=5;   //5价格倒序
-				//     page=1;
-				//     this.keyWordSearch();
-				//   }
-				//   return
-				// }
-			
-				// if(this.activeIndex==1 || this.activeIndex==3){
-				//   this.priceOrder=true;
-				//   this.ordertype=this.activeIndex;   //3销量
-				//   page=1;
-				//   this.keyWordSearch();
-				// }
-			
+				this.$fly.post(this.$api.goodslist,params).then(res => {
+					if (res.code == 1) {
+						let list = res.data.list
+						if(this.page==1){
+							this.list = []
+						}
+						this.loadMoreStatusDeal(list)
+						if(list.length>0){
+							this.list = this.list.concat(res.data.list);
+						}
+					}
+				})
+			},
+			changeType(type){
+				console.log('筛选类型:'+type)
+				this.page = 1;
+				this.ordertype = type
+				this.keyWordSearch()
 			},
 			getDataList() {
-				if (this.keyword && this.goodType == 0) {
 					this.keyWordSearch();
-				} else if (this.keyword && this.goodType == 1) {
-					this.keyWordFenhuoSearch();
-				} else if (this.nav_id) {
-					this.catid = this.catid
-					this.getClassGood()
-				}
 			}
 		}
 	}

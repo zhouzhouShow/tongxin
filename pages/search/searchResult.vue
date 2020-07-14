@@ -6,7 +6,7 @@
 		<div class="goods-list-container" :style="{background:goodType == 1? '#f3f3f3':'#fff'}">
 			<div class='goods-item-container' v-for="(item,index) in searchResultList"
 			 :key="index">
-				<product :product="item" />
+				<product :product="item"  />
 				<!-- 份货商品 -->
 				<!-- <block v-if="goodType==1">
 					<goodsItem  @fhChangeColor='changColor' @fhChangeEllipsis='ellipsis' itemtype="fenhuo" :item='item' :myIndex="index" ></goodsItem>
@@ -55,6 +55,10 @@
 				type: 0, //0:普通搜索进来,1:分类点击进来 
 				// goodType: 0, // 0 : 挑款商品 ,1:份货商品
 			}
+		},
+		onUnload() {
+			// 接触全局监听
+			uni.$off('filterGood')
 		},
 		onReady(){
 			uni.$on('filterGood',(res)=>{

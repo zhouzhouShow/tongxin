@@ -33,9 +33,10 @@
     </div>
 		<div class="barnd-cats">
 			<scroll-view scroll-x="true" style="white-space: nowrap;" >
-				<div class="brand-cat" v-for="item in brand_detail.catlist" :key="item.cat_id" @click="changeGoods(item.cat_id)">
+				<div class="brand-cat" :class="catid==item.cat_id?'active':''" v-for="item in brand_detail.catlist" :key="item.cat_id" @click="changeGoods(item.cat_id)">
 				  <img :src="item.logo" class="logo-img" />
 				  <div class="brand-name">{{item.cat_name}}</div>
+					<img v-if="catid==item.cat_id" class="active-icon" src="/static/images/icon/active_icon.png" alt="">
 				</div>
 			</scroll-view>
 		</div>
@@ -63,7 +64,7 @@ export default {
     return {
       brandid: "",
       catid: "",
-      ordertype: 6, //1 时间 3.销量  4 价格顺序 5价格倒序 6 更新 7 商品排序倒序 8商品排序升序
+      ordertype: 7, //1 时间 3.销量  4 价格顺序 5价格倒序 6 更新 7 商品排序倒序 8商品排序升序
       brand_detail: {},
       brand_goods: [],
       activeIndex: 0, //0人气 1销售 2价格
@@ -103,30 +104,29 @@ export default {
       this.brand_goods = []
       this.page=1;
       if (this.activeIndex == 0) {  //  人气
-        this.priceOrder = true;
-        this.ordertype = 6
+        this.ordertype = 7
         this.getBrandDetailGoods()
       }
 
-      if(this.activeIndex == 1){  //销量
+      if(this.activeIndex == 1){  //价格
         this.priceOrder = !this.priceOrder
         this.ordertype = 3
 				if(this.priceOrder){  //价格降序
-				  this.ordertype = 7
+				  this.ordertype = 3
 				  this.getBrandDetailGoods()
 				}else{                //价格升序
-				  this.ordertype = 8
+				  this.ordertype = 2
 				  this.getBrandDetailGoods()
 				}
       }
 
-      if (this.activeIndex == 2) {
+      if (this.activeIndex == 2) { //销量
         this.xiaolOrder = !this.xiaolOrder;
         if(this.xiaolOrder){  //价格降序
-          this.ordertype = 7
+          this.ordertype = 1
           this.getBrandDetailGoods()
         }else{                //价格升序
-          this.ordertype = 8
+          this.ordertype = 6
           this.getBrandDetailGoods()
         }
       }
@@ -206,6 +206,9 @@ export default {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+		.active{
+			border:1rpx solid #F22732;
+		}
     .brand-cat {
       padding-top: 20rpx;
 			display: inline-block;
@@ -213,8 +216,16 @@ export default {
 			background: #fff;
 			margin-right: 20rpx;
 			width: 180rpx;
+			border-radius: 4rpx;
 			height: 200rpx;
-
+			position: relative;
+			.active-icon{
+				position: absolute;
+				bottom: 0;
+				right:0rpx;
+				width: 20rpx;
+				height: 20rpx;
+			}
       .logo-img {
         width: 124rpx;
         height: 124rpx;

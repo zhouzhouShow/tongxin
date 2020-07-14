@@ -64,11 +64,13 @@
 				genderList:[],
 			};
 		},
-		onLoad() {
+		onShow() {
 			let obj = wx.getStorageSync('filterObj') || ''
 			if(obj){
-				this.minPrice = obj.minPrice
-				this.maxPrice = obj.maxPrice
+				console.log(obj)
+				console.log(obj.minPrice)
+				this.minPrice = obj.priceMin
+				this.maxPrice = obj.priceMax
 				this.bIndex=obj.bIndex
 				this.cIndex=obj.cIndex
 				this.gIndex=obj.gIndex
@@ -90,9 +92,9 @@
 					gIndex:this.gIndex,
 					priceMin:this.minPrice || '',
 					priceMax:this.maxPrice || '',
-					brandId:this.brandList[this.bIndex].id || '',
-					gender:this.genderList[this.bIndex].id || '',
-					cateId:this.classifyList[this.cIndex].id || '',
+					brandId:this.bIndex == -1? '' : this.brandList[this.bIndex].id,
+					gender:this.gIndex == -1? '' : this.genderList[this.gIndex].id,
+					cateId:this.cIndex == -1? '' : this.classifyList[this.cIndex].id,
 				}
 				uni.$emit('filterGood',data)
 				wx.setStorageSync("filterObj",data)

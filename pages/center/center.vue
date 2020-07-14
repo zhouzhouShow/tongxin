@@ -179,7 +179,7 @@
 		},
 		onLoad() {
 			this.paddingTop = wx.getMenuButtonBoundingClientRect().top
-			wx.showTabBar()
+		
 		},
 		mounted() {
 			this.getCenterIndex()
