@@ -11,7 +11,7 @@
 				</view>
 			</view>
 			<view class="good-box">
-				<view class="brand-box" v-for="(item ,index) in payOrderData.cartlist.list" :key="index" >
+				<view class="brand-box" v-for="(item ,index) in orderGoodsList" :key="index" >
 					<view class="brand-info flex-align-center">
 						<image class="b-img" :src="item.brand_logo[0]" mode=""></image>
 						<text class="brand-name">{{item.brand_name}}</text>
@@ -130,9 +130,11 @@
 				couponId: null, //选中优惠券的id
 				orderId: "",
 				payWay:1, //1:微信支付
+				orderGoodsList:[],
 			};
 		},
 		 async onLoad(option){
+			 console.log(123123)
 			this.$tip.loading();
 			this.shopCarIds = option.cart_ids;
 			this.addressId = option.address_id;
@@ -142,6 +144,9 @@
 				result = await this.loadOrderDetail();
 				this.totalPrice = result.data.price_sum;
 				this.orderGoodsList = result.data.products_list;
+				result.data.freight = result.data.shipping_monery;
+				result.data.goods_num = result.data.total_num
+				console.log(result.data)
 			}else{
 				if (wx.getStorageSync('address_id')) {
 					this.addressId = wx.getStorageSync('address_id');
@@ -149,8 +154,9 @@
 				}
 				result = await this.settlement(this.shopCarIds, this.addressId);
 				this.totalPrice = result.data.total_price;
-				this.orderGoodsList = result.data.goods;
+				this.orderGoodsList = result.data.cartlist.list;
 			}
+			console.log(result.data)
 			this.addressInfo = result.data.address;
 			this.deliveryTips = result.data.shippings;
 			this.payOrderData = result.data
@@ -249,11 +255,11 @@
 			},
 			modifyAddress() {
 				wx.navigateTo({
-					url: "/pages/center/address/myAddress?isShop=1&cart_ids=" + this.shopCarIds
+					url: "/pages/center/address/address?isShop=1&cart_ids=" + this.shopCarIds
 				});
 			},
 			async loadOrderDetail() {
-				return await this.$fly.post(this.$api.orderDetail, {
+				return await this.$fly.post(this.$api.orderdetail, {
 					order_id: this.orderId,
 					type: 1
 				});

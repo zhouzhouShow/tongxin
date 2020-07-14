@@ -439,7 +439,7 @@
 						if (result.data.provName == null || !result.data) {
 							//跳转添加地址
 							wx.navigateTo({
-								url: "/pages/center/address/myAddress?isShop=1&cart_ids=" + selected_items
+								url: "/pages/center/address/address?isShop=1&cart_ids=" + selected_items
 							});
 						} else {
 							wx.navigateTo({

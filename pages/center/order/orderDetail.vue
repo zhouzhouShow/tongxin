@@ -12,11 +12,12 @@
 				</div>
 			</div>
 			<div class="address-info-container">
+			
 				<view class="area-box" >
-					<view class="user"><text >张小飞</text><text>19888883213</text></view>
+					<view class="user"><text>{{orderDetail.address.realname}}</text><text>{{orderDetail.address.mobile}}</text></view>
 					<view class="area-info">
 						<image class="a-icon" src="@/static/images/icon/area_icon.png" mode=""></image>
-						<text class="area">广东省广州市天河区华观路1993万科广场 A栋407A</text>
+						<text class="area">{{orderDetail.address.prov_name+orderDetail.address.city_name+orderDetail.address.dist_name+orderDetail.address.address}}</text>
 					</view>
 				</view>
 				<div class="logistics" @click.stop="getLogistics" v-if="logistics && logistics.nu">
@@ -40,15 +41,16 @@
 			</div>
 			<div class="setBg">
 				<view class="brand-box">
-					<view class="b-item">
+					<view class="b-item" v-for="(item,index) in orderGoodsList" :key="index">
 						<view class="brand-info flex-align-center">
-							<image class="b-img" src="@/static/images/center/icon_avatar.png" mode=""></image>
-							<text class="brand-name">芭芭拉</text>
+							<image class="b-img" :src="item.brand_logo[0]" mode=""></image>
+							<text class="brand-name">{{item.brandinfo.brand_name}}</text>
 							<text class="icon-arrow iconfont iconyoujiantou"></text>
 						</view>
 						<view class="b-good">
-							<cartItem type="order" :item="item"></cartItem>
-							<cartItem type="order" :item="item"></cartItem>
+							<block v-for="(itemC,indexC) in item.goodlist" :key="indexC">
+								<cartItem type="order" :item="itemC"></cartItem>
+							</block>
 						</view>
 					</view>
 				</view>
@@ -57,10 +59,6 @@
 					<p>
 						<span>商品总额</span>
 						<span>¥{{goodTotalPrice}}</span>
-					</p>
-					<p v-if="orderDetail.final_flag == 8">
-						<span>已付定金</span>
-						<span>¥{{(Number(orderDetail?orderDetail.admin_account_money_1:0)+Number(orderDetail?orderDetail.admin_account_money_2:0)+Number(orderDetail?orderDetail.admin_account_money_3:0)).toFixed(2)}}</span>
 					</p>
 					<p>
 						<span>运费</span>
@@ -89,10 +87,8 @@
 			</div>
 			</div>
 			<div class="order-info-container">
-				<span>订单号：{{orderDetail.order_sn_id}}</span>
+				<span>订单号：{{orderDetail.order_code}}</span>
 				<span v-if="orderDetail.final_flag == 1 && orderDetail.pay_type !=4">支付状态：未支付</span>
-
-				<span v-if="orderDetail.final_flag == 8 && orderDetail.pay_type ==4">支付状态：未支付尾款</span>
 
 				<!-- 0，未付款；1，付款中；2，已付款 3, 已付预付款 -->
 				<span v-if="orderDetail.pay_type ==4 && orderDetail.final_flag != 8" :class="orderDetail.underline_pay == 0 ? 'no-pay':''">
@@ -101,26 +97,26 @@
 				<span v-if="orderDetail.pay_type ==8" :class="orderDetail.underline_pay == 0 ? 'no-pay':''">物流代收：￥{{orderDetail.last_money}}</span>
 
 				<span v-if="orderDetail.pay_type == 1">微信支付：￥{{orderDetail.last_money}}</span>
-				<span v-if="orderDetail.balance > 0">UU币：￥{{orderDetail.balance}}</span>
-				<span v-if="orderDetail.balance_2 > 0">余额：￥{{orderDetail.balance_2}}</span>
-				<span v-if="orderDetail.final_flag != 8">创建时间：{{orderDetail.create_time}}</span>
-				<span v-if="orderDetail.final_flag == 8 && orderDetail.pay_type ==4">留货截止时间：{{orderDetail.preorder_deadline}}</span>
-				<span v-if="orderDetail.final_flag == 8 && orderDetail.pay_type ==4">付定金时间：{{orderDetail.preorder_pay_time}}</span>
-				<span>付款{{orderDetail.final_flag ==8?'尾款':''}}时间：<span :class="orderDetail.pay_status < 2 ? 'no-pay':''">{{orderDetail.pay_status < 2 ? '-' : orderDetail.pay_time}}
-					</span></span>
+			<!-- 	<span v-if="orderDetail.balance > 0">UU币：￥{{orderDetail.balance}}</span>
+				<span v-if="orderDetail.balance_2 > 0">余额：￥{{orderDetail.balance_2}}</span> -->
+				<span v-if="orderDetail.final_flag != 8">创建时间：{{orderDetail.createtime}}</span>
+			<span>付款{{orderDetail.final_flag ==8?'尾款':''}}时间：<span :class="orderDetail.pay_status < 2 ? 'no-pay':''">{{orderDetail.pay_status < 2 ? '-' : orderDetail.paytime}}
+				</span></span>
 				<!-- <span v-html="'配送方式：'+orderDetail.shipping_name.info"></span> -->
 			</div>
 		</div>
 		<div class="order-detail-bottom-container">
 			<block v-if="type != 'generalize'">
-				<span class="redBg" v-if="orderDetail.final_flag == 1 && orderDetail.pay_type !=4" @click.stop="toPay(orderDetail.id)">付款</span>
-				<span v-if="orderDetail.final_flag == 2 && orderDetail.ship_status != 3 &&orderDetail.pay_type!=8" @click.stop="changeStatus(orderDetail.id,4)">申请退款</span>
-				<span v-if="orderDetail.final_flag == 3" @click.stop="getLogistics">物流详情</span>
+				<span class="" v-if="orderDetail.final_flag == 1" @click.stop="changeStatus(orderDetail.id,4)">取消订单</span>
+				<span class="redBg" v-if="orderDetail.final_flag == 1" @click.stop="toPay(orderDetail.id)">立即付款</span>
+				<span class="" v-if="orderDetail.final_flag == 2" @click.stop="goIndex">返回</span>
+				<span v-if="orderDetail.final_flag == 2 && orderDetail.ship_status != 3 " @click.stop="changeStatus(orderDetail.id,4)">申请退款</span>
+				<span v-if="orderDetail.final_flag == 4" @click="deleteOrder">删除订单</span>
+				<span v-if="orderDetail.final_flag == 3" @click.stop="getLogistics">查看物流</span>
 				<span class="redBg" v-if="orderDetail.final_flag == 3 && orderDetail.receipt == 1" @click.stop="changeStatus(orderDetail.id,3)">确认收货</span>
-				<span class="redBg" v-if="orderDetail.final_flag == 8 " @click.stop="toPay(orderDetail.id)">支付尾款</span>
-				<span class="redBg" @click="">加入购物车</span>
+				<span class="redBg" v-if="orderDetail.final_flag == 4"  @click="addCart">加入购物车</span>
 			</block>
-			<span @click.stop="goIndex">返回</span>
+			<!-- <span @click.stop="goIndex">返回</span> -->
 		</div>
 	
 	</div>
@@ -128,7 +124,6 @@
 </template>
 
 <script>
-	import utils from "../../../utils/index";
 	import goodsItem from "@/components/goodsItem";
 	import cartItem from '@/components/shopCart/cartItem'
 	export default {
@@ -165,7 +160,7 @@
 				let price = 0
 				if (this.orderGoodsList.length > 0) {
 					this.orderGoodsList.map((item) => {
-						for (let items of item) {
+						for (let items of item.goodlist) {
 							price += items.goods_num * items.goods_price
 						}
 					})
@@ -212,62 +207,7 @@
 
 				return price ? price.toFixed(2) : 0.00
 			},
-			//获取推荐更多
-			getMore() {
-				this.loadMore = 2;
-				this.$fly.post(this.$api.collection, {
-					page: this.page,
-					pageSize: this.pageSize,
-					type: this.orderDetail.products_list[0][0].goods_type == 3 ? 3 : 2
-				}).then(res => {
-					console.log(res)
-					// 判断第一个商品类型
-					if (this.orderDetail.products_list[0][0].goods_type == 3) {
-						res.data.list.filter(item => {
-							item.descShow = false
-							item.colorChooseIndex = 0
-							// let keyStr = item.stockarr.colorarr[0].color_id+'-'+item.stockarr.sizearr[0].size_id
-							item.stockarr.colorarr.reverse((a, b) => {
-								return a.color > b.color
-							})
-							// item.keyStr = keyStr
-							let num = item.stockarr.colorarr[0].color
-							let price = 0
-							item.stockarr.wholesale_price_arr.forEach(item => {
-								if (num <= Number(item.max) && num >= Number(item.min)) {
-									price = item.price
-								}
-							})
-							if (price == 0) { //没有区间,就区最大的数量的价格
-								let maxArr = item.stockarr.wholesale_price_arr.slice(0)
-								maxArr.reverse((a, b) => {
-									console.log(a.max)
-									return a.max > b.max
-								})
-								item.preferPrice = maxArr[0].price
-							} else {
-								item.preferPrice = price
-							}
-						})
-					}
-					if (this.page == 1) {
-						this.goodList = res.data.list
-					} else {
-						if (res.data.list.length > 0) {
-							this.goodList = this.goodList.concat(res.data.list)
-						} else {
-							this.loadMore = 3;
-						}
-					}
-					if (res.data.list.length < this.pageSize) {
-						this.loadMore = 3;
-					} else {
-						this.page++
-						this.loadMore = 1;
-					}
-				})
-
-			},
+	
 			getLogistics() {
 				wx.navigateTo({
 					url: '/pages/center/order/logistics?order_id=' + this.orderId
@@ -280,7 +220,7 @@
 
 			toPay(id) {
 				wx.navigateTo({
-					url: '/pages/shopAndOrder/settlement/submitOrder?orderId=' + id
+					url: '/pages/shopCart/submitOrder?orderId=' + id
 				})
 			},
 
@@ -292,13 +232,13 @@
 			},
 
 			async loadOrderDetail() {
-				var result = await this.$fly.post(this.$api.orderDetail, {
+				var result = await this.$fly.post(this.$api.orderdetail, {
 					order_id: this.orderId,
 					type: 0
 				});
 				// result.data.last_money = 
-				result.data.create_time = utils.formatTime(result.data.create_time * 1000);
-				result.data.pay_time = result.data.pay_time == 0 ? "--" : utils.formatTime(result.data.pay_time * 1000);
+				result.data.createtime = this.$utils.formatTime(result.data.createtime * 1000);
+				result.data.paytime = (result.data.paytime == 0 || !result.data.paytime) ? "--" : this.$utils.formatTime(result.data.paytime * 1000);
 				return result.data;
 			},
 
@@ -366,7 +306,7 @@
 
 			changeStatus(id, status) {
 				if (status == 4) {
-					Dialog.confirm({
+					this.$tip.modal({
 						title: '退款确认',
 						message: '确认真的不要宝贝了吗？'
 					}).then(() => {
@@ -412,212 +352,8 @@
 		},
 		async onLoad(option) {
 			this.orderId = option.order_id;
-			// this.orderDetail = await this.loadOrderDetail();
-			let data  = {
-				"status": 1,
-				"msg": "\u83b7\u53d6\u6210\u529f",
-				"data": {
-					"underline_pay": "0",
-					"id": "121211",
-					"order_total_coupon_total": "78.40",
-					"order_total_coupon_1": "78.40",
-					"address_id": "0",
-					"order_total_coupon_3": "0.00",
-					"order_sn_id": "2020061301982",
-					"user_id": "60805",
-					"pay_type": "3",
-					"order_type": "0",
-					"is_self_get": "0",
-					"order_status": "1",
-					"pay_status": "2",
-					"ship_status": "1",
-					"discount_price": "0.00",
-					"price_sum": "78.40",
-					"shipping_monery": "0.00",
-					"price": "78.40",
-					"balance": "78.40",
-					"redpack": "0.00",
-					"balance_2": "0.00",
-					"last_money": 78.4,
-					"shipping": "50",
-					"create_time": "1592020622",
-					"delivery_time": "1592022985",
-					"pay_time": "1592020622",
-					"over_time": "0",
-					"refund_status": "0",
-					"admin_account_money_1": "0.00",
-					"admin_account_money_2": "0.00",
-					"admin_account_money_3": "0.00",
-					"is_preorder": "0",
-					"preorder_deadline": "",
-					"preorder_pay_time": "",
-					"products_list": [
-						[{
-							"id": "837190",
-							"order_id": "121211",
-							"code": "YX-PACK-30119",
-							"goods_id": "30119",
-							"goods_num": "1",
-							"price_sale": "80.00",
-							"goods_price": "78.40",
-							"sku": "YX-PACK-30119_1",
-							"user_id": "60805",
-							"comment": "0",
-							"over": "0",
-							"color": "\u767d\u8272",
-							"size": "110\/120\/130\/140\/150",
-							"weight": "1.00",
-							"title": "\u6cb3\u9a6c\u5c9b\u4e28\u4f11\u95f2\u7b80\u7ea6\u649e\u8272\u5b57\u6bcd\u5370\u82b1\u7eaf\u68c9T\u6064",
-							"color_id": "0",
-							"size_id": "0",
-							"true_num": "1",
-							"delay": "0",
-							"goods_type": "1",
-							"is_seckill": "0",
-							"price": "78.40",
-							"wholesale_num": "5",
-							"goods_img": [
-								"https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200110\/df37282ff85dce9122f410e6002542dc.jpg",
-								"https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200110\/3c6fce367dd9083e347bb9ccb732668f.jpg",
-								"https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200110\/c0d8b24d6554e83edd18114f90ed5d35.jpg",
-								"https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200110\/3b84264047a789fa3406bc7312e74730.jpg",
-								"https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.com\/uploads\/20200110\/2a7be5ef853136387cf4b7e936d05b25.jpg"
-							],
-							"stokcnum": "3",
-							"pack_stock_num": 15,
-							"sku_num": "5"
-						}]
-					],
-					"address": {
-						"id": "145887",
-						"realname": "21321",
-						"mobile": "13312345678",
-						"prov": "\u6cb3\u5317\u7701",
-						"prov_name": "\u6cb3\u5317\u7701",
-						"city": "\u77f3\u5bb6\u5e84\u5e02",
-						"city_name": "\u77f3\u5bb6\u5e84\u5e02",
-						"dist": "\u957f\u5b89\u533a",
-						"dist_name": "\u957f\u5b89\u533a",
-						"address": "\u5e08\u8303\u5927\u5b66",
-						"status": "1"
-					},
-					"userinfo": {
-						"id": "60805",
-						"group_id": "1",
-						"username": "yx60805",
-						"nickname": "\u4e00\u9505\u7096\u4e0d\u4e0b",
-						"alias": "",
-						"truename": "lalsl",
-						"email": "",
-						"mobile": "1331234567",
-						"avatar": "https:\/\/youxuanyouping.oss-cn-shenzhen.aliyuncs.comhttps:\/\/wx.qlogo.cn\/mmopen\/vi_32\/JFRlib4SA0OPeCjsw9TZ1kORR1iaAPHSzXaoSbsxAiaeERRBVCvJ666Bk6SbkGz9fUvYThPRPHic6BabXYlHvibV5dA\/132",
-						"level": "10",
-						"gender": "1",
-						"birthday": "2016-04-11",
-						"bio": "",
-						"score": "0",
-						"successions": "1",
-						"maxsuccessions": "1",
-						"prevtime": "1594278081",
-						"logintime": "1594278221",
-						"loginip": "119.129.113.132",
-						"loginfailure": "0",
-						"joinip": "61.140.163.221",
-						"jointime": "1582886233",
-						"createtime": "1582886233",
-						"updatetime": "1588664743",
-						"levelup_time": "0",
-						"deadline_time": "1622264390",
-						"token": "",
-						"id_card": "",
-						"recommendcode": "",
-						"status": "normal",
-						"verification": "",
-						"validate_email": "0",
-						"member_status": "0",
-						"member_discount": "100.00",
-						"p_id": "0",
-						"first_order_time": "1584410451",
-						"last_order_time": "1592020659",
-						"order_num": "7",
-						"charge_num": "0",
-						"froms": "",
-						"refreeid": "0",
-						"qr_code": "https:\/\/api.yoyoxp.com\/salesecode\/shareuser\/60805.png",
-						"user_type": "0",
-						"commission_status": "0",
-						"admin_id": "0",
-						"is_can_change": "0",
-						"prov": "",
-						"city": "",
-						"dist": "",
-						"prov_name": "",
-						"city_name": "",
-						"dist_name": "",
-						"beizhu": "",
-						"is_self_in": "0",
-						"is_bind": "1",
-						"session_key": "mWrEdw\/9si1ZI54CVP651w==",
-						"sign": "0"
-					},
-					"total_num": 1,
-					"final_flag": 3,
-					"coupon": [],
-					"flancoin": "315.00",
-					"totalflancoin": 315,
-					"balancemoney": "19.00",
-					"paytype": [{
-						"id": "1",
-						"type_name": "\u5fae\u4fe1\u652f\u4ed8",
-						"desc": "\u5fae\u4fe1\u652f\u4ed8",
-						"create_time": "1478882254",
-						"update_time": "1478882254",
-						"status": "1",
-						"is_default": "1",
-						"rate": "0",
-						"is_special": "0",
-						"sort": "1"
-					}, {
-						"id": "4",
-						"type_name": "\u7ebf\u4e0b\u652f\u4ed8",
-						"desc": "\u7ebf\u4e0b\u652f\u4ed8",
-						"create_time": "1478882254",
-						"update_time": "1478882254",
-						"status": "1",
-						"is_default": "0",
-						"rate": "0",
-						"is_special": "0",
-						"sort": "6"
-					}, {
-						"id": "8",
-						"type_name": "\u7269\u6d41\u4ee3\u6536",
-						"desc": "\u7269\u6d41\u4ee3\u6536",
-						"create_time": "1478882254",
-						"update_time": "1478882254",
-						"status": "1",
-						"is_default": "0",
-						"rate": "0",
-						"is_special": "0",
-						"sort": "8"
-					}],
-					"receipt": 1,
-					"shippings": [{
-						"title": "\u7269\u6d41\u914d\u9001",
-						"id": 50,
-						"info": "\u7269\u6d41\u914d\u9001\uff1a\u7531\u5546\u5bb6\u9009\u62e9\u5408\u4f5c\u5feb\u9012\u4e3a\u60a8\u914d\u9001\uff0c\u6e29\u99a8\u63d0\u793a\uff1a\u5feb\u9012\u914d\u9001\u662f\u5230\u4ed8\u90ae\u8d39",
-						"fee": 0,
-						"worker": ""
-					}, {
-						"title": "\u95e8\u5e97\u81ea\u63d0",
-						"id": 49,
-						"info": "\u4f18\u9009\u4f18\u54c1\u5c55\u5385",
-						"fee": "\u53d6\u8d27\u81ea\u4ed8",
-						"worker": ""
-					}],
-					"total_discount_price": 0
-				}
-			};
-			this.orderDetail = data.data
+			let data  = await this.loadOrderDetail();
+			this.orderDetail = data
 			this.type = option.type || ''
 			console.log(this.orderDetail)
 			this.initOrderHeader();

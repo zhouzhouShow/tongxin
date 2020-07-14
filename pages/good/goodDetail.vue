@@ -456,10 +456,10 @@
 						// this.inventoryNum -= this.chooseNum //把库存减去
 					} else { //立即购买
 						this.$fly.post(this.$api.addressDefault).then(result => {
-							if (result.data.provName == null) {
+							if (result.data.provName == null || !result.data) {
 								//跳转添加地址
 								wx.navigateTo({
-									url: "/pages/center/address/myAddress?isShop=1&cart_ids=" + res.data.cart_id
+									url: "/pages/center/address/address?isShop=1&cart_ids=" + res.data.cart_id
 								});
 							} else {
 								wx.navigateTo({
