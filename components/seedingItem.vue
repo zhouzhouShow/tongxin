@@ -183,16 +183,16 @@
 			},
 			showPopup(item, index) {
 				this.targetIndex = index || 0
-				this.isTabBar && wx.hideTabBar()
+				// this.isTabBar && wx.hideTabBar()
 				setTimeout(() => this.$refs.popup.open())
 			},
 			hidePopup() {
 				this.$refs.popup.close()
 			},
 			popupChange(e) {
-				if (!e.show) {
-					setTimeout(() => this.isTabBar && wx.showTabBar())
-				}
+				// if (!e.show) {
+				// 	setTimeout(() => this.isTabBar && wx.showTabBar())
+				// }
 			},
 			handleDelete() {
 				let id = this.deleteId
@@ -201,7 +201,7 @@
 			},
 			mineControl(id) {
 				this.deleteId = id
-				this.isTabBar && wx.hideTabBar()
+				// this.isTabBar && wx.hideTabBar()
 				setTimeout(() => this.$refs.btnPopup.open())
 			},
 			hideBtnPopup() {
@@ -209,9 +209,9 @@
 				this.$refs.btnPopup.close()
 			},
 			btnPopupChange(e) {
-				if (!e.show) {
-					setTimeout(() => this.isTabBar && wx.showTabBar())
-				}
+				// if (!e.show) {
+				// 	setTimeout(() => this.isTabBar && wx.showTabBar())
+				// }
 			}
 		}
 	}

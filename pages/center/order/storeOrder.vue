@@ -16,8 +16,10 @@
 				</view>
 				<view class="product">
 					<list>
-						<view v-for="(el,num) in item.products_list" :key="num" class="product_item">
-							<productItem v-for="(e,s) in el.goodlist" :key="s" :info="e"></productItem>
+						<view v-for="(el,num) in item.products_list" :key="num">
+							<view v-for="(e,s) in el.goodlist" :key="s" class="product_item">
+								<productItem :info="e"></productItem>
+							</view>
 						</view>
 					</list>
 				</view>
@@ -160,7 +162,11 @@
 					}
 				}
 
-				.product {}
+				.product {
+					&_item{
+						margin-bottom: 30rpx;
+					}
+				}
 
 				.total {
 					display: flex;

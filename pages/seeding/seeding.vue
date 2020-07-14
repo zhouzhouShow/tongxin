@@ -68,7 +68,7 @@
 		data() {
 			return {
 				loadingType: '1',
-				searchText: '好',
+				searchText: '',
 				isSearch: false,
 				userInfo: {},
 				navList: [{
@@ -298,6 +298,7 @@
 	.seeding {
 		width: 100%;
 		min-height: 100%;
+		padding-bottom: 100rpx;
 		background-color: #F3F3F3;
 
 		&_user {
@@ -468,7 +469,7 @@
 
 		&_create {
 			position: fixed;
-			bottom: 70rpx;
+			bottom: 170rpx;
 			right: 30rpx;
 			width: 90rpx;
 			height: 90rpx;
