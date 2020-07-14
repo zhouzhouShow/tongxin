@@ -223,30 +223,32 @@
 			
 		</div>
 		<!-- <div class="share-pop"> -->
-			<popup :show="sharePop" :maskClick="false" type="bottom">
+			<popup ref="popup" :show="sharePop" :maskClick="false" type="bottom">
 				<div class="share-pop">
 					<div class="title flex-center">
 						<span>分享</span>
-						<span class="iconfont iconchacha"></span>
+						<span class="iconfont iconchacha" @click="sharePop=false"></span>
 					</div>
 					<div class="share-type">
-						<div class="">
+						<div class="" @click.stop="shareImg">
 							<image src="../../static/images/good/share_wechat.png" mode=""></image>
 							<p>分享群/好友</p>
 						</div>
-						<div class="">
+						<div class="" @click.stop="saveImg">
 							<image src="../../static/images/good/share_download.png" mode=""></image>
 							<p>保存图片</p>
 						</div>
 					</div>
-					<div class="cancel">取消</div>
+					<div class="cancel"  @click="sharePop=false">取消</div>
 				</div>
 			</popup>
 		<!-- </div> -->
+		<fixedIcon @share="share" type="special" ref="backTop" :showItem='showItem'></fixedIcon>
 	</view>
 </template>
 
 <script>
+	import fixedIcon from '@/components/fixedIcon.vue'
 	import parser from "@/components/jyf-Parser/index.vue"
 	import uniNumberBox from "@/components/uni-number-box/uni-number-box.vue"
 	import popup from '@/components/uni-popup/uni-popup.vue'
@@ -256,7 +258,37 @@
 			parser,
 			uniNumberBox,
 			popup,
-			swiperDot
+			swiperDot,
+			fixedIcon
+		},
+		data() {
+			return {
+				id:'',
+				recommendList:[],
+				showPopChoice:false,
+				inventoryNum:100, //库存
+				colorChooseIndex:0,
+				sizeChooseIndex:0,
+				sharePop:false,
+				chooseNum:1,
+				colorArr:[],
+				sizeArr:[],
+				skuStr:'', //sku
+				skuId:'', //skuId
+				products_list:[], //规格列表
+				chooseImg:'',
+				sizeTitle:'',//尺寸title
+				colorTitle:'', // 颜色title
+				detail: {},
+				timer:null,
+				deadline:0,//秒杀倒计时
+				grassmanList:[],//随机种草人
+				current:0,
+				showItem:{ //
+					share:true
+				},
+				userIsAgent:false,//是否为代理
+			};
 		},
 		async onLoad(option){
 			this.id = option.id
@@ -286,6 +318,11 @@
 					this.timer = null
 				}
 			}, 1000)
+			// 获取用户是不是代理
+			this.$user.getInfo('is_agent').then(res=>{
+				console.log(res)
+				this.showItem.share = res==0 ? false : true
+			})
 			this.$tip.loaded()
 			this.recommendList =  await this.recommondGoodslist()
 			this.grassmanList  = await this.grassman()
@@ -311,32 +348,33 @@
 				}
 			},
 		},
-		data() {
-			return {
-				id:'',
-				recommendList:[],
-				showPopChoice:false,
-				inventoryNum:100, //库存
-				colorChooseIndex:0,
-				sizeChooseIndex:0,
-				sharePop:true,
-				chooseNum:1,
-				colorArr:[],
-				sizeArr:[],
-				skuStr:'', //sku
-				skuId:'', //skuId
-				products_list:[], //规格列表
-				chooseImg:'',
-				sizeTitle:'',//尺寸title
-				colorTitle:'', // 颜色title
-				detail: {},
-				timer:null,
-				deadline:0,
-				grassmanList:[],//随机种草人
-				current:0
-			};
-		},
+	
 		methods:{
+			saveImg(){
+				let img = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553187020783&di=bac9dd78b36fd984502d404d231011c0&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201609%2F26%2F20160926173213_s5adi.jpeg"
+				this.$utils.saveImgToPhotosAlbum(img)
+			},
+			 shareImg(){
+				uni.share({
+				    provider: "weixin",
+				    scene: "WXSceneSession",
+				    type: 2,
+				    imageUrl: "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/uni@2x.png",
+				    success: function (res) {
+				        console.log("success:" + JSON.stringify(res));
+				    },
+				    fail: function (err) {
+				        console.log("fail:" + JSON.stringify(err));
+				    }
+				});
+				 console.log(1)
+				 this.$utils.shareImg("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553187020783&di=bac9dd78b36fd984502d404d231011c0&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201609%2F26%2F20160926173213_s5adi.jpeg")
+			 },
+			// 分享
+			share(){
+				this.sharePop = true
+				// this.$refs.popup.open()
+			},
 			toBrand(id){
 				wx.navigateTo({
 					url:'/pages/index/brandDetail?id='+this.detail.brandinfo.id
@@ -543,8 +581,10 @@
 			justify-content: center;
 			div:nth-child(1){
 				margin-right: 245rpx;
+				text-align: center;
 			}
 			div{
+				
 				image{
 					width: 110rpx;
 					height: 110rpx;
@@ -1066,7 +1106,7 @@
 			bottom: 0;
 			left: 0;
 			right: 0;
-			z-index: 100;
+			z-index: 1000;
 			background: #fff;
 			min-height: 550rpx;
 			transition: all .5s;

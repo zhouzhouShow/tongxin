@@ -43,13 +43,13 @@
 				<view class="brand-box">
 					<view class="b-item" v-for="(item,index) in orderGoodsList" :key="index">
 						<view class="brand-info flex-align-center">
-							<image class="b-img" :src="item.brand_logo[0]" mode=""></image>
+							<image class="b-img" :src="item.brandinfo.brand_logo[0]" mode=""></image>
 							<text class="brand-name">{{item.brandinfo.brand_name}}</text>
 							<text class="icon-arrow iconfont iconyoujiantou"></text>
 						</view>
 						<view class="b-good">
 							<block v-for="(itemC,indexC) in item.goodlist" :key="indexC">
-								<cartItem type="order" :item="itemC"></cartItem>
+								<cartItem @handleToRefund="handleToRefund(itemC)" :reFoundBtn="orderDetail.final_flag==4" type="order" :item="itemC"></cartItem>
 							</block>
 						</view>
 					</view>
@@ -62,7 +62,7 @@
 					</p>
 					<p>
 						<span>运费</span>
-						<span>到付</span>
+						<span>{{orderDetail.shipping_monery == 0 ? '包邮': orderDetail.shipping_monery}}</span>
 					</p>
 					<p v-if="orderDetail.redpack && orderDetail.redpack>0">
 						<span>优惠券抵扣</span>
@@ -73,45 +73,39 @@
 				<div class="total-price">
 
 					<p class="" v-if="orderDetail.final_flag != 8">
-						<span class="flex flex-align-center">订单金额
+						<span class="flex flex-align-center gray">订单金额
 						<!-- <img class="icon" src="@/static/images/icon/arrow_down.png" alt=""> -->
 						</span>
 						<span>¥{{orderDetail.redpack>0 && orderDetail.redpack ? (orderDetail.price_sum - orderDetail.redpack) : orderDetail.price_sum}}</span>
 					</p>
-					<p class="" v-if="orderDetail.final_flag == 8">
-						<span class="flex flex-align-center">未付尾款
-						<!-- <img class="icon" src="@/static/images/icon/arrow_down.png" alt=""> -->
-						</span>
-						<span>¥{{orderDetail.last_money?orderDetail.last_money:0.00}}</span>
-					</p>
 			</div>
 			</div>
 			<div class="order-info-container">
-				<span>订单号：{{orderDetail.order_code}}</span>
-				<span v-if="orderDetail.final_flag == 1 && orderDetail.pay_type !=4">支付状态：未支付</span>
+				<span>订单号：<span>{{orderDetail.order_code}}</span></span>
+				<span >支付状态：<span>{{(orderDetail.pay_status < 2 ? '待支付' : ' 支付成功')}}</span></span>
 
-				<!-- 0，未付款；1，付款中；2，已付款 3, 已付预付款 -->
+		<!-- 		0，未付款；1，付款中；2，已付款 3, 已付预付款
 				<span v-if="orderDetail.pay_type ==4 && orderDetail.final_flag != 8" :class="orderDetail.underline_pay == 0 ? 'no-pay':''">
-					线下支付 ：￥{{orderDetail.last_money+' ('+ (orderDetail.pay_status < 2 ? '待支付' : ' 已支付')+')'}}</span>
-				<!-- {{orderDetail.underline_pay == 0 ? "德邦代付需支付":"德邦代付"}} -->
-				<span v-if="orderDetail.pay_type ==8" :class="orderDetail.underline_pay == 0 ? 'no-pay':''">物流代收：￥{{orderDetail.last_money}}</span>
+					线下支付 ：<span>￥{{orderDetail.last_money+' ('+ (orderDetail.pay_status < 2 ? '待支付' : ' 已支付')+')'}} </span></span> -->
 
-				<span v-if="orderDetail.pay_type == 1">微信支付：￥{{orderDetail.last_money}}</span>
+				<!-- <span v-if="orderDetail.pay_type == 1">微信支付：￥{{orderDetail.last_money}}</span> -->
 			<!-- 	<span v-if="orderDetail.balance > 0">UU币：￥{{orderDetail.balance}}</span>
 				<span v-if="orderDetail.balance_2 > 0">余额：￥{{orderDetail.balance_2}}</span> -->
-				<span v-if="orderDetail.final_flag != 8">创建时间：{{orderDetail.createtime}}</span>
+				<span v-if="orderDetail.final_flag != 8">创建时间：<span>{{orderDetail.createtime}}</span></span>
+		
 			<span>付款{{orderDetail.final_flag ==8?'尾款':''}}时间：<span :class="orderDetail.pay_status < 2 ? 'no-pay':''">{{orderDetail.pay_status < 2 ? '-' : orderDetail.paytime}}
 				</span></span>
+				<span v-if="orderDetail.final_flag ==4 ">成交时间：<span>{{orderDetail.overtime}}</span></span>
 				<!-- <span v-html="'配送方式：'+orderDetail.shipping_name.info"></span> -->
 			</div>
 		</div>
 		<div class="order-detail-bottom-container">
 			<block v-if="type != 'generalize'">
-				<span class="" v-if="orderDetail.final_flag == 1" @click.stop="changeStatus(orderDetail.id,4)">取消订单</span>
+				<span class="" v-if="orderDetail.final_flag == 1" @click.stop="changeStatus(orderDetail.id,2)">取消订单</span>
 				<span class="redBg" v-if="orderDetail.final_flag == 1" @click.stop="toPay(orderDetail.id)">立即付款</span>
 				<span class="" v-if="orderDetail.final_flag == 2" @click.stop="goIndex">返回</span>
-				<span v-if="orderDetail.final_flag == 2 && orderDetail.ship_status != 3 " @click.stop="changeStatus(orderDetail.id,4)">申请退款</span>
-				<span v-if="orderDetail.final_flag == 4" @click="deleteOrder">删除订单</span>
+				<!-- <span v-if="orderDetail.final_flag == 2 && orderDetail.ship_status != 3 " @click.stop="changeStatus(orderDetail.id,4)">申请退款</span> -->
+				<span v-if="orderDetail.final_flag == 4" @click="changeStatus(orderDetail.id,1)">删除订单</span>
 				<span v-if="orderDetail.final_flag == 3" @click.stop="getLogistics">查看物流</span>
 				<span class="redBg" v-if="orderDetail.final_flag == 3 && orderDetail.receipt == 1" @click.stop="changeStatus(orderDetail.id,3)">确认收货</span>
 				<span class="redBg" v-if="orderDetail.final_flag == 4"  @click="addCart">加入购物车</span>
@@ -169,17 +163,11 @@
 			}
 		},
 		methods: {
-			// changeStatus({id, status}) {
-			//   this.$tip.loading('正在处理')
-			//   this.$fly.post(this.$api.changeOrderStatus, {
-			//     id: this.orderId,
-			//     status: status
-			//   }).then(res => {
-			//     this.$tip.loaded();
-			//     // this.
-			//     this.$tip.toast(res.msg)
-			//   })
-			// },
+			handleToRefund(info){
+				wx.navigateTo({
+					url:'../refund/applyRefund?info='+info
+				})
+			},
 			ellipsis(index) {
 				this.goodList[index].descShow = !this.goodList[index].descShow
 			},
@@ -239,6 +227,9 @@
 				// result.data.last_money = 
 				result.data.createtime = this.$utils.formatTime(result.data.createtime * 1000);
 				result.data.paytime = (result.data.paytime == 0 || !result.data.paytime) ? "--" : this.$utils.formatTime(result.data.paytime * 1000);
+				if(result.data.final_flag == 4){
+					result.data.overtime = this.$utils.formatTime(result.data.overtime*1000)
+				}
 				return result.data;
 			},
 
@@ -322,7 +313,7 @@
 			submitChangeStatus(id, status) {
 				this.$tip.loading('正在处理')
 				this.$fly.post(this.$api.changeOrderStatus, {
-					id: id,
+					order_id: id,
 					status: status
 				}).then(async res => {
 					this.orderDetail = await this.loadOrderDetail();
@@ -330,6 +321,9 @@
 					this.orderGoodsList = this.orderDetail.products_list;
 					this.initialization = true;
 					this.getOrderLog()
+					if(status == 1){
+						uni.navigateBack({})
+					}
 					this.$tip.toast(res.msg);
 				})
 			},
@@ -597,7 +591,7 @@
 			.price-discount-box {
 				font-size: 26rpx;
 				color: #333;
-				padding: 30rpx 20rpx 0;
+				padding: 30rpx 30rpx 0;
 				background: #fff;
 				>p {
 					display: flex;
@@ -609,8 +603,10 @@
 			.total-price {
 				font-size: 30rpx;
 				font-weight: 500;
-				padding: 0 20rpx 30rpx;
-
+				padding: 0 30rpx 30rpx;
+				.gray{
+					color: #999999;
+				}
 				>p {
 					display: flex;
 					justify-content: space-between;
@@ -630,21 +626,19 @@
 				border-radius:10rpx;
 				display: flex;
 				flex-direction: column;
-				justify-content: space-evenly;
+				justify-content: space-between;
 				flex-shrink: 0;
-				min-height: rpx(270);
 				border-top: rpx(20) solid #F3F3F3;
-				padding-top: rpx(7);
-				padding-bottom: rpx(35);
-				padding-right: rpx(42);
-				padding-left: rpx(27);
+				padding:0 30rpx 30rpx;
 
 				>span {
 					font-size: rpx(26);
 					font-weight: 400;
 					color: #666666;
-					margin-top: rpx(20);
-					line-height: rpx(37);
+					margin-top: rpx(30);
+					line-height: 1;
+					display: flex;
+					justify-content: space-between;
 				}
 
 				.no-pay {

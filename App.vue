@@ -51,6 +51,19 @@
 				await this.appInit();
 			}
 		},
+		async onShow(){
+			let mtoken = wx.getStorageSync('token') || ''
+			this.$user.getUserInfo().then(res => {
+			  var data = res.data;
+			  console.log('测试',data)
+			  if(data.avatar=='' || data.code == 403 || !mtoken){ //用户信息没有 头像,请求状态为403 ,本地没有token就要授权
+			   uni.reLaunch({
+			   	url:'pages/auth/auth'
+			   })
+			  }
+			//  console.log(res)
+			})
+		},
 		created() {
 		  uni.hideTabBar({});
 		

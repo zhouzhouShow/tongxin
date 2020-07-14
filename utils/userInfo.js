@@ -25,16 +25,11 @@ const userInfo = {
 	getUserInfo() {
 		return new Promise((resolve, reject) => {
 			this.isGet = false;
-			// store.dispatch('actionsAccountMine').then(res => {
-			// 	this.setInfo(res.data);
-			// 	this.isGet = true;
-			// 	resolve(res);
-			// })
-			// request.get({url:api.accountMine}).then(res => {
-			//   this.setInfo(res.data);
-			//   this.isGet = true;
-			//   resolve(res);
-			// })
+			fly.post(api.getCenterIndex).then(res => {
+			  this.setInfo(res.data);
+			  this.isGet = true;
+			  resolve(res);
+			})
 		})
 	},
 }

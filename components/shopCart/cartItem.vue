@@ -4,12 +4,15 @@
 		<image class="g-img" :src="item.goods_images[0]"
 		 mode=""></image>
 		<view class="g-info">
-			<p class="g-name clamp-two">{{item.goods_title}}</p>
-			<p class="g-spec flex-justify-center">
-				<text>{{item.spec_item_title | split}}</text>
-				<text v-if="type=='cart'" class="iconfont iconarrow"></text>
-			</p>
-			<!-- <p class="discount">9.2折</p> -->
+			<p class="g-name clamp-two">{{item.goods_title || item.goods_name}}</p>
+			<div class="flex flex-align-center resBox">
+				<p class="g-spec flex-justify-center">
+					<text>{{item.spec_item_title | split}}</text>
+					<text v-if="type=='cart'" class="iconfont iconarrow"></text>
+				</p>
+				<p v-if="reFoundBtn" class="reFoundBtn" @click="handleToRefund">退货</p>
+			</div>
+			<p class="discount" v-if="item.discount">{{item.discount/10}}折</p>
 			<p class="pirce-box flex-align-center">
 				<span class="n-price">
 					<span class="p-icon">¥</span>{{item.goods_price}}
@@ -35,7 +38,8 @@
 			type:{
 				type:String,
 				default:'cart'
-			}
+			},
+			reFoundBtn:false
 		},
 		filters:{
 			split(str){
@@ -49,6 +53,9 @@
 		},
 	
 		methods:{
+			handleToRefund(){
+				this.$emit('handleToRefund')
+			},
 			getNumberValue(e){
 				console.log(e)
 				this.$emit('changeNum',{goods_num:e.inputValue,addType:e.addType,oldValue:e.oldValue})
@@ -86,21 +93,35 @@
 				font-weight: 500;
 				color: rgba(51, 51, 51, 1);
 			}
-
-			.g-spec {
-				font-size: 24rpx;
-				font-weight: 400;
-				color: rgba(153, 153, 153, 1);
-				line-height: 36rpx;
-				margin-top: 18rpx;
-				// padding:0 13rpx;
-				width: 194rpx;
-				height: 46rpx;
-				line-height: 46rpx;
-				background: rgba(248, 248, 248, 1);
-				border-radius: 4rpx;
-
+			.resBox{
+				.reFoundBtn{
+					width:150rpx;
+					height:50rpx;
+					line-height:50rpx;
+					text-align: center;
+					border:1rpx solid rgba(221,221,221,1);
+					border-radius:25rpx;
+					font-size:28rpx;
+					font-weight:400;
+					margin-left: auto;
+					color:rgba(102,102,102,1);
+				}
+				.g-spec {
+					font-size: 24rpx;
+					font-weight: 400;
+					color: rgba(153, 153, 153, 1);
+					line-height: 36rpx;
+					margin-top: 18rpx;
+					// padding:0 13rpx;
+					width: 194rpx;
+					height: 46rpx;
+					line-height: 46rpx;
+					background: rgba(248, 248, 248, 1);
+					border-radius: 4rpx;
+				
+				}
 			}
+			
 
 			.discount {
 				margin-top: 10rpx;

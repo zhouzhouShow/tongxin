@@ -144,10 +144,12 @@
 			}
 		},
 		async  onLoad() {
+			this.$tip.loading()
 			this.banner = await this.getBanner()
 			this.wechatNavBtnHeight = wx.getMenuButtonBoundingClientRect().top+1
 			this.brandlist()
 			this.miaoshaList = await this.newGoodslist() //上新
+			this.$tip.loaded()
 		},
 		onPageScroll(e) {
 			if (this.sTimer) {

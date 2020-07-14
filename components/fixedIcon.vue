@@ -7,7 +7,13 @@
 	<view class="backTop"  v-show="showItem">
 		<view class="fixed-box">
 			<image v-if="showItem.cart" @click.stop="trigger('cart')" src="../static/images/icon/fixed_cart.png" ></image>
-			<button class="resetStyle" open-type="share"><image v-if="showItem.share" @click.stop="trigger('share')"  src="../static/images/icon/share_icon.png" ></image></button>
+			<!-- 单独分享处理逻辑 -->
+			<block v-if="type=='special'"> 
+				<image v-if="showItem.share" @click.stop="trigger('share')"  src="../static/images/icon/share_icon.png" ></image>
+			</block>
+			<block v-else>
+				<button class="resetStyle" open-type="share"><image v-if="showItem.share" @click.stop="trigger('share')"  src="../static/images/icon/share_icon.png" ></image></button>
+			</block>
 			<image v-if="showItem.backTop" @click.stop="trigger('backTop')"  src="../static/images/icon/backTop.png" ></image>
 		</view>
 	</view>
@@ -15,7 +21,7 @@
 
 <script>
 	export default {
-		props:['showItem'],
+		props:['showItem','type'],
 		data() {
 			return {
 				
@@ -56,7 +62,7 @@
 		right:20rpx;
 		width:72rpx;
 		height:300rpx;
-		z-index: 9999;
+		z-index: 999;
 		text-align: center;
 		.fixed-box{
 			display: flex;

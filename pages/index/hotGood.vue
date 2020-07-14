@@ -60,15 +60,15 @@
 				cNavId:0,//0 无  1婴童  2男童 3女童
 				navList: [{
 					title: '婴童',
-					img: '../../static/images/good/share_wechat.png',
+					img: 'https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200714/9f817897b334dd3548cacaf3683d025a.png',
 					id:1,
 				},{
 					title: '男童',
-					img: '../../static/images/good/share_wechat.png',
+					img: 'https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200714/ef7e6c1fa146957e982b2cd5ff817c38.png',
 					id:2,
 				},{
 					title: '女童',
-					img: '../../static/images/good/share_wechat.png',
+					img: 'https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200714/37d039cee0bf00d16216d45218a920b2.png	',
 					id:3,
 				}]
 			};

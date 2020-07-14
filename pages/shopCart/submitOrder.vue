@@ -143,6 +143,11 @@
 			if(this.orderId){ //携带订单id进来 , 两个数据不同,所以要分开处理拿数据
 				result = await this.loadOrderDetail();
 				this.totalPrice = result.data.price_sum;
+				result.data.products_list.map(item=>{
+					item.brand_logo = item.brandinfo.brand_logo
+					item.brand_banner = item.brandinfo.brand_banner
+					item.brand_name = item.brandinfo.brand_name
+				})
 				this.orderGoodsList = result.data.products_list;
 				result.data.freight = result.data.shipping_monery;
 				result.data.goods_num = result.data.total_num

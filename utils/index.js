@@ -68,7 +68,7 @@ function uploadFile(path, title = '上传中') {
 		})
 		console.log(api)
 		uni.uploadFile({
-			url: config.baseUrl +api.uploadImage,
+			url: config.baseUrl + api.uploadImage,
 			filePath: path,
 			name: 'file',
 			formData: {
@@ -242,6 +242,24 @@ function updateUserinfo(user) {
 		})
 	})
 }
+// 分享图片
+function shareImg(img) {
+	if (!img) {
+		return
+	}
+	return new Promise((resolve, reject) => {
+		uni.share({
+			provider: 'weixin',
+			type: 2,
+			scene: 'WXSceneSession',
+			imageUrl: img,
+			success: function(res) {
+				resolve(res)
+			}
+		})
+	})
+
+}
 /**
  * 保存图片
  */
@@ -355,20 +373,20 @@ function setCenterTabBarBadge() {
 
 }
 
-function getTestToken(){
+function getTestToken() {
 	request.post({
-		url: api.getTestToken,
-		data: {
-			user_id:'11993'
-		}
-	}).then((res) => {})
-	.catch((err) => {})
+			url: api.getTestToken,
+			data: {
+				user_id: '11993'
+			}
+		}).then((res) => {})
+		.catch((err) => {})
 }
 
-function previewImage(list,index = 0){
+function previewImage(list, index = 0) {
 	uni.previewImage({
-		urls:list,
-		current:index
+		urls: list,
+		current: index
 	})
 }
 
@@ -388,5 +406,6 @@ export default {
 	makePhone,
 	setCenterTabBarBadge,
 	getTestToken,
-	previewImage
+	previewImage,
+	shareImg
 }
