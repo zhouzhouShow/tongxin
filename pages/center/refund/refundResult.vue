@@ -9,6 +9,9 @@
 		<view class="tip">
 			<text>预计<text class="time">23小时59分</text>内为您审核，请耐心等待，保持手机畅通</text>
 		</view>
+		<view class="btn">
+			<button @click="handleSure" type="default">确定</button>
+		</view>
 	</view>
 </template>
 
@@ -19,6 +22,13 @@
 			return {
 
 			};
+		},
+		methods:{
+			handleSure(){
+				wx.redirectTo({
+					url:'./refundOrder'
+				})
+			}
 		}
 	}
 </script>
@@ -71,6 +81,24 @@
 				text {
 					color: #333333;
 				}
+			}
+		}
+		.btn{
+			margin: 50rpx;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			button{
+				width:210rpx;
+				height:80rpx;
+				background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
+				border-radius:40rpx;
+				font-size:30rpx;
+				font-family:PingFang SC;
+				font-weight:400;
+				color:rgba(255,255,255,1);
+				line-height:80rpx;
+				text-align: center;
 			}
 		}
 	}

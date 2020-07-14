@@ -33,7 +33,7 @@
 						</view>
 						<view v-else class="refund">
 							<text>购买数量：{{info.goods_num}}</text>
-							<text>申请数量：{{refundNumber}}</text>
+							<text>已退数量：{{refundNumber}}</text>
 						</view>
 					</view>
 				</view>
