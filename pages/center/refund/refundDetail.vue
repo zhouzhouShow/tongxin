@@ -1,15 +1,23 @@
 <template>
 	<view class="refund_detail">
 		<view class="type">
-			<view v-if="status==1">
+			<view v-if="orderDetail.status==0">
 				<view class="title">
 					<text>已申请退款/售后，等待商家处理</text>
 				</view>
 				<view class="tip">
-					<text>剩余23时59分</text>
+					<text>剩余{{getTime}}</text>
 				</view>
 			</view>
-			<view v-else-if="status==2">
+			<view v-else-if="orderDetail.status==1">
+				<view class="title">
+					<text>您的退款申请审核失败</text>
+				</view>
+				<view class="tip">
+					<text></text>
+				</view>
+			</view>
+			<view v-else-if="orderDetail.status==2">
 				<view class="title">
 					<text>您的退款申请已通过</text>
 				</view>
@@ -17,7 +25,7 @@
 					<text>请填写返还快递信息</text>
 				</view>
 			</view>
-			<view v-else-if="status==3">
+			<view v-else-if="orderDetail.status==3">
 				<view class="title">
 					<text>商品已退回，等待商家退款</text>
 				</view>
@@ -25,7 +33,7 @@
 					<text>申通快递：ST00000000000000</text>
 				</view>
 			</view>
-			<view v-else-if="status==4">
+			<view v-else-if="orderDetail.status==4">
 				<view class="title">
 					<text>退款成功</text>
 				</view>
@@ -33,8 +41,16 @@
 					<text>2020-07-09 15:13</text>
 				</view>
 			</view>
+			<view v-else-if="orderDetail.status==5">
+				<view class="title">
+					<text>退款失败</text>
+				</view>
+				<view class="tip">
+					<text>2020-07-09 15:13</text>
+				</view>
+			</view>
 		</view>
-		<view v-if="status==2||status==3" class="address">
+		<view v-if="orderDetail.status==2||orderDetail.status==3" class="address">
 			<view class="title">
 				<text>商家收货地址</text>
 			</view>
@@ -50,12 +66,12 @@
 		</view>
 		<view class="product">
 			<view class="store">
-				<image class="logo" :src="orderDetail.storeInfo.logo" mode="scaleToFill"></image>
-				<text>{{orderDetail.storeInfo.name}}</text>
+				<image class="logo" :src="orderDetail.products_list[0].brandinfo.brand_logo[0]" mode="scaleToFill"></image>
+				<text>{{orderDetail.products_list[0].brandinfo.brand_name}}</text>
 				<image class="arrow" src="../../../static/images/center/icon_arrow-right-grey.png" mode="scaleToFill"></image>
 			</view>
 			<view class="products">
-				<view v-for="el in orderDetail.productList" :key="el.id" class="products_item">
+				<view v-for="el in orderDetail.products_list[0].goodlist" :key="el.id" class="products_item">
 					<productItem :info="el" :showNumber="false"></productItem>
 				</view>
 			</view>
@@ -65,7 +81,7 @@
 						<text>退货数量</text>
 					</view>
 					<view class="right">
-						<text>1件</text>
+						<text>{{orderDetail.total_num||0}}件</text>
 					</view>
 				</view>
 				<view class="text">
@@ -73,7 +89,7 @@
 						<text>退货原因</text>
 					</view>
 					<view class="right">
-						<text>无理由退货</text>
+						<text>{{orderDetail.reason || ''}}</text>
 					</view>
 				</view>
 				<view class="text">
@@ -81,7 +97,7 @@
 						<text>退款金额</text>
 					</view>
 					<view class="red right">
-						<text>¥ 48.00</text>
+						<text>¥ {{getRefundTotal(orderDetail)}}</text>
 					</view>
 				</view>
 				<view class="text">
@@ -89,7 +105,7 @@
 						<text>申请时间</text>
 					</view>
 					<view class="right">
-						<text>2020-07-09 12:25</text>
+						<text>{{$utils.formatTime(orderDetail.create_time*1000,'yyyy-MM-dd hh:mm:ss')}}</text>
 					</view>
 				</view>
 				<view class="text">
@@ -97,7 +113,7 @@
 						<text>退货单号</text>
 					</view>
 					<view class="right">
-						<text>000000000000000000</text>
+						<text>{{orderDetail.order_code}}</text>
 					</view>
 				</view>
 				<view class="text more">
@@ -105,18 +121,17 @@
 						<text>其他说明</text>
 					</view>
 					<view class="right">
-						<text>尺码偏小，穿不了。做工有点问题，希望有改近。尺码偏小，穿不了。做工有点问题，希望有改近。尺码偏小，穿不了。做工有点问题，希望有改近。
-						</text>
+						<text>{{orderDetail.explain}}</text>
 					</view>
 				</view>
 				<view class="images">
-					<view v-for="(image, index) in images" :key="index" class="image">
+					<view v-for="(image, index) in orderDetail.voucher" :key="index" class="image">
 						<image :src="image" mode="aspectFill"></image>
 					</view>
 				</view>
 			</view>
 		</view>
-		<view @click="showPopup" v-if="status==2" class="fill_logistics">
+		<view @click="showPopup" v-if="orderDetail.status==2" class="fill_logistics">
 			<button type="default">填写物流</button>
 		</view>
 		<uni-popup @change="popupChange" ref="popup" type="bottom">
@@ -160,35 +175,30 @@
 			productItem,
 			uniPopup
 		},
+		computed:{
+			getTime(){
+				let nowTime = new Date().getTime()
+				let createTime = this.orderDetail.create_time/1000
+				let roundClock = 86400000
+				let gap = roundClock - (nowTime - createTime)
+				return this.$utils.formatTime(gap,'hh时mm分')
+			},
+			getRefundTotal(item){
+				return function(item){
+					let goods = item.products_list[0].goodlist[0]
+					return (goods.goods_num*goods.goods_price).toFixed(2)
+				}
+			}
+		},
 		data() {
 			return {
-				status: 2,
+				id: 0,
 				businessInformation: {
 					name: '蓝盈盈',
 					mobile: '18375825365',
 					address: '广东省广州市天河区华观路1993万科广场负一楼B1区101'
 				},
-				orderDetail: {
-					id: 1,
-					storeInfo: {
-						logo: require('@/static/images/center/icon_store.png'),
-						name: '拉粑粑',
-						id: 1
-					},
-					status: 1,
-					total: 88,
-					pay: 88,
-					productList: [{
-						id: 1,
-						cover: 'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg',
-						name: '2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 ',
-						number: 1,
-						price: 88,
-						discount: 0.7,
-						discountText: '7折',
-						spec: '粉色；120cm'
-					}]
-				},
+				orderDetail: {},
 				images: [
 					'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg',
 					'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg',
@@ -198,13 +208,31 @@
 					'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg',
 					'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg'
 				],
-				logistic:{
-					name:'',
-					number:''
+				logistic: {
+					name: '',
+					number: ''
 				}
 			};
 		},
-		methods:{
+		onLoad(options) {
+			this.id = options.id
+			this.getRefundOrderInfo()
+		},
+		methods: {
+			getRefundOrderInfo() {
+				uni.showLoading({
+					title: '获取中'
+				})
+				this.$fly.post(this.$api.getRefundOrderInfo, {
+					return_id: this.id
+				}).then(res => {
+					uni.hideLoading()
+					res.data.voucher = res.data.voucher.split(',')
+					this.orderDetail = res.data
+				}).catch(err => {
+					uni.hideLoading()
+				})
+			},
 			showPopup() {
 				this.$refs.popup.open()
 			},
@@ -212,7 +240,7 @@
 				this.$refs.popup.close()
 			},
 			popupChange(e) {
-				
+
 			},
 		}
 	}
@@ -439,45 +467,49 @@
 				transform: translateY(-50%);
 			}
 		}
-		
-		.popup_content{
-			.logistic_item{
+
+		.popup_content {
+			.logistic_item {
 				padding: 70rpx 50rpx;
-				.item{
+
+				.item {
 					display: flex;
 					align-items: center;
-					font-size:30rpx;
-					font-family:PingFang SC;
-					font-weight:400;
-					color:rgba(51,51,51,1);
-					line-height:28rpx;
-					&:nth-child(1){
+					font-size: 30rpx;
+					font-family: PingFang SC;
+					font-weight: 400;
+					color: rgba(51, 51, 51, 1);
+					line-height: 28rpx;
+
+					&:nth-child(1) {
 						margin-bottom: 40rpx;
 					}
-					.left{
-						
-					}
-					.right{
+
+					.left {}
+
+					.right {
 						margin-left: 30rpx;
 						padding: 25rpx 30rpx;
-						border:1rpx solid rgba(238,238,238,1);
-						border-radius:4rpx;
+						border: 1rpx solid rgba(238, 238, 238, 1);
+						border-radius: 4rpx;
 					}
 				}
 			}
-			.logistic_btn{
+
+			.logistic_btn {
 				padding: 0rpx 0 30rpx 0;
-				button{
-					width:690rpx;
-					height:80rpx;
-					background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
-					border-radius:40rpx;
+
+				button {
+					width: 690rpx;
+					height: 80rpx;
+					background: linear-gradient(90deg, rgba(252, 56, 67, 1) 0%, rgba(246, 42, 138, 1) 100%);
+					border-radius: 40rpx;
 					line-height: 80rpx;
 					text-align: center;
-					font-size:30rpx;
-					font-family:PingFang SC;
-					font-weight:400;
-					color:rgba(255,255,255,1);
+					font-size: 30rpx;
+					font-family: PingFang SC;
+					font-weight: 400;
+					color: rgba(255, 255, 255, 1);
 				}
 			}
 		}

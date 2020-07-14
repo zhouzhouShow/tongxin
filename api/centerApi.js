@@ -13,6 +13,7 @@ const centerApi = {
 	getRefundList: '/api/return_goods/returnOrderlist', // 列表
 	getRefundOrderInfo: '/api/return_goods/returnOrderInfo', // 退货详情
 	submitExpressInfo: '/api/return_goods/submitExpress', // 提交物流信息
+	getRefundConfig: '/api/return_goods/conf', // 获取配置信息
 	
   areaList: '/api/index/areaList', //  地址信息
   addressList: '/api/user_address/addressList', // 我的地址列表

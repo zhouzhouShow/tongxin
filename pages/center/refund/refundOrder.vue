@@ -7,7 +7,7 @@
 			<view class="input">
 				<input type="text" v-model="searchText" placeholder="搜索商品名称" />
 			</view>
-			<view class="btn">
+			<view @click="search" class="btn">
 				<text>搜索</text>
 			</view>
 		</view>
@@ -16,24 +16,26 @@
 		</view>
 		<view class="list">
 			<view v-for="item in list" :key="item.id" class="item">
-				<view class="store">
-					<view class="info">
-						<image class="logo" :src="item.storeInfo.logo" mode="scaleToFill"></image>
-						<text>{{item.storeInfo.name}}</text>
-						<image class="arrow" src="../../../static/images/center/icon_arrow-right-grey.png" mode="scaleToFill"></image>
+				<block v-for="(el,num) in item.products_list" :key="num">
+					<view class="store">
+						<view class="info">
+							<image class="logo" :src="el.brandinfo.brand_logo[0]" mode="scaleToFill"></image>
+							<text>{{el.brandinfo.brand_name}}</text>
+							<image class="arrow" src="../../../static/images/center/icon_arrow-right-grey.png" mode="scaleToFill"></image>
+						</view>
+						<view class="status">
+							<text>{{status[item.status]}}</text>
+						</view>
 					</view>
-					<view class="status">
-						<text>{{status[item.status]}}</text>
+					<view class="product">
+						<view v-for="(e,n) in el.goodlist" :key="e.id" class="product_item">
+							<productItem :info="e"></productItem>
+						</view>
 					</view>
-				</view>
-				<view class="product">
-					<view v-for="el in item.productList" :key="el.id" class="product_item">
-						<productItem :info="el"></productItem>
-					</view>
-				</view>
+				</block>
 				<view class="total">
 					<text>退款金额</text>
-					<text>¥88</text>
+					<text>¥{{getRefundTotal(item)}}</text>
 				</view>
 				<view class="btns">
 					<button v-if="item.status==4" class="to_delete" type="default">删除记录</button>
@@ -90,6 +92,8 @@
 			return {
 				searchText: "",
 				loadingType: 1,
+				page: 0,
+				pageSize: 10,
 				navList: [{
 						ids: 0,
 						name: '全部'
@@ -112,37 +116,61 @@
 					},
 				],
 				nowNavIndex: 0,
-				status: ['申请中', '待寄出', '待退款', '退款成功'],
-				list: [{
-					id: 1,
-					storeInfo: {
-						logo: require('@/static/images/center/icon_store.png'),
-						name: '拉粑粑',
-						id: 1
-					},
-					status: 2,
-					total: 88,
-					pay: 88,
-					productList: [{
-						id: 1,
-						cover: 'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg',
-						name: '2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 ',
-						number: 1,
-						price: 88,
-						discount: 0.7,
-						discountText: '7折',
-						spec: '粉色；120cm'
-					}]
-				}]
+				status: ['审核中','审核失败', '待寄出', '待退款','退款成功','退款失败'],
+				list: []
 			};
 		},
+		computed:{
+			getRefundTotal(item){
+				return function(item){
+					let goods = item.products_list[0].goodlist[0]
+					return (goods.goods_num*goods.goods_price).toFixed(2)
+				}
+			}
+		},
+		onLoad() {
+			this.getRefundList()
+		},
+		onReachBottom(){
+			if(this.loadingType==1){
+				this.page++
+				this.getRefundList()
+			}
+		},
 		methods: {
-			changeNav(ids) {
-				this.nowNavIndex = ids
+			getRefundList() {
+				this.loadingType = 2
+				this.$fly.post(this.$api.getRefundList, {
+					page: this.page,
+					pageSize: this.pageSize,
+					statu_stype: this.nowNavIndex,
+					keyword: this.searchText
+				}).then(res => {
+					this.list = this.list.concat(res.data.list)
+					if (res.data.list.length < this.pageSize) {
+						this.loadingType = 3
+					} else {
+						this.loadingType = 1
+					}
+				})
 			},
-			handleToDetail() {
+			search() {
+				this.page = 0
+				this.list = []
+				this.loadingType = 1
+				this.getRefundList()
+			},
+			changeNav(ids) {
+				if (this.nowNavIndex == ids) return
+				this.nowNavIndex = ids
+				this.page = 0
+				this.list = []
+				this.loadingType = 1
+				this.getRefundList()
+			},
+			handleToDetail(item) {
 				wx.navigateTo({
-					url: './refundDetail'
+					url: './refundDetail?id='+item.id
 				})
 			},
 			showPopup(item) {

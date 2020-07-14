@@ -115,6 +115,9 @@
 			},
 			toPay(id){
 				// TODO: 二次支付
+				wx.navigateTo({
+					url:'../../shopCart/submitOrder?orderId='+id
+				})
 			},
 			toReceipt(id){
 				this.changeStatus({
@@ -184,7 +187,7 @@
 			},
 			handleToRefund(info){
 				wx.navigateTo({
-					url:'../refund/applyRefund?info='+info
+					url:'../refund/applyRefund?info='+JSON.stringify(info)
 				})
 			}
 		},

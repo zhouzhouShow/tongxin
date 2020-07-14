@@ -2,14 +2,14 @@
 	<view class="apply_refund">
 		<view class="main">
 			<view class="product_info">
-				<productItem :info="productInfo" :showRefundInfo="true" :refundNumber="refundNumber"></productItem>
+				<productItem :info="productInfo" :showRefundInfo="true" :refundNumber="refundGoodInfo.return_goods_num"></productItem>
 			</view>
 			<view class="apply_number">
 				<view class="title">
 					<text>申请数量</text>
 				</view>
 				<view class="control">
-					<uni-number-box @change="changeApplyNumber" :min="1" :max="productInfo.number"></uni-number-box>
+					<uni-number-box @change="changeApplyNumber" :min="1" :max="getMax"></uni-number-box>
 				</view>
 			</view>
 			<view class="apply_reason">
@@ -27,7 +27,7 @@
 			</view>
 			<view class="apply_mark">
 				<view class="input">
-					<textarea@input="markInput" :maxlength="200" v-mode="mark" placeholder="请描述申请售后服务的具体原因" />
+					<textarea@input="markInput" :maxlength="200" v-model="mark" placeholder="请描述申请售后服务的具体原因" />
 					<text>{{markNowLength}}/200</text>
 				</view>
 			</view>
@@ -73,26 +73,58 @@
 		},
 		data() {
 			return {
-				productInfo: {
-					id: 1,
-					cover: 'http://img1.imgtn.bdimg.com/it/u=1961855076,527375209&fm=26&gp=0.jpg',
-					name: '2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 2020新款木马短袖女童连衣裙宝宝夏装纯棉 ',
-					number: 1,
-					price: 88,
-					discount: 0.7,
-					discountText: '7折',
-					spec: '粉色；120cm'
-				},
+				productInfo: {},
+				refundGoodInfo: {},
 				refundNumber: 1,
-				reasonList: ['原因1', '原因2', 4, 5, 6],
+				reasonList: [],
 				reasonIndex: '',
 				markNowLength: 0,
+				mark: '',
 				images: [],
 				maxCount: 9,
-				submitImagesUrl:[]
+				submitImagesUrl: []
 			};
 		},
+		onLoad(options) {
+			try {
+				let info = JSON.parse(options.info)
+				this.productInfo = info
+				this.getRefundGoodInfo()
+				this.getRefundConfig()
+			} catch (e) {
+				this.productInfo = {}
+			}
+		},
+		computed: {
+			getMax() {
+				return Number(this.refundGoodInfo.buy_goods_num) - Number(this.refundGoodInfo.return_goods_num)
+			}
+		},
 		methods: {
+			getRefundConfig() {
+				this.$fly.post(this.$api.getRefundConfig).then(res => {
+					let list = []
+					res.data.reason_list.forEach(item => {
+						list.push(item.reason)
+					})
+					this.reasonList = list
+				})
+			},
+			getRefundGoodInfo() {
+				uni.showLoading({
+					title: '获取中',
+				})
+				this.$fly.post(this.$api.getRefundGoodInfo, {
+					order_id: this.productInfo.order_id,
+					goods_id: this.productInfo.goods_id,
+					product_id: this.productInfo.product_id
+				}).then(res => {
+					uni.hideLoading()
+					this.refundGoodInfo = res.data
+				}).catch(err => {
+					uni.hideLoading()
+				})
+			},
 			changeApplyNumber(e) {
 				this.refundNumber = e.value
 			},
@@ -119,18 +151,79 @@
 				})
 			},
 			async handleSubmit() {
-				wx.navigateTo({
-					url:"./refundResult"
-				})
-				return
+				let refundNumber = Number(this.refundNumber)
+				let totalNum = Number(this.refundGoodInfo.buy_goods_num)
+				let hasRefundNum = Number(this.refundGoodInfo.return_goods_num?this.refundGoodInfo.return_goods_num:0)
+				if(refundNumber>(totalNum-hasRefundNum)){
+					uni.showToast({
+						title: '没有商品可申请退款',
+						icon: 'none',
+						duration: 1500
+					})
+					return
+				} else if (!this.reasonIndex) {
+					uni.showToast({
+						title: '请选择退货原因',
+						icon: 'none',
+						duration: 1500
+					})
+					return
+				} else if (!this.mark) {
+					uni.showToast({
+						title: '请描述具体原因',
+						icon: 'none',
+						duration: 1500
+					})
+					return
+				} else if (this.images.length <= 0) {
+					uni.showToast({
+						title: '请上传凭证',
+						icon: 'none',
+						duration: 1500
+					})
+					return
+				}
 				let _this = this;
 				var loadingTitle = '';
 				for (var i = 0; i < _this.images.length; i++) {
 					loadingTitle = '正在上传第' + (i + 1) + '/' + _this.images.length + '张';
-					let result = await this.$utils.uploadFile(_this.images, loadingTitle);
+					let result = await this.$utils.uploadFile(_this.images[i], loadingTitle);
 					let data = JSON.parse(result.data);
 					_this.submitImagesUrl.push(data.data.url);
 				}
+				let jsonstr = [{
+					'order_id': this.productInfo.order_id,
+					'goods_id': this.productInfo.goods_id,
+					'product_id': this.productInfo.product_id,
+					'goods_num': this.refundNumber
+				}]
+				uni.showLoading({
+					title:'提交中'
+				})
+				this.$fly.post(this.$api.applyRefund, {
+					jsonstr:JSON.stringify(jsonstr),
+					order_id:this.productInfo.order_id,
+					reason:this.reasonList[this.reasonIndex],
+					explain:this.mark,
+					voucher:this.submitImagesUrl.join(',')
+				}).then(res=>{
+					this.getRefundGoodInfo()
+					uni.showToast({
+						title:res.msg || '申请成功',
+						duration:1500
+					})
+					this.refundNumber = 1
+					this.reasonIndex = ''
+					this.markNowLength = 0
+					this.mark = ''
+					this.images = []
+					this.submitImagesUrl = []
+					wx.navigateTo({
+						url:'./refundResult'
+					})
+				}).catch(err=>{
+					uni.hideLoading()
+				})
 			},
 		}
 	}
@@ -300,40 +393,44 @@
 				}
 			}
 		}
-		.way{
-			width:710rpx;
-			height:100rpx;
-			background:rgba(255,255,255,1);
-			border-radius:10rpx;
+
+		.way {
+			width: 710rpx;
+			height: 100rpx;
+			background: rgba(255, 255, 255, 1);
+			border-radius: 10rpx;
 			margin: 20rpx;
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			font-size:28rpx;
-			font-family:PingFang SC;
-			font-weight:400;
+			font-size: 28rpx;
+			font-family: PingFang SC;
+			font-weight: 400;
 			padding: 0 30rpx;
-			.left{
-				color:rgba(51,51,51,1);
+
+			.left {
+				color: rgba(51, 51, 51, 1);
 			}
-			.right{
-				color:rgba(153,153,153,1);
+
+			.right {
+				color: rgba(153, 153, 153, 1);
 			}
 		}
-		
-		.submit{
+
+		.submit {
 			margin-top: 30rpx;
-			button{
-				width:690rpx;
-				height:80rpx;
-				background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
-				border-radius:40rpx;
+
+			button {
+				width: 690rpx;
+				height: 80rpx;
+				background: linear-gradient(90deg, rgba(252, 56, 67, 1) 0%, rgba(246, 42, 138, 1) 100%);
+				border-radius: 40rpx;
 				line-height: 80rpx;
 				text-align: center;
-				font-size:30rpx;
-				font-family:PingFang SC;
-				font-weight:400;
-				color:rgba(255,255,255,1);
+				font-size: 30rpx;
+				font-family: PingFang SC;
+				font-weight: 400;
+				color: rgba(255, 255, 255, 1);
 			}
 		}
 	}
