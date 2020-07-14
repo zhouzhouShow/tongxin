@@ -70,7 +70,7 @@
 					</view>
 				</view>
 				<view class="logistic_btn">
-					<button type="default">确定</button>
+					<button type="default" @click.stop="submitExpressInfo">确定</button>
 				</view>
 			</view>
 		</uni-popup>
@@ -117,7 +117,12 @@
 				],
 				nowNavIndex: 0,
 				status: ['审核中','审核失败', '待寄出', '待退款','退款成功','退款失败'],
-				list: []
+				list: [],
+				logisticId:'',
+				logistic:{
+					name:'',
+					number:''
+				}
 			};
 		},
 		computed:{
@@ -138,6 +143,21 @@
 			}
 		},
 		methods: {
+			submitExpressInfo(){
+				if(!this.logistic.number || !this.logistic.name){
+					return this.$tip.toast('请填写完整!')
+				}
+				this.$fly.post(this.$api.submitExpressInfo,{
+					express_company:this.logistic.name,
+					express_id:this.logistic.number,
+					return_id:this.logisticId
+				}).then(res=>{
+					if(res.code){
+						this.page = 1
+						this.getRefundList()
+					}
+				})
+			},
 			getRefundList() {
 				this.loadingType = 2
 				this.$fly.post(this.$api.getRefundList, {
@@ -174,6 +194,7 @@
 				})
 			},
 			showPopup(item) {
+				this.logisticId = item.id
 				this.$refs.popup.open()
 			},
 			hidePopup() {

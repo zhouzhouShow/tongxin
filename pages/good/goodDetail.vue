@@ -230,10 +230,10 @@
 						<span class="iconfont iconchacha" @click="sharePop=false"></span>
 					</div>
 					<div class="share-type">
-						<div class="" @click.stop="shareImg">
+						<button  open-type="share"  class="" >
 							<image src="../../static/images/good/share_wechat.png" mode=""></image>
 							<p>分享群/好友</p>
-						</div>
+						</button>
 						<div class="" @click.stop="saveImg">
 							<image src="../../static/images/good/share_download.png" mode=""></image>
 							<p>保存图片</p>
@@ -289,6 +289,20 @@
 				},
 				userIsAgent:false,//是否为代理
 			};
+		},
+		onShareAppMessage(res) {
+			help.isBtnShare = true
+			if (res.from === 'button') {
+				// console.log(res.target);
+			}
+			return {
+				title: this.detail.goods_title,
+				path: '/pages/index/index?good=' + this.good_id,
+				imageUrl: this.detail.goods_images[0],
+				success: function() {
+					console.log('分享成功')
+				}
+			}
 		},
 		async onLoad(option){
 			this.id = option.id
@@ -579,11 +593,17 @@
 			padding: 70rpx 0;
 			display: flex;
 			justify-content: center;
-			div:nth-child(1){
+			button{
+				background: transparent;
+				border: none;
+				box-shadow: none;
+				padding: 0;
+				margin: 0;
 				margin-right: 245rpx;
 				text-align: center;
+				line-height: inherit;
 			}
-			div{
+			div,button{
 				
 				image{
 					width: 110rpx;

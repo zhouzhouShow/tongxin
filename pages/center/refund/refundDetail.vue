@@ -159,7 +159,7 @@
 					</view>
 				</view>
 				<view class="logistic_btn">
-					<button type="default">确定</button>
+					<button type="default" @click.stop="submitExpressInfo">确定</button>
 				</view>
 			</view>
 		</uni-popup>
@@ -185,6 +185,7 @@
 			},
 			getRefundTotal(item){
 				return function(item){
+					console.log(item)
 					let goods = item.products_list[0].goodlist[0]
 					return (goods.goods_num*goods.goods_price).toFixed(2)
 				}
@@ -219,6 +220,17 @@
 			this.getRefundOrderInfo()
 		},
 		methods: {
+			submitExpressInfo(){
+				this.$fly.post(this.$api.submitExpressInfo,{
+					express_company:this.logistic.name,
+					express_id:this.logistic.number,
+					return_id:this.id
+				}).then(res=>{
+					if(res.code){
+						this.getRefundOrderInfo()
+					}
+				})
+			},
 			getRefundOrderInfo() {
 				uni.showLoading({
 					title: '获取中'

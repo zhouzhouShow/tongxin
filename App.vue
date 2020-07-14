@@ -1,4 +1,5 @@
 <script>
+	import {wechatGetSystemInfo, checkVersion, updataApp} from './utils/tools'
 	export default {
 		methods:{
 			toPage(callback){
@@ -52,6 +53,34 @@
 			}
 		},
 		async onShow(){
+			updataApp(); //检查版本更新
+			if (e.query.scene || e.query.q || (e.query.id && (e.scene==1007||e.scene==1008))) {
+			   shareConfig.sharePage(e.query).then((res)=>{
+			     console.log(res)
+			     let data = Object.assign(res)
+			     console.log(data)
+			      if (data.isRefreed) {
+			        // wx.removeStorageSync('token')
+			        this.refreedid = data.id;
+			        this.appInit();
+			      }
+			      if(data.path !="/pages/index/index"){
+			        console.log('是否',data)
+			        this.toPage(()=>{
+			             this.$share.isGetPageQuery = true;
+			          }) 
+			        }
+							if(e.query.scene && decodeURIComponent(e.query.scene).includes('user_refreeid')){ //分销,下级进入
+								let str = decodeURIComponent(e.query.scene)
+								let refreeid = str.substr(str.indexOf('=')+1)
+								 this.appInit(refreeid);
+							}else{
+								 this.appInit();
+							}
+			        // this.appInit();
+			   });
+			     
+			}
 			let mtoken = wx.getStorageSync('token') || ''
 			this.$user.getUserInfo().then(res => {
 			  var data = res.data;
