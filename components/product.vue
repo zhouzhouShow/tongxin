@@ -9,7 +9,7 @@
 			<img mode="aspectFill"
 			     src="http://fulanpifa.oss-cn-shenzhen.aliyuncs.com/uploads/20180904/7f8cd2124f0a791b1e6626bce0e299d9.gif"
 			     v-else>
-			<img v-if="!hasVideo" class="video-icon" mode="aspectFill" :lazy-load="true" src="../static/images/play-btn.png">
+			<!-- <img v-if="!hasVideo" class="video-icon" mode="aspectFill" :lazy-load="true" src="../static/images/play-btn.png"> -->
      
       <div class="video-icon" v-if="product.video_url">
         <img class="video-play-icon" src="../static/images/play-btn.png" alt="">
@@ -102,7 +102,7 @@
       },
       goProductDetail() {
         if (this.isClickable) {
-          var id = this.product.id;
+          var id = this.product.goods_id;
           var sku = this.product.sku || "";
           wx.navigateTo({
             url: '/pages/good/goodDetail?id='+id+'&sku='+sku,

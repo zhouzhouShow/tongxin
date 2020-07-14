@@ -79,7 +79,7 @@
 						<radio-group class="radio-group" @change.stop="couponChange" >
 							<label :for="'st'+index" v-for="(item,index) in payOrderData.coupon" :key="index">
 								<view class="item"  @click.stop=''>
-									<image class="bg" src="../../../static/images/coupon/coupon_bg.png" mode=""></image>
+									<image class="bg" src="@/static/images/coupon/coupon_bg.png" mode=""></image>
 									<view class="item-info"  v-if="item">
 										<view class="left-box">
 											<p class="price"><span class="price-icon">¥</span>{{parseIntNum(item.money)}}</p>
@@ -88,7 +88,7 @@
 										<view class="right-box">
 											<view class="name">
 												<span class="coupon-type">{{item.name}}</span>
-												<radio class="radio" :id="'st'+index" :value="str(item)" color="#5D6B85" :checked="item.id==couponId"></radio>
+												<radio  class="radio" :id="'st'+index" :value="str(item)" color="#f93168" :checked="item.id==couponId"></radio>
 											</view>
 											<p class="expires">
 												<block>
@@ -271,11 +271,6 @@
 			chooseCoupon() {
 				this.$refs['popup'].open()
 			},
-			modifyAddress() {
-				wx.navigateTo({
-					url: "/pages/center/address/address?isShop=1&cart_ids=" + this.shopCarIds
-				});
-			},
 			showAll() {
 				this.$refs['orderBox'].showAllMethod()
 				this.showAllState = !this.showAllState
@@ -287,6 +282,7 @@
 </script>
 
 <style lang="scss" scoped>
+
 	.submitOrder {
 		min-height: 100vh;
 		background: #f3f3f3;
@@ -583,7 +579,7 @@
 				position: absolute;
 				width: 100%;
 				height: 100%;
-				z-index: -1;
+				z-index: 0;
 			}
 
 			.item-info {
@@ -591,10 +587,12 @@
 				display: flex;
 				align-items: center;
 				height: 100%;
+				z-index: 2;
 
 				.left-box {
 					color: #fff;
 					width: 220rpx;
+					z-index: 1;
 					// margin-right: 20rpx;
 					text-align: center;
 
@@ -688,7 +686,7 @@
 		.sureChoose {
 			height: 88rpx;
 			line-height: 88rpx;
-			background: rgba(242, 48, 48, 1);
+			background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
 			border-radius: 44rpx;
 			text-align: center;
 			font-size: 32rpx;

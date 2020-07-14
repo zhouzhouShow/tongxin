@@ -698,6 +698,7 @@
 				width: 60rpx;
 				height: 60rpx;
 				top:0;
+				border-radius: 50%;
 			}
 		}
 		.tips{
@@ -854,7 +855,7 @@
 			background: url(../../static/images/seckill_bg_common.png) top center no-repeat;
 			background-size: 100% 100%;
 			text.title-tips{
-				color: #F12732;
+				color: #F12732 !important;
 			}
 			.sec-kill-text,
 			.sec-kill-time {

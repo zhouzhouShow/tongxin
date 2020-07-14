@@ -92,7 +92,7 @@
 		.good-name {
 			margin-bottom: 20rpx;
 			width: 190rpx;
-			height: 60rpx;
+			// height: 60rpx;
 			font-size: 24rpx;
 			font-weight: 400;
 			color: rgba(51, 51, 51, 1);

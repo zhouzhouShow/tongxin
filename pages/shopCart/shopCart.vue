@@ -1,7 +1,7 @@
 <template>
 	<view class="cart">
 		<view class="good-list">
-			<view class="good-brand-item" v-for="(item,index) in shopCarList" :key="index">
+			<view class="good-brand-item" v-if="shopCarList.length" v-for="(item,index) in shopCarList" :key="index">
 				<view class="title-state-box flex-align-center">
 					<checkbox color="#17B948" :checked="item.allChecked" @click="allPickClick" />
 					<view class="brand-info flex-align-center">
@@ -9,7 +9,7 @@
 						<text class="brand-name">{{item.brand_name}}</text>
 						<text class="icon-arrow iconfont iconyoujiantou"></text>
 					</view>
-					<image class="delete" src="../../static/images/icon/icon_delete.png" mode=""></image>
+					<image @click.stop="deleteBrandGood(item,index)" class="delete" src="../../static/images/icon/icon_delete.png" mode=""></image>
 				</view>
 				<view class="good-box">
 					<block v-for="(itemG,indexG) in item.goodlist"  :key="item.good_id">
@@ -17,11 +17,14 @@
 					</block>
 				</view>
 			</view>
-
+			<view v-if="shopCarList.length==0" class="shop-car-empty-container">
+				<img src="@/static/images/shop-car-empty.png">
+				<span>购物车空空如也</span>
+			</view>
 		</view>
 		<view class="fixed-bottom">
 			<label class="radio">
-				<checkbox color="#17B948" :checked="isAll"  @click.stop="allPickClick" />
+				<checkbox color="#17B948" :checked="allPickChecked"  @click.stop="allPickClick" />
 				<text>全选</text>
 			</label>
 			<view class="total">
@@ -48,18 +51,81 @@
 		},
 		data() {
 			return {
-				isAll: false,
+				allPickChecked: false,
 				shopCarList: [],
 				noNumList:[],
 				totalPrice: 0, //总价
 				allShopTotalPrice:0,
+				initialization:false,
 			
 			};
+		},
+		async onShow(){
+			this.$tip.loading();
+			this.totalPrice = 0
+			this.initialization = true;
+			this.allPickChecked = false
+			// console.log(await this.loadShopCarData())
+			this.shopCarList = await this.loadShopCarData('all');
+			this.$tip.loaded();
+			//  滚动到顶部
+			wx.pageScrollTo({
+				scrollTop: 0,
+				duration: 300
+			})
 		},
 		async onLoad(){
 			 this.shopCarList = await this.loadShopCarData('all')
 		},
 		methods:{
+			async deleteBrandGood(item,index){
+				this.$tip.loading();
+				let cartids = [] 
+				let deleteIndexList = []
+				item.goodlist.map((items,indexs)=>{
+					if(items.checked){
+						cartids.push(items.cart_id)
+						deleteIndexList.push(indexs)
+					}
+				})
+				// console.log(deleteIndexList)
+				let cartIdStr = cartids.join(',')
+				await this.$fly.post(this.$api.delCart,{ids:cartIdStr}).then( async(res)=>{
+					if(res.code){
+						let deleteAllPrice = 0
+						item.goodlist.map((items,indexs)=>{
+							if(items.checked){
+								deleteAllPrice+=Number(items.goods_num*items.goods_price)
+							}
+						})
+						console.log(deleteAllPrice)
+						this.totalPrice =(this.totalPrice- deleteAllPrice).toFixed(2)
+						this.$tip.toast('删除成功!')
+						this.shopCarList = await this.loadShopCarData('all');
+						
+						// 优化策略,自己计算,不重新获取数据
+					// 	for (let indexs = 0; indexs < item.goodlist.length; indexs++) {
+					// 		if(item.goodlist[indexs].checked){
+					// 			console.log(item.goodlist)
+					// 			console.log(indexs)
+					// 			item.goodlist.splice(indexs,1)
+					// 			--indexs
+					// 		}
+					// 	}
+					
+					// 	if(item.goodlist.length == 0){
+					// 		this.shopCarList.splice(index,1)
+					// 	}
+					// 	if(this.shopCarList.length==0){
+					// 		this.allPickChecked = false
+					// 	}
+						
+						
+					}
+				})
+				this.$tip.loaded();
+				console.log(cartIdStr)
+			},
 			async loadShopCarData(type = 'all') {
 				let params = {}
 				// console.log(page)
@@ -82,7 +148,7 @@
 				} else {
 					this.soleOutListLoadmore = false
 				}
-				// this.allShopTotalPrice = data.totalPrice 
+				this.allShopTotalPrice = data.totalPrice  || 0
 				this.allShopNum = data.totalCount
 				data.list.forEach((items) => {
 					let itemsAllPrice = 0,
@@ -326,7 +392,6 @@
 			},
 			async onSubmitOrder() {
 				
-			
 					this.$tip.loading();
 			
 					// if (!this.isMeetConditions()) {
@@ -371,7 +436,7 @@
 						}
 			 
 						console.log('selected_items', selected_items)
-						if (result.data.provName == null) {
+						if (result.data.provName == null || !result.data) {
 							//跳转添加地址
 							wx.navigateTo({
 								url: "/pages/center/address/myAddress?isShop=1&cart_ids=" + selected_items
@@ -383,8 +448,6 @@
 							});
 						}
 					}
-			
-				
 			},
 			async getDefaultAddress() {
 				return await this.$fly.post(this.$api.addressDefault, {});
@@ -462,8 +525,8 @@
 <style lang="scss" scoped>
 
 	.good-list {
-		padding: 0 20rpx;
-
+		padding: 16rpx 20rpx 210rpx;
+		
 		.good-brand-item {
 			background: #fff;
 			padding:30rpx 20rpx 0;
@@ -477,7 +540,6 @@
 					font-size: 32rpx;
 					font-weight: 500;
 					color: rgba(51, 51, 51, 1);
-
 					.b-img {
 						width: 40rpx;
 						height: 40rpx;
@@ -501,6 +563,32 @@
 				}
 				
 			}
+		
+		}
+		.shop-car-empty-container {
+		
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background-color: white;
+			flex-direction: column;
+			padding-top: rpx(100);
+			padding-bottom: rpx(120);
+			background: #f3f3f3;
+		
+			>img {
+				width: rpx(144);
+				height: rpx(144);
+			}
+		
+			>span {
+				font-size: rpx(28);
+				font-weight: 500;
+				line-height: rpx(30);
+				color: #999999;
+				margin-top: rpx(20);
+			}
+		
 		}
 	}
 
@@ -513,7 +601,7 @@
 	.fixed-bottom {
 		position: fixed;
 		width: 100%;
-		bottom: 100rpx;
+		bottom: 98rpx;
 		height: 98rpx;
 		left: 0;
 		z-index: 99;

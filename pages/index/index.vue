@@ -106,13 +106,13 @@
 				wechatNavBtnHeight:0, //胶囊按钮距离顶部位置
 				navList:[{
 					title:'童婴会场',
-					link:'/pages/index/xinma-recommend',
+					link:'/pages/index/session?title=童婴会场&goodsAge=1',
 				},{
 					title:'女童会场',
-					link:'/pages/index/xinma-recommend',
+					link:'/pages/index/session?title=女童会场&goodsAge=3',
 				},{
 					title:'男童会场',
-					link:'/pages/index/xinma-recommend',
+					link:'/pages/index/session?title=男童会场&goodsAge=2',
 				},{
 					title:'秋冬上新',
 					link:'/pages/index/season',
@@ -259,6 +259,7 @@
 		}
 		.content{
 			padding:0 30rpx;
+			margin-bottom: 30rpx;
 			.banner{
 				height: 330rpx;
 				margin-bottom: 20rpx;

@@ -25,21 +25,21 @@
 		<block v-else-if="itemtype=='sessionItem'">
 			<view class="item" style="margin-bottom: 0;">
 				<view class="g-img-box">
-					<image class="g-img" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg"
+					<image class="g-img" :src="item.goods_images[0]"
 					 mode=""></image>
 				</view>
 				<view class="g-info">
 					<p class="g-name">{{item.goods_title}}</p>
-					<p class="discount">9.2折</p>
+					<p class="discount">{{item.discount}}折</p>
 					<p class="pirce-box">
 						<span class="n-price">
-							<span class="p-icon">¥</span>{{item.price}}
+							<span class="p-icon">¥</span>{{item.price_last}}
 						</span>
-						<span class="o-pirce">¥{{item.oPrice}}</span>
+						<span class="o-pirce">¥{{item.price_market}}</span>
 					
 					</p>
 					<p class="sold-num flex-align-center">
-						<span>已售: 609</span>
+						<span>已售: {{item.salenum}}</span>
 							<view class="buy" @clickl.stop="buy">去购买</view>
 					</p>
 				</view>

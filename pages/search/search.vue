@@ -85,6 +85,10 @@ export default {
 		changeType(type){
 			// this.type = 
 		},
+		search(e){
+			console.log(e)
+			this.toSearchResult(e)
+		},
 		ellipsis(index){
 			this.goodsList[index].descShow = !this.goodsList[index].descShow
 		},
