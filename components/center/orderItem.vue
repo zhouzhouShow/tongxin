@@ -1,13 +1,13 @@
 <template>
 	<view class="order-item" >
 		<view class="order-title flex-align-center">
-			<image class="u-img" src="@/static/images/center/icon_avatar.png" mode=""></image>
+			<image class="u-img" :src="detail.userinfo.avatar" mode=""></image>
 			<view class="u-name">
-				<text>妮子大姨</text>
-				<text>订单号: 234324123123</text>
+				<text>{{detail.userinfo.nickname}}</text>
+				<text>订单号: {{detail.order_code}}</text>
 			</view>
 			<block>
-				<text class="state" v-if="detail.final_flag==1 || true">待付款</text>
+				<text class="state" v-if="detail.final_flag==1">待付款</text>
 				<text  class="state" v-if="detail.final_flag==2">
 					{{ detail.ship_status == 3? '备货中' : '待发货' }}
 				</text>
@@ -16,7 +16,6 @@
 				</text>
 				<text class="state" v-if="detail.final_flag==4">已完成</text>
 				<text class="state" v-if="detail.final_flag==5">已取消</text>
-				<!-- <text v-if="detail.final_flag==6">已退货</text> -->
 				<text class="state" v-if="detail.final_flag==6">
 					{{detail.refund_status == 0 ? '退款审核中' : detail.refund_status == 1 ? '已退款' : '退款失败'  }}
 				</text>
@@ -25,59 +24,66 @@
 		
 		</view>
 		<view class="brand-box">
-			<view class="b-item">
+			<view class="b-item" v-for="(el,num) in detail.products_list" :key="el.id">
 				<view class="brand-info flex-align-center">
-					<image class="b-img" src="@/static/images/center/icon_avatar.png" mode=""></image>
-					<text class="brand-name">芭芭拉</text>
+					<image class="b-img" :src="el.brandinfo.brand_logo[0]" mode="scaleToFill"></image>
+					<text class="brand-name">{{el.brandinfo.brand_name}}</text>
 					<text class="icon-arrow iconfont iconyoujiantou"></text>
 				</view>
-				<view class="b-good">
-					<cartItem type="order" :item="item"></cartItem>
-					<cartItem type="order" :item="item"></cartItem>
+				<view v-for="(e,n) in el.goodlist" :key="n" class="b-good">
+					<productItem @handleToRefund="handleToRefund" :showRefundBtn="detail.final_flag==4?true:false" :info="e"></productItem>
 				</view>
 			</view>
 		</view>
 		<view class="total-box">
-			<text>总价 ¥88</text>
-			<text>应付款 ¥88</text>
+			<text>总价 ¥{{detail.price_sum}}</text>
+			<text>应付款 ¥{{detail.last_money}}</text>
 		</view>
 		<view class="btn-box">
-		<!-- 	<div v-if="detail.final_flag==1" @click.stop="changeOrderStatus(detail.id,2)">
-					<span>取消订单</span>
-				</div>
-				
-				<div @click.stop="toDetail(detail.id)">
-					<span>查看详情</span>
-				</div>
-				<div v-if="detail.final_flag == 2 && detail.ship_status != 3" @click.stop="changeOrderStatus(detail.id,4)">
-					<span>退款</span>
-				</div>
-				<div v-if="detail.final_flag==3 && detail.receipt==1" @click.stop.prevent="changeOrderStatus(detail.id,3)" class="orderLightBtn">
-					<span>确认收货</span>
-				</div>
-				<div class="orderLightBtn" v-if="detail.final_flag==1 && detail.pay_type!=4" @click.stop="toPay(detail.id)">
-					<span>付款</span>
-				</div>
-				<div class="orderLightBtn" v-if="detail.final_flag==8 && detail.pay_type==4" @click.stop="toPay(detail.id)">
-					<span>付尾款</span>
-				</div> -->
-			<text>查看详情</text>
-			<text class="redB">去付款</text>
+			<text @click="toDetail">查看详情</text>
+			<text @click="toExpress" v-if="detail.final_flag==3 || detail.final_flag==4">查看物流</text>
+			<text @click="toPay" v-if="detail.final_flag==1" class="redB">去付款</text>
+			<text @click="toReceipt" v-if="detail.final_flag==3" class="redB">确认收货</text>
+			<text @click="addToCar" v-if="detail.final_flag==5" class="redB">加入购物车</text>
+			<text @click="toDelete" v-if="detail.final_flag==4 || detail.final_flag==5">删除订单</text>
 		</view>
 	</view>
 </template>
 
 <script>
-	import cartItem from '@/components/shopCart/cartItem'
+	import productItem from '@/components/productItem'
 	export default {
 		components:{
-			cartItem
+			productItem
 		},
 		props:['detail'],
 		data() {
 			return {
 
 			};
+		},
+		methods:{
+			toDetail() {
+				this.$emit('toDetail', this.detail.id)
+			},
+			toExpress(){
+				this.$emit('toExpress',this.detail.id)
+			},
+			toPay(){
+				this.$emit('toPay',this.detail.id)
+			},
+			toReceipt(){
+				this.$emit('toReceipt',this.detail.id)
+			},
+			addToCar(){
+				this.$emit('addToCar',this.detail.id)
+			},
+			toDelete(){
+				this.$emit('toDelete',this.detail.id)
+			},
+			handleToRefund(info){
+				this.$emit('handleToRefund',info)
+			}
 		}
 	}
 </script>
@@ -136,7 +142,9 @@
 					}
 				}
 
-				.b-good {}
+				.b-good {
+					margin-bottom: 30rpx;
+				}
 
 			}
 		}
@@ -166,6 +174,7 @@
 				display: inline-block;
 				width: 150rpx;
 				height: 50rpx;
+				line-height: 50rpx;
 				color: #666666;
 				font-size: 28rpx;
 				font-weight: 400;
@@ -179,6 +188,7 @@
 			.redB {
 				background: linear-gradient(90deg, rgba(252, 56, 67, 1) 0%, rgba(246, 42, 138, 1) 100%);
 				color: #fff;
+				border: none;
 			}
 		}
 	}

@@ -24,7 +24,7 @@
 					<view class="name">
 						<text>我的订单</text>
 					</view>
-					<view class="tip">
+					<view @click="hanldeToOrder" class="tip">
 						<text>查看全部订单</text>
 						<image src="../../static/images/center/icon_arrow-right-grey.png" mode="scaleToFill"></image>
 					</view>
@@ -81,7 +81,7 @@
 					<view class="name">
 						<text>我的店铺</text>
 					</view>
-<!-- 					<view class="tip">
+					<!-- 					<view class="tip">
 						<text>查看店铺详情</text>
 						<image src="../../static/images/center/icon_arrow-right-grey.png" mode="scaleToFill"></image>
 					</view> -->
@@ -108,7 +108,7 @@
 					<view class="name">
 						<text>我的服务</text>
 					</view>
-<!-- 					<view class="tip">
+					<!-- 					<view class="tip">
 						<text>查看全部服务</text>
 						<image src="../../static/images/center/icon_arrow-right-grey.png" mode="scaleToFill"></image>
 					</view> -->
@@ -133,21 +133,21 @@
 				</view>
 			</view>
 		</view>
-		<comfooter :tabIdx="3" ></comfooter>
+		<comfooter :tabIdx="3"></comfooter>
 	</view>
 </template>
 
 <script>
-	import comfooter from'@/components/com-footer.vue'
+	import comfooter from '@/components/com-footer.vue'
 	export default {
 		name: "center",
-		components:{
+		components: {
 			comfooter
 		},
 		data() {
 			return {
 				paddingTop: 0,
-				pageData:{},
+				pageData: {},
 				userInfo: {},
 				orderNav: [{
 						ids: 0,
@@ -179,34 +179,33 @@
 		},
 		onLoad() {
 			this.paddingTop = wx.getMenuButtonBoundingClientRect().top
-			wx.showTabBar()
 		},
 		mounted() {
 			this.getCenterIndex()
 		},
 		methods: {
-			nav(url){
+			nav(url) {
 				wx.navigateTo({
 					url: url
 				})
 			},
 			getCenterIndex() {
-				this.$fly.post(this.$api.getCenterIndex).then(res=>{
+				this.$fly.post(this.$api.getCenterIndex).then(res => {
 					this.userInfo = res.data
-					
+
 					this.userInfo.is_agent = 1
-					
-					if(this.userInfo.is_agent){
+
+					if (this.userInfo.is_agent) {
 						this.getMyAssets()
 					}
 				})
 			},
 			getMyAssets() {
 				uni.showLoading()
-				this.$fly.post(this.$api.getMyAssets).then(res=>{
+				this.$fly.post(this.$api.getMyAssets).then(res => {
 					this.pageData = res.data
 					uni.hideLoading()
-				}).catch(err=>{
+				}).catch(err => {
 					uni.hideLoading()
 				})
 			},
@@ -218,7 +217,7 @@
 			handleToWithdraw() {
 				console.log(this.pageData)
 				wx.navigateTo({
-					url: './withdraw?balance='+this.pageData.balance
+					url: './withdraw?balance=' + this.pageData.balance
 				})
 			},
 			handleToMemberList() {
@@ -236,17 +235,35 @@
 					url: './order/storeOrder'
 				})
 			},
-			handleToOrderType(index){
+			hanldeToOrder() {
+				wx.navigateTo({
+					url: './order/orderList'
+				})
+			},
+			handleToOrderType(index) {
 				let url = ''
-				switch(index){
+				switch (index) {
+					case 0:
+						url = './order/orderList?idx=' + 0
+						break;
+					case 1:
+						url = './order/orderList?idx=' + 1
+						break;
+					case 2:
+						url = './order/orderList?idx=' + 2
+						break;
+					case 3:
+						url = './order/orderList?idx=' + 3
+						break;
 					case 4:
 						url = './refund/refundOrder'
 						break;
 					default:
+						url = './order/orderList'
 						break;
 				}
 				wx.navigateTo({
-					url:url
+					url: url
 				})
 			}
 		}
@@ -259,6 +276,7 @@
 		min-height: 100%;
 		overflow: hidden;
 		padding-bottom: 100rpx;
+
 		view {
 			box-sizing: border-box;
 		}

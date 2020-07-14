@@ -13,12 +13,19 @@
 			navList:{
 				type:Array,
 				default:()=>[]
+			},
+			navIndex:{
+				type:String|Number,
+				default:0
 			}
 		},
 		data() {
 			return {
 				nowNavIndex:0
 			};
+		},
+		mounted() {
+			this.nowNavIndex = this.navIndex
 		},
 		methods:{
 			changeNav(ids){

@@ -8,10 +8,11 @@ const centerApi = {
 	getMyStoreInfo: '/api/market/storeInfo', // 店铺数据
 	getVisitInfo: '/api/market/visitList', // 今日访客
 	
-	getCouponList: '/api/market/coupon_list', // 优惠券列表
-	getMyCoupon: '/api/market/mycoupon', // 我的优惠券
-	getMycouponNum: '/api/market/mycouponnum', // 优惠券数量
-	getCoupon: '/api/market/get_coupon', // 领取优惠券
+	getRefundGoodInfo: '/api/return_goods/goodsInfo', // 退货的商品
+	applyRefund: '/api/return_goods/begin', // 提交申请
+	getRefundList: '/api/return_goods/returnOrderlist', // 列表
+	getRefundOrderInfo: '/api/return_goods/returnOrderInfo', // 退货详情
+	submitExpressInfo: '/api/return_goods/submitExpress', // 提交物流信息
 	
   areaList: '/api/index/areaList', //  地址信息
   addressList: '/api/user_address/addressList', // 我的地址列表

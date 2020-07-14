@@ -15,7 +15,7 @@
 						<text>{{info.spec_item_title}}</text>
 					</view>
 					<view v-if="showRefundBtn" class="right">
-						<button type="default">退货</button>
+						<button @click="handleToRefund" type="default">退货</button>
 					</view>
 				</view>
 				<view v-if="info.discount<100" class="discount">
@@ -70,6 +70,11 @@
 			return {
 
 			};
+		},
+		methods:{
+			handleToRefund(){
+				this.$emit('handleToRefund',this.info)
+			}
 		}
 	}
 </script>
