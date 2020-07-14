@@ -4,33 +4,37 @@
 			<image :src="info.goods_img[0]" mode="aspectFill"></image>
 		</view>
 		<view class="detail">
-			<view class="name">
-				<text>{{info.goods_name}}</text>
-			</view>
-			<view class="spec">
-				<view class="left">
-					<text>{{info.spec_item_title}}</text>
-				</view>
-				<view v-if="showRefundBtn" class="right">
-					<button type="default">退货</button>
+			<view>
+				<view class="name">
+					<text>{{info.goods_name}}</text>
 				</view>
 			</view>
-			<view v-if="info.discount<100" class="discount">
-				<text>{{info.discount/10}}折</text>
-			</view>
-			<view class="price">
-				<view class="left">
-					<text>¥</text>
-					<text>{{info.goods_price}}</text>
-				</view>
-				<view v-if="showNumber" class="right">
-					<view v-if="!showRefundInfo" class="number">
-						<text>x</text>
-						<text>{{info.goods_num}}</text>
+			<view>
+				<view class="spec">
+					<view class="left">
+						<text>{{info.spec_item_title}}</text>
 					</view>
-					<view v-else class="refund">
-						<text>购买数量：{{info.goods_num}}</text>
-						<text>申请数量：{{refundNumber}}</text>
+					<view v-if="showRefundBtn" class="right">
+						<button type="default">退货</button>
+					</view>
+				</view>
+				<view v-if="info.discount<100" class="discount">
+					<text>{{info.discount/10}}折</text>
+				</view>
+				<view class="price">
+					<view class="left">
+						<text>¥</text>
+						<text>{{info.goods_price}}</text>
+					</view>
+					<view v-if="showNumber" class="right">
+						<view v-if="!showRefundInfo" class="number">
+							<text>x</text>
+							<text>{{info.goods_num}}</text>
+						</view>
+						<view v-else class="refund">
+							<text>购买数量：{{info.goods_num}}</text>
+							<text>申请数量：{{refundNumber}}</text>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -40,26 +44,26 @@
 
 <script>
 	export default {
-		props:{
-			info:{
-				type:Object,
-				default:()=>{}
+		props: {
+			info: {
+				type: Object,
+				default: () => {}
 			},
-			showRefundBtn:{
-				type:Boolean,
-				default:false
+			showRefundBtn: {
+				type: Boolean,
+				default: false
 			},
-			showNumber:{
-				type:Boolean,
-				default:true
+			showNumber: {
+				type: Boolean,
+				default: true
 			},
-			showRefundInfo:{
-				type:Boolean,
-				default:false
+			showRefundInfo: {
+				type: Boolean,
+				default: false
 			},
-			refundNumber:{
-				type:Number,
-				default:0
+			refundNumber: {
+				type: Number,
+				default: 0
 			}
 		},
 		data() {
@@ -92,6 +96,9 @@
 		.detail {
 			flex: 1;
 			margin-left: 20rpx;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
 
 			.name {
 				font-size: 28rpx;
@@ -103,11 +110,11 @@
 				-webkit-box-orient: vertical;
 				-webkit-line-clamp: 2;
 				overflow: hidden;
-				margin-top: -6rpx;
+				margin-top: 0rpx;
 			}
 
 			.spec {
-				margin-top: 20rpx;
+				// margin-top: 20rpx;
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
@@ -173,7 +180,7 @@
 				align-items: center;
 
 				.left {
-					height: 29rpx;
+					height: 32rpx;
 					font-size: 40rpx;
 					font-family: DINPro;
 					font-weight: 500;

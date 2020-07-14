@@ -31,7 +31,7 @@
 				</view>
 			</view>
 			<view class="list">
-				<view v-for="(el,num) in orderNav" :key="num" class="item">
+				<view @click="handleToOrderType(num)" v-for="(el,num) in orderNav" :key="num" class="item">
 					<image :src="el.icon" mode="scaleToFill"></image>
 					<text>{{el.name}}</text>
 				</view>
@@ -235,6 +235,19 @@
 				wx.navigateTo({
 					url: './order/storeOrder'
 				})
+			},
+			handleToOrderType(index){
+				let url = ''
+				switch(index){
+					case 4:
+						url = './refund/refundOrder'
+						break;
+					default:
+						break;
+				}
+				wx.navigateTo({
+					url:url
+				})
 			}
 		}
 	}
@@ -245,6 +258,7 @@
 		background-color: #F3F3F3;
 		min-height: 100%;
 		overflow: hidden;
+		padding-bottom: 100rpx;
 		view {
 			box-sizing: border-box;
 		}
@@ -275,6 +289,7 @@
 					image {
 						width: 100%;
 						height: 100%;
+						border-radius: 50%;
 					}
 				}
 
