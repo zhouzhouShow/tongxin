@@ -1,82 +1,83 @@
 <template>
 	<view class="container">
-		<view class="header-box" :style="{paddingTop:wechatNavBtnHeight+'px'}">
-			<view class="header">
-				<image class="logo-icon" src="@/static/images/icon/logo-icon.png" mode=""></image>
-				<navigator url="/pages/search/search">
-					<view class="search-input-container" >
-						<view class="search-icon">
-							<img  src="@/static/images/icon/search.png">
+	<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback"  :down="downOption"  :up="{use:false,toTop:{src:''}}">
+			<view class="header-box" :style="{paddingTop:wechatNavBtnHeight+'px'}">
+					<view class="header">
+						<image class="logo-icon" src="@/static/images/icon/logo-icon.png" mode=""></image>
+						<navigator url="/pages/search/search">
+							<view class="search-input-container" >
+								<view class="search-icon">
+									<img  src="@/static/images/icon/search.png">
+								</view>
+								<text>在童心优选中选择</text>
+							</view>
+						</navigator>
+					</view>
+					<view class="nav flex-align-center">
+						<image class="nav-icon" src="/static/images/icon/logo-text.png"></image>
+						<view class="nav-box flex-align-center">
+							<text @click="nav(item.link)" class="item" v-for="(item,index) in navList" :key="index">{{item.title}}</text>
 						</view>
-						<text>在童心优选中选择</text>
 					</view>
-				</navigator>
+					<view class="swiper-display-area"  >
+						<swiper @change="swiperChange" v-if="banner.length>0" interval="3000" autoplay=true duration="500" circular=true>
+							<view v-for="(item,index) in banner" :key="index" @click="nav(item.ad_link)">
+								<swiper-item>
+									<img style="width:100%;height:388rpx;display:block;" :src="item.image">
+								</swiper-item>
+							</view>
+						</swiper>
+						<view class="dot-container" v-if="banner.length>0">
+							<swiperDot :current='current' :length="banner.length"></swiperDot>
+						</view>
+						
+						<!-- <img style="width:100%;height:330rpx;display:block;" src=""> -->
+					</view>
+					<view class="icons-list-container">
+						<image class="bg" src="../../static/images/icon/nav-bg.png" mode=""></image>
+						<view class="icons-box">
+							<div class="icon-item" @click="nav(item.link)"  v-for="(item,index) in listItem" :key="index">
+								<div class="icon-img">
+									<img :src="item.img">
+								</div>
+								<div class="icon-title">{{item.title}}</div>
+							</div>
+						</view>
+					
+					</view>
 			</view>
-			<view class="nav flex-align-center">
-				<image class="nav-icon" src="/static/images/icon/logo-text.png"></image>
-				<view class="nav-box flex-align-center">
-					<text @click="nav(item.link)" class="item" v-for="(item,index) in navList" :key="index">{{item.title}}</text>
+			<view class="miaosha">
+				<view class="title">
+					<image src="../../static/images/index/index_icon_1.png" mode=""></image>
+					<text class="text">新品秒杀版</text>
 				</view>
-			</view>
-			<view class="swiper-display-area"  >
-				<swiper @change="swiperChange" v-if="banner.length>0" interval="3000" autoplay=true duration="500" circular=true>
-					<view v-for="(item,index) in banner" :key="index" @click="nav(item.ad_link)">
-						<swiper-item>
-							<img style="width:100%;height:388rpx;display:block;" :src="item.image">
-						</swiper-item>
-					</view>
-				</swiper>
-				<view class="dot-container" v-if="banner.length>0">
-					<swiperDot :current='current' :length="banner.length"></swiperDot>
+				<view class="miaosha-good">
+					<scroll-view  scroll-x="true" style="white-space:nowrap">
+						<view v-if="miaoshaList.length" v-for="(item,index) in miaoshaList" :key="index" @click="toDetail(item.goods_id)">
+							<miaoshaItem :item="item"></miaoshaItem>	
+						</view>
+					</scroll-view>
+				
 				</view>
 				
-				<!-- <img style="width:100%;height:330rpx;display:block;" src=""> -->
-			</view>
-			<view class="icons-list-container">
-				<image class="bg" src="../../static/images/icon/nav-bg.png" mode=""></image>
-				<view class="icons-box">
-					<div class="icon-item" @click="nav(item.link)"  v-for="(item,index) in listItem" :key="index">
-						<div class="icon-img">
-							<img :src="item.img">
-						</div>
-						<div class="icon-title">{{item.title}}</div>
-					</div>
-				</view>
 			
 			</view>
-		</view>
-		<view class="miaosha">
-			<view class="title">
-				<image src="../../static/images/index/index_icon_1.png" mode=""></image>
-				<text class="text">新品秒杀榜</text>
-			</view>
-			<view class="miaosha-good">
-				<scroll-view scroll-x="true" style="white-space:nowrap">
-					
-					<view v-for="(item,index) in miaoshaList" :key="index" @click="toDetail(item.goods_id)">
-						<miaoshaItem :item="item"></miaoshaItem>	
+			<view class="special">
+				<view class="title">
+					<image src="../../static/images/index/index_icon_2.png" mode=""></image>
+					<text class="text">必逛专题</text>
+				</view>
+				<view class="content" v-for="(item ,index) in specialList" :key="index">
+					<image class="banner" :src="item.brand_banner[0]" ></image>
+					<view class="special-good">
+						<view v-for="(gItem ,gIndex) in item.goodlist" :key="gIndex" @click="toDetail(gItem.goods_id)">
+							<brandGoodItem :item="gItem"></brandGoodItem>
+					 </view>
 					</view>
-				</scroll-view>
-			
-			</view>
-			
-		
-		</view>
-		<view class="special">
-			<view class="title">
-				<image src="../../static/images/index/index_icon_2.png" mode=""></image>
-				<text class="text">必逛专题</text>
-			</view>
-			<view class="content" v-for="(item ,index) in specialList" :key="index">
-				<image class="banner" :src="item.brand_banner[0]" ></image>
-				<view class="special-good">
-					<view v-for="(gItem ,gIndex) in item.goodlist" :key="gIndex" @click="toDetail(gItem.goods_id)">
-						<brandGoodItem :item="gItem"></brandGoodItem>
-				 </view>
 				</view>
+				<load-more  :status="loadMore"></load-more>
 			</view>
-			<load-more  :status="loadMore"></load-more>
-		</view>
+		</mescroll-body>
 		<fixedIcon @share="share" ref="backTop" :showItem='showItem'></fixedIcon>
 		<comfooter :tabIdx="0" :centerAngle="payAngle"></comfooter>
 	</view>
@@ -89,9 +90,10 @@
 	import brandGoodItem from '@/components/index/brandGoodItem.vue'
 	import miaoshaItem from '@/components/index/miaoshaItem.vue'
 	import loadMoreData from '@/mixins/loadmore.js'
+	import MescrollMixin from "mescroll-uni/mescroll-mixins.js";
 	import loadMore from '@/components/uni-load-more/uni-load-more.vue'
 	export default {
-		mixins:[loadMoreData],
+		mixins:[loadMoreData,MescrollMixin],
 		components:{
 			fixedIcon,
 			comfooter,
@@ -104,6 +106,7 @@
 			return {
 				title: 'Hello',
 				wechatNavBtnHeight:0, //胶囊按钮距离顶部位置
+				pageSize:6,
 				navList:[{
 					title:'童婴会场',
 					link:'/pages/index/session?title=童婴会场&goodsAge=1',
@@ -135,7 +138,7 @@
 					title: '新品上架',
 					link: ''
 				}],
-				miaoshaList:[1,2,3,4,5,5],
+				miaoshaList:[],
 				specialList:[],
 				showItem:{
 					backTop:false
@@ -143,13 +146,13 @@
 				current:0
 			}
 		},
+		onShow(){
+			setTimeout(()=>{
+				uni.hideTabBar({})
+			},200)
+		},
 		async  onLoad() {
-			this.$tip.loading()
-			this.banner = await this.getBanner()
-			this.wechatNavBtnHeight = wx.getMenuButtonBoundingClientRect().top+1
-			this.brandlist()
-			this.miaoshaList = await this.newGoodslist() //上新
-			this.$tip.loaded()
+			
 		},
 		onPageScroll(e) {
 			if (this.sTimer) {
@@ -166,6 +169,24 @@
 		
 		},
 		methods: {
+			mescrollInit(){
+				setTimeout(()=>{
+					uni.hideTabBar({})
+				},200)
+				this.wechatNavBtnHeight = wx.getMenuButtonBoundingClientRect().top+1
+			},
+			async downCallback(){
+				this.specialList=[]
+				this.page = 1
+				this.$loginIntercept.loginCallback( async()=>{
+					this.banner = await this.getBanner()
+					this.brandlist()
+					this.miaoshaList = await this.newGoodslist() //上新
+					this.mescroll.endDownScroll()
+					this.mescroll.resetUpScroll(); // 重置列表为第一页 (自动执行 page.num=1, 再触发upCallback方法 )
+				})
+			},
+		
 			toDetail(id){
 				console.log(id)
 				wx.navigateTo({
@@ -203,10 +224,10 @@
 					var list = res.data.list;
 					this.loadMoreStatusDeal(res.data.list)
 					if (list.length > 0) {
+						console.log(1213123)
 						this.specialList = this.specialList.concat(list)
 					}
 				})
-				return 
 			},
 			
 			toSearch(){
@@ -243,6 +264,7 @@
 			reachBottomCallBack(){
 				this.brandlist();
 			},
+			
 			
 		},
 		

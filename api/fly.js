@@ -10,12 +10,7 @@ fly.config.baseURL = config.baseUrl;
 fly.interceptors.request.use((request) => {
   // const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJmbGFuIiwiaWF0IjoxNTc0NjUxNDcwLCJleHAiOjE1NzU5NDc0NzAsImRhdGEiOnsidWlkIjoiNTc5OTIifX0.474kuALHWlQ8rGgghP381oC24Sv7dkkL7Ul14MNb3IQ';
   const token = wx.getStorageSync('token') || '';
-	if(!token){
-		console.log(112321321)
-		wx.redirectTo({
-		  url: '/pages/auth/auth'
-		})
-	}
+
   if (request.body) {
     request.body.token = token;
   } else {
@@ -43,9 +38,9 @@ fly.interceptors.response.use(
     } else if(response.data.code == 401 || response.data.code == 403){
       // wx.removeStorageSync('token');
       // 用户未登录的跳转授权页面
-      wx.reLaunch({
-        url: '/pages/auth/auth'
-      })
+      // wx.reLaunch({
+      //   url: '/pages/auth/auth'
+      // })
       // store.commit('setIsAuth',false)
     }else{
       wx.showToast({
@@ -67,9 +62,9 @@ fly.interceptors.response.use(
       msg = '用户未登录'
       wx.removeStorageSync('token');
       // 用户未登录的跳转授权页面
-      wx.reLaunch({
-        url: '/pages/auth/auth'
-      })
+      // wx.reLaunch({
+      //   url: '/pages/auth/auth'
+      // })
     } else {
       if (err.response.data.message) {
         msg = err.response.data.message

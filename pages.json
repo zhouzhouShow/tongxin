@@ -3,7 +3,8 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationStyle": "custom"
+				"navigationStyle": "custom",
+				"navigationBarTitleText": "童心优选"
 			}
 		}, {
 			"path": "pages/center/center",
@@ -51,7 +52,9 @@
 			"style": {}
 		}, {
 			"path": "pages/seeding/productDetail",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "内容详情"
+			}
 		}, {
 			"path": "pages/center/address/address",
 			"style": {
@@ -95,7 +98,9 @@
 			}
 		}, {
 			"path": "pages/seeding/release",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "发布"
+			}
 		}, {
 			"path": "pages/seeding/shoppingCarRelate",
 			"style": {}
@@ -122,10 +127,14 @@
 			}
 		}, {
 			"path": "pages/center/income",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "我的收益"
+			}
 		}, {
 			"path": "pages/center/withdraw",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "提现"
+			}
 		}, {
 			"path": "pages/center/inviteMember",
 			"style": {}

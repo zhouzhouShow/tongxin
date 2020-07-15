@@ -84,7 +84,7 @@
 			</view>
 		</view>
 		<view class="color-box text-column-box">
-			<view class="row-box" @click="showPopFun">
+			<view class="row-box" @click="showPopFun(3)">
 				<text class="label">选择</text>
 				<text class="text">{{(colorChooseIndex ===-1 && sizeChooseIndex ===-1) ? '请选择颜色尺码' :(colorArr[colorChooseIndex].item +sizeArr[sizeChooseIndex].item) }} </text>
 				<text class="iconfont iconyoujiantou" ></text>
@@ -118,7 +118,7 @@
 			<view class="r-title">店铺推荐</view>
 			<!-- <view class="good-box"> -->
 			<scroll-view class="good-box" scroll-x="true" style="white-space: nowrap;"  >
-				<view class="item" v-for="(item,index) in recommendList" :key="index" @click.stop="toDetail(item.good_id)">
+				<view class="item" v-for="(item,index) in recommendList" :key="index" @click.stop="toDetail(item.goods_id)">
 					<image :src="item.goods_images[0]" mode="aspectFill"></image>
 					<view class="good-name clamp">{{item.goods_title}}</view>
 					<view class="price">¥{{item.price_last}}</view>
@@ -151,11 +151,11 @@
 				<button class="kefu-button" open-type="contact"></button>
 			</div>
 			<div class="operation flex-center">
-				<div  class="buy-btn" @click.stop="showPopFun(1)">
-					立即购买
+				<div  class="buy-btn" @click.stop="showPopFun(2)">
+					加入购物车
 				</div>
 				<div class="add-shopcart isCanNotbuy"  @click.stop="showPopFun(1)">
-					加入购物车
+					立即购买
 				</div>
 			</div>
 		</div>
@@ -214,8 +214,9 @@
 				</div>
 				<div class="buy-sure-btn-container">
 					<div class="buy-sure-btn">
-						<div class="add-cart" @click.stop="subAddShopCart(2)">加入购物车</div>
-						<div class="buy-now" @click.stop="subAddShopCart(1)">立即购买</div>
+						<div class="sure-btn" @click.stop="subAddShopCart(btnShowType)" v-if="btnShowType!=3">确定</div>
+						<div class="add-cart" v-if="btnShowType==3" @click.stop="subAddShopCart(2)">加入购物车</div>
+						<div class="buy-now" v-if="btnShowType==3" @click.stop="subAddShopCart(1)">立即购买</div>
 					</div>
 				</div>
 			</div>
@@ -226,7 +227,7 @@
 			<popup ref="popup" :show="sharePop" :maskClick="false" type="bottom">
 				<div class="share-pop">
 					<div class="title flex-center">
-						<span>分享</span>
+						<span @click="shareImgFunc">分享</span>
 						<span class="iconfont iconchacha" @click="sharePop=false"></span>
 					</div>
 					<div class="share-type">
@@ -287,11 +288,13 @@
 				showItem:{ //
 					share:true
 				},
+				btnShowType:1,//1:点击颜色规格  2:点击加入购物车 3:点击立即购买
+				shareImg:'',//分享图片
 				userIsAgent:false,//是否为代理
 			};
 		},
 		onShareAppMessage(res) {
-			help.isBtnShare = true
+			this.$help.isBtnShare = true
 			if (res.from === 'button') {
 				// console.log(res.target);
 			}
@@ -306,6 +309,7 @@
 		},
 		async onLoad(option){
 			this.id = option.id
+			uni.hideShareMenu({})
 			this.$tip.loading()
 			let data = await this.getDetail()
 			this.detail = data.data
@@ -333,11 +337,14 @@
 				}
 			}, 1000)
 			// 获取用户是不是代理
-			this.$user.getInfo('is_agent').then(res=>{
+			this.$user.getInfo('is_agent').then( (res)=>{
 				console.log(res)
-				this.showItem.share = res==0 ? false : true
+				this.showItem.share = res==0 ? false : true		
 			})
 			this.$tip.loaded()
+			if(this.showItem.share ){ //是代理
+			 this.shareImg = await this.shareWXCode()
+			}
 			this.recommendList =  await this.recommondGoodslist()
 			this.grassmanList  = await this.grassman()
 		},
@@ -366,24 +373,30 @@
 	
 		methods:{
 			saveImg(){
-				let img = "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553187020783&di=bac9dd78b36fd984502d404d231011c0&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201609%2F26%2F20160926173213_s5adi.jpeg"
+				let img = this.shareImg
+				this.sharePop = false
 				this.$utils.saveImgToPhotosAlbum(img)
 			},
-			 shareImg(){
+		 async shareWXCode(){
+				let data = await this.$fly.post(this.$api.shareWXCode)
+				return data.data.imgUrl
+			},
+			 shareImgFunc(){
 				uni.share({
 				    provider: "weixin",
 				    scene: "WXSceneSession",
-				    type: 2,
-				    imageUrl: "https://img-cdn-qiniu.dcloud.net.cn/uniapp/images/uni@2x.png",
+				    type: 0,
+				    href: "http://uniapp.dcloud.io/",
+				    title: "uni-app分享",
+				    summary: "我正在使用HBuilderX开发uni-app，赶紧跟我一起来体验！",
+				    imageUrl: this.shareImg,
 				    success: function (res) {
 				        console.log("success:" + JSON.stringify(res));
 				    },
 				    fail: function (err) {
 				        console.log("fail:" + JSON.stringify(err));
 				    }
-				});
-				 console.log(1)
-				 this.$utils.shareImg("https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553187020783&di=bac9dd78b36fd984502d404d231011c0&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201609%2F26%2F20160926173213_s5adi.jpeg")
+				})
 			 },
 			// 分享
 			share(){
@@ -551,12 +564,18 @@
 					actionType: collect_type
 				}).then(res => {
 					this.detail.is_collect =  collect_type == 0 ? 1 : 0
+					if(collect_type == 0){
+						this.detail.likenum+=1
+					}else{
+						this.detail.likenum-=1
+					}
 				})
 			},
 			closePop() {
 				this.showPopChoice = false
 			},
-			showPopFun(){
+			showPopFun(type){
+				this.btnShowType = type
 				this.showPopChoice = true
 			},
 			async getDetail(){
@@ -1073,24 +1092,21 @@
 		.operation{
 			width:420rpx;
 			margin-right: 30rpx;
+			font-size: 30rpx;
+			color: #fff;
+			line-height: 80rpx;
 			.buy-btn {
 				width:210rpx;
 				height:80rpx;
 				background:linear-gradient(90deg, #F77312 0%,#FAA638 100%);
 				border-radius:40rpx 0px 0px 40rpx;
-				font-size: 32rpx;
-				font-weight: 400;
-				color: #fff;
-				line-height: 80rpx;
 			}
 			.add-shopcart {
 				width:210rpx;
 				height:80rpx;
 				background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
 				border-radius:0px 40px 40px 0px;
-				font-size: 32rpx;
-				color: #fff;
-				line-height: 80rpx;
+			
 			}
 		}
 		
@@ -1275,7 +1291,7 @@
 				.color-list {
 					display: flex;
 					flex-wrap: wrap;
-					padding: 30rpx 0rpx;
+					padding: 30rpx 0rpx 10rpx;
 					box-sizing: border-box;
 					div.size-color {
 						border: 1px solid rgba(238, 238, 238, 1);
@@ -1426,6 +1442,16 @@
 			justify-content: center;
 			height: 100rpx;
 			padding-bottom: 10rpx;
+			text-align: center;
+			color: #fff;
+			font-size: 30rpx;
+			.sure-btn{
+				width:690rpx;
+				height:80rpx;
+				line-height:80rpx;
+				background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
+				border-radius:40rpx;
+			}
 			.add-cart,.buy-now{
 				width:345rpx;
 				height:80rpx;
@@ -1446,9 +1472,7 @@
 				align-items: center;
 				border-radius: 40rpx;
 				overflow: hidden;
-				text-align: center;
-				color: #fff;
-				font-size: 32rpx;
+				
 			}
 		}
 	

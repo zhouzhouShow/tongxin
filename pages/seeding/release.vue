@@ -143,6 +143,7 @@
 		},
 		onReady() {
 			uni.$on('getRelateInfo',data=>{
+				console.log(data)
 				this.relateIds = data.relateIds
 				this.relateList = data.relateList
 			})
@@ -220,16 +221,19 @@
 				if(!this.seedingReason){
 					uni.showToast({
 						title:'请描述你种草ta的理由',
+						icon:'none',
 						duration:1500
 					})
 				}else if(!this.video && !this.images){
 					uni.showToast({
 						title:'请上传照片/视频',
+						icon:'none',
 						duration:1500
 					})
 				}else if(this.relateList.length<=0){
 					uni.showToast({
 						title:'至少添加1个关联商品',
+						icon:'none',
 						duration:1500
 					})
 				}else{
@@ -292,7 +296,10 @@
 				})
 			},
 			handleToSearchRelate() {
-				console.log('去搜索商品关联')
+				this.hideRelatePopup()
+				wx.navigateTo({
+					url:'/pages/search/search?type=seeding'
+				})
 			},
 			handleToShoppingCarRelate() {
 				wx.navigateTo({

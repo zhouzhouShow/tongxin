@@ -1,21 +1,21 @@
 <template>
-	<view class="recommend">
-		<!-- <view class="poster"> -->
-			<image class="poster" src="https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg" mode=""></image>
-		<!-- </view> -->
-		<view class="recommend-box">
-			<view class="r-title flex-center">
-				<image src="../../static/images/icon/heart.png" mode=""></image>
-				<span>推荐榜单</span>
-				<image src="../../static/images/icon/heart.png" mode=""></image>
+		<view class="recommend">
+			<!-- <view class="poster"> -->
+				<image class="poster" src="https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200715/2f4b3a7e393070013718756d6b9e2e56.png" mode=""></image>
+			<!-- </view> -->
+			<view class="recommend-box">
+				<view class="r-title flex-center">
+					<image src="../../static/images/icon/heart.png" mode=""></image>
+					<span>推荐榜单</span>
+					<image src="../../static/images/icon/heart.png" mode=""></image>
+				</view>
+				<view v-for="(item,index) in list"  :key="index" @click="toDetail(item.goods_id)">
+					<goodItem :item="item"></goodItem>
+				</view>
+				<load-more v-if="loadMore != 3"  :status="loadMore"></load-more>
 			</view>
-			<view v-for="(item,index) in list"  :key="index" @click="toDetail(item.goods_id)">
-				<goodItem :item="item"></goodItem>
-			</view>
-			<load-more v-if="loadMore != 3"  :status="loadMore"></load-more>
+			<fixedIcon @share="share" ref="backTop" :showItem='showItem'></fixedIcon>
 		</view>
-		<fixedIcon @share="share" ref="backTop" :showItem='showItem'></fixedIcon>
-	</view>
 </template>
 
 <script>
@@ -96,8 +96,8 @@
 		text-align: center;
 		.r-title{
 			image{
-				width: 39rpx;
-				height: 39rpx;
+				width: 40rpx;
+				height: 40rpx;
 			}
 			image:nth-of-type(2){
 				transform: rotateY(180deg);

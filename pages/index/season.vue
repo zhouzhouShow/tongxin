@@ -156,6 +156,7 @@
 				align-items: center;
 				justify-content: center;
 				width:74rpx;
+				margin-left:auto;
 				height:320rpx;
 				background:linear-gradient(0deg,rgba(252,57,67,1) 0%,rgba(247,45,126,1) 100%);
 				border-radius:8rpx 0px 0px 8rpx;
@@ -178,8 +179,8 @@
 
 			.r-title {
 				image {
-					width: 39rpx;
-					height: 39rpx;
+					width: 35rpx;
+					height: 35rpx;
 				}
 
 				image:nth-of-type(2) {

@@ -1,7 +1,7 @@
 <template>
 	<view class="item" v-if="item">
 		<view class="img-box">
-			<image class="good-img" :src="item.goods_images" mode=""></image>
+			<image class="good-img" :src="item.goods_images[0]" mode=""></image>
 			<!-- <view class="time">距结束02:02:02</view> -->
 		</view>
 		<view class="price-box">

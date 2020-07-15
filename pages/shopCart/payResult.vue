@@ -20,7 +20,7 @@
         </block>
       </div>
       <div class="load-more-container">
-        <load-more :load-more="loadMore"></load-more>
+        <load-more :status="loadMore"></load-more>
       </div>
     </div>
   </div>
@@ -45,27 +45,7 @@
         loadMore: 1,
         recommendPage: 1,
         recommendPageSize: 8,
-        recommendData: [{
-						pic_urls: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
-						stocksnum: 10,
-						goods_type: 1,
-						price_market: 123,
-						code: 123213,
-						title: '张阿第三方第大师法撒旦个单方事故第三方三方飞',
-						price: '123',
-						nub: 123
-					},
-					{
-							pic_urls: 'https://youxuanyouping.oss-cn-shenzhen.aliyuncs.com/uploads/20200616/56b78d7f092c22e89d2608c8ac56b44c.jpg',
-							stocksnum: 10,
-							goods_type: 1,
-							price_market: 123,
-							code: 123213,
-							title: '张阿第三方第大师法撒旦个单方事故第三方三方飞',
-							price: '123',
-							nub: 123
-						},
-				],
+        recommendData: [],
         successIcon: require("@/static/images/pay-success-icon.png"),
         failIcon: require("@/static/images/pay-fail-icon.png")
       };
@@ -73,10 +53,10 @@
 
     methods: {
       async recommendMore() {
-        return await this.$fly.post(this.$api.collection, {
+        return await this.$fly.post(this.$api.goodslist, {
             page: this.recommendPage,
             pageSize: this.recommendPageSize,
-            type: 2
+            is_recommend: 1
         });
       },
       backToHome() {
@@ -157,7 +137,7 @@
         width: rpx(475);
         margin-top: rpx(40);
         align-items: flex-start;
-        justify-content: space-between;
+        justify-content: center;
 
         .back-to-home {
           display: flex;
@@ -170,6 +150,7 @@
           font-weight: 400;
           border:1rpx solid rgba(221,221,221,1);
           border-radius:25rpx;
+					margin-right:50rpx ;
         }
 
         .check-order {
@@ -201,8 +182,8 @@
         justify-content: center;
 
         > img {
-          width: rpx(236);
-          height: rpx(50);
+          width: rpx(396);
+          height: rpx(36);
         }
       }
 

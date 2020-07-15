@@ -29,9 +29,13 @@
                 url: wx.getStorageSync('JumpToPath')
               })
             }else{
-              wx.reLaunch({
-                url: '/pages/index/index',
-              })
+							setTimeout(()=>{
+								uni.hideTabBar({})
+								wx.reLaunch({
+								  url: '/pages/index/index',
+								})
+							},200)
+             
             }
           })
         }

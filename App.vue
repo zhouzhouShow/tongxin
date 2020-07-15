@@ -1,5 +1,6 @@
 <script>
 	import {wechatGetSystemInfo, checkVersion, updataApp} from './utils/tools'
+	import shareConfig from 'utils/share.js'
 	export default {
 		methods:{
 			toPage(callback){
@@ -17,6 +18,9 @@
 			    }).then((res) => {
 			      wx.setStorageSync('token', res.data.token);
 			      resolve(res.data.token);
+						this.$user.getUserInfo();
+						console.log(this.$loginIntercept)
+						this.$loginIntercept.loginSuccess(true)
 			    })
 			  })
 			},
@@ -42,8 +46,10 @@
 			},
 		},
 		 async onLaunch(option) {
-			console.log('App Launch')
-			wx.hideTabBar(); //隐藏默认tab
+			console.log(option)
+			setTimeout(()=>{
+				uni.hideTabBar({})
+			},200)
 			if(option.query.scene && decodeURIComponent(option.query.scene).includes('user_refreeid')){ //分销,下级进入
 				let str = decodeURIComponent(option.query.scene)
 				let refreeid = str.substr(str.indexOf('=')+1)
@@ -51,9 +57,25 @@
 			}else{
 				await this.appInit();
 			}
+			this.$loginIntercept.loginCallback(()=>{
+				this.$user.getUserInfo().then(res => {
+					console.log(res)
+				  var data = res.data;
+					if(data.avatar){
+						this.$store.commit('loginSuccess',true)
+					}else{
+						this.$store.commit('loginSuccess',false)
+					}
+				//  console.log(res)
+				})
+			})
 		},
-		async onShow(){
+		async onShow(e){
+			console.log(e)
 			updataApp(); //检查版本更新
+			setTimeout(()=>{
+				uni.hideTabBar({})
+			},200)
 			if (e.query.scene || e.query.q || (e.query.id && (e.scene==1007||e.scene==1008))) {
 			   shareConfig.sharePage(e.query).then((res)=>{
 			     console.log(res)
@@ -82,16 +104,9 @@
 			     
 			}
 			let mtoken = wx.getStorageSync('token') || ''
-			this.$user.getUserInfo().then(res => {
-			  var data = res.data;
-			  console.log('测试',data)
-			  if(data.avatar=='' || data.code == 403 || !mtoken){ //用户信息没有 头像,请求状态为403 ,本地没有token就要授权
-			   uni.reLaunch({
-			   	url:'pages/auth/auth'
-			   })
-			  }
-			//  console.log(res)
-			})
+			console.log(123213123231)
+			
+			
 		},
 		created() {
 		  uni.hideTabBar({});

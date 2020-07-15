@@ -162,8 +162,8 @@
 
 			.r-title {
 				image {
-					width: 39rpx;
-					height: 39rpx;
+					width: 48rpx;
+					height: 48rpx;
 				}
 
 				image:nth-of-type(2) {

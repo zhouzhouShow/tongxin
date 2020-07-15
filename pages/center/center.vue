@@ -6,9 +6,9 @@
 			</view>
 			<view class="info">
 				<view class="avatar">
-					<image :src="userInfo.avatar" mode="aspectFill"></image>
+					<image  :src="hasLogin ? userInfo.avatar : '/static/images/no-auth.png'" mode="aspectFill"></image>
 				</view>
-				<view class="nickname">
+				<view class="nickname" v-if="hasLogin">
 					<view class="name">
 						{{userInfo.nickname}}
 					</view>
@@ -16,6 +16,9 @@
 						<text>{{userInfo.is_agent==1?'代理会员':'普通会员'}}</text>
 					</view>
 				</view>
+				<button open-type="getUserInfo" @getuserinfo="getInfo" class="auth-btn" v-else>
+					 点击授权登录
+				</button>
 			</view>
 		</view>
 		<view class="order">
@@ -37,7 +40,7 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="userInfo.is_agent" class="income">
+		<view v-if="userInfo.is_agent && hasLogin" class="income">
 			<view @click="handleToMyIncome" class="nav_box">
 				<view class="nav">
 					<view class="name">
@@ -75,7 +78,7 @@
 				</view>
 			</view>
 		</view>
-		<view v-if="userInfo.is_agent" class="store">
+		<view v-if="userInfo.is_agent && hasLogin" class="store">
 			<view class="nav_box">
 				<view class="nav">
 					<view class="name">
@@ -144,6 +147,11 @@
 		components: {
 			comfooter
 		},
+		computed:{
+			hasLogin(){
+				return this.$store.state.hasLogin
+			}
+		},
 		data() {
 			return {
 				paddingTop: 0,
@@ -184,6 +192,21 @@
 			this.getCenterIndex()
 		},
 		methods: {
+			getInfo(e){
+				console.log(e)
+			  if (e.target.userInfo) {
+			    this.$fly.post(this.$api.updateUserInfo, {
+			      wxname: e.target.userInfo.nickName,
+			      headimg: e.target.userInfo.avatarUrl,
+			      gender: e.target.userInfo.gender,
+						iv:e.target.iv,
+						encryptedData:e.target.encryptedData
+			    }).then(res => {
+						this.$store.commit('loginSuccess',true)
+						this.$tip.toast('授权成功!')
+			    })
+			  }
+			},
 			nav(url) {
 				wx.navigateTo({
 					url: url
@@ -310,7 +333,18 @@
 						border-radius: 50%;
 					}
 				}
-
+				.auth-btn{
+					// padding-left: 20rpx;
+					border: none;
+					box-shadow: none;
+					line-height: 1;
+					margin:0;
+					padding:0;
+					font-size:36rpx;
+					font-weight:500;
+					color:rgba(51,51,51,1);
+					margin-left: 20rpx;
+				}
 				.nickname {
 					margin-left: 20rpx;
 					display: flex;
@@ -414,7 +448,7 @@
 					flex-direction: column;
 					justify-content: center;
 					align-items: center;
-
+					line-height: 1;
 					image {
 						width: 44rpx;
 						height: 44rpx;

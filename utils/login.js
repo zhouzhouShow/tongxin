@@ -1,7 +1,7 @@
 import api from '../api/api'
 import request from '../js_sdk/jamling-request/j-request/request.js'
 import tips from './tip.js'
-import intercept from './logicIntercept.js'
+import intercept from './loginIntercept.js'
 
 /**
  * 检查session是否失效

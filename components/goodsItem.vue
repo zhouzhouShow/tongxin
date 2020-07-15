@@ -13,7 +13,7 @@
 					<p class="tips-text">抢购价</p>
 					<p class="pirce-box" style="margin-top:0;">
 						<span class="n-price">
-							<span class="p-icon">¥</span>{{item.price_sale}}
+							<span class="p-icon">¥</span>{{item.price_last}}
 						</span>
 						<span class="o-pirce">¥{{item.price_market}}</span>
 						<view class="buy" @clickl.stop="buy">去购买</view>

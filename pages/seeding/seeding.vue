@@ -1,63 +1,67 @@
 <template>
 	<view class="seeding">
-		<view @click="handleToUserPage(0)" class="seeding_user" style="background: url(../../static/images/seeding/user_bg.png);">
-			<view class="avatar">
-				<image :src="userInfo.avatar" mode="scaleToFill"></image>
-			</view>
-			<view class="info">
-				<view class="info_nickname">
-					<text>{{userInfo.nickname}}</text>
+		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" :down="downOption" :up="{use:false,toTop:{src:''}}">
+			<view @click="handleToUserPage(0)" class="seeding_user" style="background: url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200715/91ed7eb28826a27f108dfc6dd787646f.png	);">
+				<view class="avatar">
+					<image :src="userInfo.avatar" mode="scaleToFill"></image>
 				</view>
-				<view class="info_num">
-					<text>种草数 {{userInfo.article_num}}</text>
-					<text>粉丝 {{userInfo.fans_num}}</text>
+				<view class="info">
+					<view class="info_nickname">
+						<text>{{userInfo.nickname}}</text>
+					</view>
+					<view class="info_num">
+						<text>种草数 {{userInfo.article_num}}</text>
+						<text>粉丝 {{userInfo.fans_num}}</text>
+					</view>
 				</view>
-			</view>
-			<view class="icon">
-				<image src="../../static/images/seeding/icon_arrow-right-white.png" mode="scaleToFill"></image>
-			</view>
-		</view>
-		<view class="seeding_banner">
-			<image src="../../static/images/seeding/top_banner.png" mode="widthFix"></image>
-		</view>
-		<view class="seeding_nav">
-			<view class="box">
-				<view @click="changeNav(index)" v-for="(item,index) in navList" :key="index" :class="['item',nowIndex==index?'active':'']">
-					<text>{{item.text}}</text>
-					<image src="../../static/images/seeding/icon_nav-active.png" mode="scaleToFill"></image>
+				<view class="icon">
+					<image src="../../static/images/seeding/icon_arrow-right-white.png" mode="scaleToFill"></image>
 				</view>
 			</view>
-			<view @click="showSearch" :class="['search',isSearch?'show':'hide']">
-				<image src="../../static/images/seeding/icon_search.png" mode="scaleToFill"></image>
-				<input :focus="isSearch" @blur.stop="searchBlur" type="text" v-model="searchText" placeholder="输入要搜索的内容" />
-				<view @click="keywordSearch" class="text">
-					<text>搜索</text>
+			<view class="seeding_banner">
+				<image src="https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200715/e18f00e7d2de3ecf7f7ccef87b5d66ed.png" mode="widthFix"></image>
+			</view>
+			<view class="seeding_nav">
+				<view class="box">
+					<view @click="changeNav(index)" v-for="(item,index) in navList" :key="index" :class="['item',nowIndex==index?'active':'']">
+						<text>{{item.text}}</text>
+						<image src="../../static/images/seeding/icon_nav-active.png" mode="scaleToFill"></image>
+					</view>
+				</view>
+				<view @click="showSearch" :class="['search',isSearch?'show':'hide']">
+					<image src="../../static/images/seeding/icon_search.png" mode="scaleToFill"></image>
+					<input :focus="isSearch" @blur.stop="searchBlur" type="text" v-model="searchText" placeholder="输入要搜索的内容" />
+					<view @click="keywordSearch" class="text">
+						<text>搜索</text>
+					</view>
 				</view>
 			</view>
-		</view>
-		<view class="seeding_list">
-			<SeedingItem :list="list" :isTabBar="true" :userId="userInfo.id" @handleToDetail="handleToDetail" @handleDelete="handleDelete"
-			 @handleToSeedingDetail="handleToSeedingDetail" @handleConcern="handleConcern" @previewImage="previewImage"
-			 @handleToUserPage="handleToUserPage" @handleLike="handleLike"></SeedingItem>
-			<uni-load-more :status="loadingType"></uni-load-more>
-		</view>
+			<view class="seeding_list">
+				<SeedingItem :list="list" :isTabBar="true" :userId="userInfo.id" @handleToDetail="handleToDetail" @handleDelete="handleDelete"
+				 @handleToSeedingDetail="handleToSeedingDetail" @handleConcern="handleConcern" @previewImage="previewImage"
+				 @handleToUserPage="handleToUserPage" @handleLike="handleLike"></SeedingItem>
+				<uni-load-more :status="loadingType"></uni-load-more>
+			</view>
+		</mescroll-body>
 		<view @click="handleToCreate" class="seeding_create">
 			<image src="../../static/images/seeding/icon_create.png" mode=""></image>
 		</view>
-		<comfooter :tabIdx="1" ></comfooter>
+		<comfooter :tabIdx="1"></comfooter>
 	</view>
 </template>
 
 <script>
-	import comfooter from'@/components/com-footer.vue'
+	import MescrollMixin from "mescroll-uni/mescroll-mixins.js";
+	import comfooter from '@/components/com-footer.vue'
 	import SeedingItem from '@/components/seedingItem.vue'
 	import uniLoadMore from "@/components/uni-load-more/uni-load-more.vue"
 	export default {
 		name: "seeding",
+		mixins: [MescrollMixin],
 		components: {
 			SeedingItem,
 			uniLoadMore,
-			comfooter
+			comfooter,
 		},
 		onShareAppMessage: function() {
 			return {
@@ -82,20 +86,22 @@
 				pageSize: 10
 			};
 		},
+	
 		onReachBottom() {
 			if (this.loadingType == 2 || this.loadingType == 3) return
 			this.page++
 			this.getFeaturedList()
 		},
 		mounted() {
-			this.getPersonalCenterData()
-			this.getFeaturedList()
+			// console.log(MescrollMixin)
+			// this.getPersonalCenterData()
+			// this.getFeaturedList()
 		},
 		onReady() {
 			uni.$on('changeFollow', info => {
 				let id = info.userId
 				let items = this.list.filter(v => v.user_id == id)
-				items.forEach(el=>{
+				items.forEach(el => {
 					el.isfollow = info.isfollow
 				})
 			})
@@ -115,7 +121,7 @@
 				let item = this.list.filter(v => v.id == id)
 				item && item[0] && (item[0].sharenum = sharenum)
 			})
-			
+
 			uni.$on('deleteSeeding', id => {
 				this.list.forEach((item, index) => {
 					if (item.id == id) {
@@ -124,8 +130,8 @@
 				})
 				this.userInfo.article_num = this.userInfo.article_num - 1
 			})
-			
-			uni.$on('hasCreate', ()=>{
+
+			uni.$on('hasCreate', () => {
 				this.userInfo.article_num = this.userInfo.article_num + 1
 			})
 		},
@@ -162,6 +168,17 @@
 			};
 		},
 		methods: {
+			mescrollInit() {
+		
+			},
+			async downCallback() {
+				this.page = 1
+				this.list = []
+				await this.getPersonalCenterData()
+				await this.getFeaturedList()
+				this.mescroll.endDownScroll()
+				// this.mescroll.resetUpScroll();
+			},
 			getPersonalCenterData() {
 				this.$fly.post(this.$api.personalCenterData).then(res => {
 					this.userInfo = res.data || {}
@@ -205,11 +222,11 @@
 			},
 			handleDelete(id) {
 				uni.showLoading({
-					title:"删除中..."
+					title: "删除中..."
 				})
-				this.$fly.post(this.$api.deleteSeeding,{
-					ids:id
-				}).then(res=>{
+				this.$fly.post(this.$api.deleteSeeding, {
+					ids: id
+				}).then(res => {
 					this.list.forEach((item, index) => {
 						if (item.id == id) {
 							this.list.splice(index, 1)
@@ -217,11 +234,11 @@
 						}
 					})
 					uni.showToast({
-						title:'删除成功',
-						duration:1500
+						title: '删除成功',
+						duration: 1500
 					})
 					uni.hideLoading()
-				}).catch(err=>{
+				}).catch(err => {
 					uni.hideLoading()
 				})
 			},
@@ -272,7 +289,7 @@
 				// list：图片 url 数组
 				if (list && list.length > 0) {
 					let newList = []
-					list.forEach(item=>{
+					list.forEach(item => {
 						newList.push(item.url)
 					})
 					uni.previewImage({

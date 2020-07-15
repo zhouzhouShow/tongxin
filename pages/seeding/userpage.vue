@@ -1,6 +1,6 @@
 <template>
 	<view class="userpage">
-		<view class="userpage_info" style="background: url(../../static/images/seeding/userpage_bg.png) no-repeat;background-size: 100% 100%;">
+		<view class="userpage_info" style="background: url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200715/f7064ac0b12abd39e5d3b86226eeb8d7.png) no-repeat;background-size: 100% 100%;">
 			<view class="logo">
 				<image :src="masterInfo.avatar" mode="aspectFill"></image>
 			</view>

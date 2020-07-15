@@ -12,7 +12,7 @@ const api = {
   hotSearch: `/api/index/hot_search`,         // 热词
   historySearch: `/api/index/history_search`,         // 最近搜索
   deleteHistorySearch: `/api/index/delete_history_search`,         // 最近搜索
-  wxCode: `/api/goods/wxCode`,         // 生成图片
+  shareWXCode: `/api/goods/wxCode`,         // 生成图片
 	
 
 }

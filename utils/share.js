@@ -1,5 +1,4 @@
 import utils from '@/utils/index.js'
-import tags from '@/utils/tags.js'
 
 /**
  * 分享参数配置
@@ -10,57 +9,45 @@ const shareConfig = {
 	config: [
 		//商品详情 二维码  //参数 id
 		{
-			p: 0,
-			path: '/pages/shopkeeper/product/product',
+			h: 0,
+			path: '/pages/good/goodDetail',
 			isCode: true,
 		},
 		//首页分享  //参数 navId
 		{
-			p: 1,
+			h: 1,
 			path: '/pages/index/index',
 		},
-		//推荐
+		//星妈推荐
 		{
-			p: 2,
-			path: '/pages/index/index',
-			isRefreed: true
+			h: 2,
+			path: '/pages/index/xinma-recommend',
 		},
-		//商品详情 分享  //参数 id
+		//爆款好物
 		{
-			p: 3,
-			path: '/pages/shopkeeper/product/product',
+			h: 3,
+			path: '/pages/index/hotGood',
 		},
-		//刚刚上新 0 即将上新 1  快速补货 2   //参数 type 
+		//限时抢购
 		{
-			p: 4,
-			path: '/pages/shopkeeper/new-shop-now/new-shop-now',
+			h: 4,
+			path: '/pages/index/timeLimitedGood',
 		},
-		//代买  navId
+		//秋冬上架
 		{ 
-			p: 5,
-			path: '/pages/helpBuy/helpBuy/helpBuy',
-			isTab:true,
+			h: 5,
+			path: '/pages/index/season',
 		},
-		//分类  pClassId  navId  cateId  isReplace  title
+		//品牌详情  id
 		{ 
-			p: 6,
-			path: '/pages/shopkeeper/product/product-cate-page',
+			h: 6,
+			path: '/pages/index/brandDetail',
 		},
-		//品牌分类  id
+		//种草详情 id
 		{ 
-			p: 7,
-			path: '/pages/shopkeeper/shop-brand/shop-brand',
-		},
-		//秒杀  id
-		{ 
-			p: 8,
-			path: '/pages/shopkeeper/seckill-page/seckill-page',
-		},
-		//最后疯抢  id
-		{ 
-			p: 9,
-			path: '/pages/shopkeeper/seckill-page/last-rob',
-		},
+			h: 7,
+			path: '/pages/seeding/productDetail',
+		}
 	],
 	sharePage(query) {
 		return new Promise((resolve, reject) => {

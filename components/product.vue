@@ -18,7 +18,7 @@
     <div class="good-content">
       <div class="good-desc">
         <div class="good-desc-part1">
-					<span class="p-box"><span class="p-icon">¥</span>{{product.price_sale}}</span>
+					<span class="p-box"><span class="p-icon">¥</span>{{product.price_last || product.price_sale}}</span>
 					<span class="mark-price">¥{{product.price_market}}</span>
         </div>
 				<div class="like">
@@ -53,8 +53,8 @@
         default: true
       },
       'type': {
-        type: Number,
-        default: 0
+        type: String,
+        default: ''
       },
 			hasVideo:{
 				type:Boolean,
@@ -101,13 +101,18 @@
         return number;
       },
       goProductDetail() {
-        if (this.isClickable) {
-          var id = this.product.goods_id;
-          var sku = this.product.sku || "";
-          wx.navigateTo({
-            url: '/pages/good/goodDetail?id='+id+'&sku='+sku,
-          })
-        }
+				if(this.type == 'seeding'){ //种草过来的
+					this.$emit('seedingChooseGood',this.product)
+				}else{
+					if (this.isClickable) {
+					  var id = this.product.goods_id;
+					  var sku = this.product.sku || "";
+					  wx.navigateTo({
+					    url: '/pages/good/goodDetail?id='+id+'&sku='+sku,
+					  })
+					}
+				}
+        
       },
     },
     mounted() {
@@ -246,7 +251,7 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				padding: 20rpx 20rpx 0 0;
+				padding: 20rpx 0rpx 0 0;
 			  .good-desc-part1 {
 			    display: flex;
 			    align-items: center;

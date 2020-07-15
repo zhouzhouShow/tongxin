@@ -1,7 +1,7 @@
 <template>
 	<view class="seeding_images">
 		<view @click.stop="" v-if="info&&info[0]&&info[0].type=='video'" class="images_video">
-			<video :src="info.product_info.video" controls></video>
+			<video :src="info[0].url" controls></video>
 		</view>
 		<view v-else-if="imagesType=='swiper'" class="images_swiper">
 			<swiper class="swiper" @change="swiperChange" :indicator-dots="indicatorDots" :autoplay="autoplay" :interval="interval"
@@ -60,6 +60,9 @@
 				duration: 500,
 				current: 0
 			}
+		},
+		mounted(){
+			console.log(this.info)
 		},
 		methods: {
 			previewImage(index) {

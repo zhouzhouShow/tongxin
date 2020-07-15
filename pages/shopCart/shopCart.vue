@@ -3,7 +3,7 @@
 		<view class="good-list">
 			<view class="good-brand-item" v-if="shopCarList.length" v-for="(item,index) in shopCarList" :key="index">
 				<view class="title-state-box flex-align-center">
-					<checkbox color="#17B948" :checked="item.allChecked" @click="allPickClick" />
+					<checkbox color="#17B948" :checked="item.allChecked" @click.stop="allPick(index)" />
 					<view class="brand-info flex-align-center">
 						<image class="b-img" :src="item.brand_logo" mode=""></image>
 						<text class="brand-name">{{item.brand_name}}</text>
@@ -12,9 +12,9 @@
 					<image @click.stop="deleteBrandGood(item,index)" class="delete" src="../../static/images/icon/icon_delete.png" mode=""></image>
 				</view>
 				<view class="good-box">
-					<block v-for="(itemG,indexG) in item.goodlist"  :key="item.good_id">
+					<view @click="toDetail(itemG.goods_id)" v-for="(itemG,indexG) in item.goodlist"  :key="indexG">
 						<cartItem :item="itemG" @changeNum="goodsNumChanged($event,index,indexG)" @onePick="onePick(index,indexG)"></cartItem>
-					</block>
+					</view>
 				</view>
 			</view>
 			<view v-if="shopCarList.length==0" class="shop-car-empty-container">
@@ -78,6 +78,11 @@
 			 this.shopCarList = await this.loadShopCarData('all')
 		},
 		methods:{
+			toDetail(id){
+				uni.navigateTo({
+					url:"/pages/good/goodDetail?id="+id
+				})
+			},
 			async deleteBrandGood(item,index){
 				this.$tip.loading();
 				let cartids = [] 
@@ -175,7 +180,8 @@
 							itemsAllPrice += item.goods_price * item.goods_num
 							itemsAllNum += item.goods_num
 						});
-						this.allShopTotalPrice = itemsAllPrice
+						
+						this.allShopTotalPrice += itemsAllPrice
 						itemsAllPrice = 0
 						itemsAllNum = 0
 					}
@@ -219,6 +225,7 @@
 			},
 			allPick(index) {
 				let goodObj = this.shopCarList[index]
+				console.log(goodObj)
 				this.$set(goodObj, 'allChecked', !goodObj.allChecked)
 				let itemsAllPrice = 0,
 					itemsAllNum = 0;
@@ -227,21 +234,19 @@
 						return val.allChecked == false;
 					})
 					this.allPickChecked = idx == -1 ? true : false;
-					if (goodObj.goods_type == 1) { //普通商品
-						this.shopCarList[index].forEach((val, index) => {
+						this.shopCarList[index].goodlist.forEach((val, index) => {
 							val.checked = true
 			
-							itemsAllPrice += val.goods_price * val.goods_num 
+							itemsAllPrice += Number(val.goods_price * val.goods_num) 
 							itemsAllNum += val.goods_num
 						})
-					} 
 			
 				} else {
 			
 					if (this.allPickChecked) {
 						this.allPickChecked = false
 					}
-					this.shopCarList[index].forEach((val, index) => {
+					this.shopCarList[index].goodlist.forEach((val, index) => {
 						val.checked = false
 					})
 					itemsAllPrice = 0
@@ -256,9 +261,9 @@
 					this.totalPrice = this.allShopTotalPrice;
 				} else {
 					if (goodObj.allChecked) {
-						this.totalPrice = this.totalPrice + goodObj.allPrice - allPrice ;
+						this.totalPrice = Number(this.totalPrice) + Number(goodObj.allPrice)- allPrice ;
 					} else {
-						this.totalPrice = this.totalPrice - allPrice;
+						this.totalPrice = Number(this.totalPrice) - allPrice;
 					}
 				}
 		

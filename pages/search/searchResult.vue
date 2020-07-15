@@ -3,10 +3,10 @@
 		<searchBar @sureBtn="search" placeholder="搜索商品" btnText="取消" :itemKeyWord="keyword"></searchBar>
 		<searchNav @changeType="changeType"></searchNav>
 
-		<div class="goods-list-container" :style="{background:goodType == 1? '#f3f3f3':'#fff'}">
+		<div class="goods-list-container" style="background:#fff">
 			<div class='goods-item-container' v-for="(item,index) in searchResultList"
 			 :key="index">
-				<product :product="item"  />
+				<product @seedingChooseGood="chooseImg" :type="goodType" :product="item"  />
 				<!-- 份货商品 -->
 				<!-- <block v-if="goodType==1">
 					<goodsItem  @fhChangeColor='changColor' @fhChangeEllipsis='ellipsis' itemtype="fenhuo" :item='item' :myIndex="index" ></goodsItem>
@@ -53,7 +53,7 @@
 				filter:{}, //筛选
 				// nav_id: '', //导航id
 				type: 0, //0:普通搜索进来,1:分类点击进来 
-				// goodType: 0, // 0 : 挑款商品 ,1:份货商品
+				goodType: 0, // 0 :普通商品, sedding:种草进来选商品
 			}
 		},
 		onUnload() {
@@ -69,7 +69,20 @@
 			})
 		},
 		methods: {
-		
+			// 选择商品并返回种草发布
+			chooseImg(e){
+				// console.log(e)
+				let data = {
+					relateIds: [],
+					relateList:[]
+				}
+				data.relateIds.push(e.goods_id)
+				data.relateList.push({goods_id:e.goods_id,image:e.goods_images[0],name:e.goods_title,price:e.price_last})
+				uni.$emit('getRelateInfo',data)
+				uni.navigateBack({
+					delta:2
+				})
+			},
 			initData() {
 				page = 1
 				pageSize = 10

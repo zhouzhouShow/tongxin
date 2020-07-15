@@ -1,4 +1,4 @@
 export default {
-	baseUrl:'http://txyx.k-sg.cn',
+	baseUrl:'https://txyx.k-sg.cn',
 	contentType:'form'
 }

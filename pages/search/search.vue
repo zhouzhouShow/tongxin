@@ -58,7 +58,7 @@ export default {
       hotSearchList:[],
       historySearchList:[],
       goodsList:[],
-			type:0,//0:挑款 ,1:份货
+			type:0,//seeding: 种草过来的
 			recommendType:'tiaokuan'
     }
   },
@@ -117,7 +117,7 @@ export default {
 			console.log(1)
       if(keyword){
         wx.navigateTo({
-          url:'/pages/search/searchResult?keyword='+keyword+'&type='+type
+          url:'/pages/search/searchResult?keyword='+keyword+'&type='+this.type
         })
       }else{
         this.$tip.toast("请输入搜索内容！");
@@ -200,9 +200,10 @@ export default {
       })
     }
   },
-  onLoad(){
+  onLoad(option){
     this.getHotSearch();
 		this.goodsList = []
+		this.type = option.type
 		// if(this.type==0){ //挑款
 		// 	this.getNewProcudt()
 		// }else{ //份货

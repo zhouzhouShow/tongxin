@@ -1,6 +1,6 @@
 <template>
 	<view class="item flex-align-center">
-		<checkbox @click="clickCheckBox" class="c-checkbox" color="#17B948" :checked="item.checked" v-if="type=='cart'" />
+		<checkbox @click.stop="clickCheckBox" class="c-checkbox" color="#17B948" :checked="item.checked" v-if="type=='cart'" />
 		<image class="g-img" :src="item.goods_images[0]"
 		 mode=""></image>
 		<view class="g-info">
