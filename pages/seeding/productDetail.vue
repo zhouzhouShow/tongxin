@@ -70,7 +70,7 @@
 				var data = res.target.dataset
 				return {
 					// title: `${this.userInfo.nickname}给你分享种草精选`,
-					path: '/pages/seeding/productDetail?id=' + data.id,
+					path: '/pages/index/index?h=7&id=' + data.id,
 					success(res) {
 						// 转发成功
 						this.handleShare(data.id)

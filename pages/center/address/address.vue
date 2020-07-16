@@ -12,7 +12,7 @@
 						<!-- <div > -->
 						<div @click='changeDafaultAddress(item)'>
 							<label class="radio">
-								<radio :value="item.id"  color="#F62A8A" :checked='item.status==1'>默认地址</radio>
+								<radio :value="item.id"  color="#FF5152" :checked='item.status==1'>默认地址</radio>
 							</label>
 						</div>
 						<div>
@@ -221,7 +221,7 @@
 					background: white;
 					height: 332rpx;
 					padding: 0 30rpx;
-					margin-top: 20rpx;
+					margin-bottom: 20rpx;
 
 					.address-item-top {
 						height: 218rpx;

@@ -1,6 +1,6 @@
 <template>
 	<view class="center">
-		<view class="userinfo" :style="[{'paddingTop':paddingTop + 'px'},{'background': 'url(../../static/images/center/center_top_bg.png) no-repeat'},{'background-size': '100% 100%'}]">
+		<view class="userinfo" :style="[{'paddingTop':paddingTop + 'px'},{'background': 'url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200716/f8df85add9986064b9c1181779d6d175.png) no-repeat'},{'background-size': '100% 100%'}]">
 			<view class="title">
 				<text>我的</text>
 			</view>
@@ -130,7 +130,7 @@
 					<image src="../../static/images/center/icon_address.png" mode="scaleToFill"></image>
 					<text>收货地址</text>
 				</view>
-				<view class="item">
+				<view class="item" @click.stop="nav('')">
 					<image src="../../static/images/center/icon_us.png" mode="scaleToFill"></image>
 					<text>关于我们</text>
 				</view>
@@ -191,6 +191,9 @@
 		mounted() {
 			this.getCenterIndex()
 		},
+		onShow() {
+			this.getCenterIndex()
+		},
 		methods: {
 			getInfo(e){
 				console.log(e)
@@ -208,6 +211,9 @@
 			  }
 			},
 			nav(url) {
+				if(!url){
+					return this.$tip.toast('正在建设中!')
+				}
 				wx.navigateTo({
 					url: url
 				})
@@ -215,9 +221,11 @@
 			getCenterIndex() {
 				this.$fly.post(this.$api.getCenterIndex).then(res => {
 					this.userInfo = res.data
-
-					this.userInfo.is_agent = 1
-
+					if(res.data.is_agent == 1){
+						this.$store.commit('setAgent',true)
+					}else{
+						this.$store.commit('setAgent',false)
+					}
 					if (this.userInfo.is_agent) {
 						this.getMyAssets()
 					}
@@ -367,7 +375,7 @@
 						border: 1rpx solid rgba(242, 39, 50, 1);
 						border-radius: 20rpx;
 						font-size: 24rpx;
-						line-height: 40rpx;
+						line-height: 36rpx;
 						text-align: center;
 						font-family: PingFang SC;
 						font-weight: 400;
@@ -450,8 +458,8 @@
 					align-items: center;
 					line-height: 1;
 					image {
-						width: 44rpx;
-						height: 44rpx;
+						width: 46rpx;
+						height: 46rpx;
 					}
 
 					text {

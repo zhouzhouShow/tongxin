@@ -289,7 +289,7 @@
 		display: flex;
 		align-items: center;
 		height: 90rpx;
-		padding: 0 30rpx;
+		padding: 0 30rpx 0 36rpx;
 		font-size: 30rpx;
 		font-weight: 500;
 		color: #333333;

@@ -40,7 +40,7 @@
 					</p>
 					<p class="sold-num flex-align-center">
 						<span>已售: {{item.salenum}}</span>
-							<view class="buy" @clickl.stop="buy">去购买</view>
+							<view class="buy" @clickl.stop="buy">立即抢购</view>
 					</p>
 				</view>
 			</view>
@@ -222,7 +222,7 @@
 			}
 			.discount {
 				margin-top: 10rpx;
-				width: 80rpx;
+				width: 70rpx;
 				height: 30rpx;
 				line-height: 30rpx;
 				text-align: center;

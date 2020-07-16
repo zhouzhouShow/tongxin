@@ -1,50 +1,50 @@
 <template>
 	<view class="container">
-	<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback"  :down="downOption"  :up="{use:false,toTop:{src:''}}">
+		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" :down="downOption" :up="{use:false,toTop:{src:''}}">
 			<view class="header-box" :style="{paddingTop:wechatNavBtnHeight+'px'}">
-					<view class="header">
-						<image class="logo-icon" src="@/static/images/icon/logo-icon.png" mode=""></image>
-						<navigator url="/pages/search/search">
-							<view class="search-input-container" >
-								<view class="search-icon">
-									<img  src="@/static/images/icon/search.png">
-								</view>
-								<text>在童心优选中选择</text>
+				<view class="header">
+					<image class="logo-icon" src="@/static/images/icon/logo-icon.png" mode=""></image>
+					<navigator url="/pages/search/search">
+						<view class="search-input-container">
+							<view class="search-icon">
+								<img src="@/static/images/icon/search.png">
 							</view>
-						</navigator>
-					</view>
-					<view class="nav flex-align-center">
-						<image class="nav-icon" src="/static/images/icon/logo-text.png"></image>
-						<view class="nav-box flex-align-center">
-							<text @click="nav(item.link)" class="item" v-for="(item,index) in navList" :key="index">{{item.title}}</text>
+							<text>在童心优选中选择</text>
 						</view>
+					</navigator>
+				</view>
+				<view class="nav flex-align-center">
+					<image class="nav-icon" src="/static/images/icon/logo-text.png"></image>
+					<view class="nav-box flex-align-center">
+						<text @click="nav(item.link)" class="item" v-for="(item,index) in navList" :key="index">{{item.title}}</text>
 					</view>
-					<view class="swiper-display-area"  >
-						<swiper @change="swiperChange" v-if="banner.length>0" interval="3000" autoplay=true duration="500" circular=true>
-							<view v-for="(item,index) in banner" :key="index" @click="nav(item.ad_link)">
-								<swiper-item>
-									<img style="width:100%;height:388rpx;display:block;" :src="item.image">
-								</swiper-item>
-							</view>
-						</swiper>
-						<view class="dot-container" v-if="banner.length>0">
-							<swiperDot :current='current' :length="banner.length"></swiperDot>
+				</view>
+				<view class="swiper-display-area">
+					<swiper @change="swiperChange" v-if="banner.length>0" interval="3000" autoplay=true duration="500" circular=true>
+						<view v-for="(item,index) in banner" :key="index" @click="nav(item.ad_link)">
+							<swiper-item>
+								<img style="width:100%;height:388rpx;display:block;"   :src="item.image">
+							</swiper-item>
 						</view>
-						
-						<!-- <img style="width:100%;height:330rpx;display:block;" src=""> -->
+					</swiper>
+					<view class="dot-container" v-if="banner.length>0">
+						<swiperDot :current='current' :length="banner.length"></swiperDot>
 					</view>
-					<view class="icons-list-container">
-						<image class="bg" src="../../static/images/icon/nav-bg.png" mode=""></image>
-						<view class="icons-box">
-							<div class="icon-item" @click="nav(item.link)"  v-for="(item,index) in listItem" :key="index">
-								<div class="icon-img">
-									<img :src="item.img">
-								</div>
-								<div class="icon-title">{{item.title}}</div>
+
+					<!-- <img style="width:100%;height:330rpx;display:block;" src=""> -->
+				</view>
+				<view class="icons-list-container">
+					<image class="bg" src="../../static/images/icon/nav-bg.png" mode=""></image>
+					<view class="icons-box">
+						<div class="icon-item" @click="nav(item.link)" v-for="(item,index) in listItem" :key="index">
+							<div class="icon-img">
+								<img :src="item.img">
 							</div>
-						</view>
-					
+							<div class="icon-title">{{item.title}}</div>
+						</div>
 					</view>
+
+				</view>
 			</view>
 			<view class="miaosha">
 				<view class="title">
@@ -52,15 +52,15 @@
 					<text class="text">新品秒杀版</text>
 				</view>
 				<view class="miaosha-good">
-					<scroll-view  scroll-x="true" style="white-space:nowrap">
-						<view v-if="miaoshaList.length" v-for="(item,index) in miaoshaList" :key="index" @click="toDetail(item.goods_id)">
-							<miaoshaItem :item="item"></miaoshaItem>	
+					<scroll-view scroll-x="true" style="white-space:nowrap">
+						<view class="miaosha-item" v-if="miaoshaList.length" v-for="(item,index) in miaoshaList" :key="index" @click="toDetail(item.goods_id)">
+							<miaoshaItem :item="item"></miaoshaItem>
 						</view>
 					</scroll-view>
-				
+
 				</view>
-				
-			
+
+
 			</view>
 			<view class="special">
 				<view class="title">
@@ -68,14 +68,14 @@
 					<text class="text">必逛专题</text>
 				</view>
 				<view class="content" v-for="(item ,index) in specialList" :key="index">
-					<image class="banner" :src="item.brand_banner[0]" ></image>
+					<image class="banner" :src="item.brand_banner[0]"></image>
 					<view class="special-good">
 						<view v-for="(gItem ,gIndex) in item.goodlist" :key="gIndex" @click="toDetail(gItem.goods_id)">
 							<brandGoodItem :item="gItem"></brandGoodItem>
-					 </view>
+						</view>
 					</view>
 				</view>
-				<load-more  :status="loadMore"></load-more>
+				<load-more :status="loadMore"></load-more>
 			</view>
 		</mescroll-body>
 		<fixedIcon @share="share" ref="backTop" :showItem='showItem'></fixedIcon>
@@ -85,7 +85,7 @@
 
 <script>
 	import fixedIcon from '@/components/fixedIcon.vue'
-	import comfooter from'@/components/com-footer.vue'
+	import comfooter from '@/components/com-footer.vue'
 	import swiperDot from '@/components/index/swiper-dot.vue'
 	import brandGoodItem from '@/components/index/brandGoodItem.vue'
 	import miaoshaItem from '@/components/index/miaoshaItem.vue'
@@ -93,8 +93,8 @@
 	import MescrollMixin from "mescroll-uni/mescroll-mixins.js";
 	import loadMore from '@/components/uni-load-more/uni-load-more.vue'
 	export default {
-		mixins:[loadMoreData,MescrollMixin],
-		components:{
+		mixins: [loadMoreData, MescrollMixin],
+		components: {
 			fixedIcon,
 			comfooter,
 			swiperDot,
@@ -105,54 +105,88 @@
 		data() {
 			return {
 				title: 'Hello',
-				wechatNavBtnHeight:0, //胶囊按钮距离顶部位置
-				pageSize:6,
-				navList:[{
-					title:'童婴会场',
-					link:'/pages/index/session?title=童婴会场&goodsAge=1',
-				},{
-					title:'女童会场',
-					link:'/pages/index/session?title=女童会场&goodsAge=3',
-				},{
-					title:'男童会场',
-					link:'/pages/index/session?title=男童会场&goodsAge=2',
-				},{
-					title:'秋冬上新',
-					link:'/pages/index/season',
+				wechatNavBtnHeight: 0, //胶囊按钮距离顶部位置
+				pageSize: 6,
+				navList: [{
+					title: '童婴会场',
+					link: '/pages/index/session?title=童婴会场&goodsAge=1',
+				}, {
+					title: '女童会场',
+					link: '/pages/index/session?title=女童会场&goodsAge=3',
+				}, {
+					title: '男童会场',
+					link: '/pages/index/session?title=男童会场&goodsAge=2',
+				}, {
+					title: '秋冬上新',
+					link: '/pages/index/season',
 				}],
 				banner: [],
 				listItem: [{
 					img: require("@/static/images/icon/nav-item-1.png"),
 					title: '晴妈推荐',
 					link: '/pages/index/xinma-recommend'
-				},{
+				}, {
 					img: require("@/static/images/icon/nav-item-2.png"),
 					title: '爆款好物',
 					link: '/pages/index/hotGood'
-				},{
+				}, {
 					img: require("@/static/images/icon/nav-item-3.png"),
 					title: '限时抢购',
 					link: '/pages/index/timeLimitedGood'
-				},{
+				}, {
 					img: require("@/static/images/icon/nav-item-4.png"),
 					title: '新品上架',
-					link: ''
+					link: 'no'
 				}],
-				miaoshaList:[],
-				specialList:[],
-				showItem:{
-					backTop:false
+				miaoshaList: [],
+				specialList: [],
+				showItem: {
+					backTop: false
 				},
-				current:0
+				current: 0,
+				mescroll:null,
 			}
 		},
-		onShow(){
-			setTimeout(()=>{
-				uni.hideTabBar({})
-			},200)
+		onUnload() {
+			// this.mescroll.setBounce(true)
 		},
-		async  onLoad() {
-			
+		onShow() {
+			let extConfig = wx.getExtConfigSync? wx.getExtConfigSync(): {}
+			console.log(extConfig)
+			setTimeout(() => {
+				uni.hideTabBar({})
+			}, 200)
+			this.$nextTick(() => {
+				this.$share.shareLinkTo().then((data) => {
+					if (data.id) {
+						data.path += ('?id=' + data.id)
+					}
+					if (data.isTab) {
+						uni.switchTab({
+							url: data.path
+						})
+					} else {
+						console.log(data.path)
+						setTimeout(()=>{
+							wx.navigateTo({
+								url: data.path
+							});
+						},500)
+					}
+					this.isGetPageQuery = false;
+					uni.removeStorageSync('routerData');
+				})
+			})
+		},
+		onShareAppMessage() {
+			this.$help.isBtnShare = true
+			return {
+				title:'童心优创',
+				path: '/pages/index/index?h=1',
+			}
+		},
+		async onLoad() {
+	
 		},
 		onPageScroll(e) {
 			if (this.sTimer) {
@@ -166,168 +200,192 @@
 					this.showItem.backTop = false
 				}
 			}, 300)
-		
+
 		},
 		methods: {
-			mescrollInit(){
-				setTimeout(()=>{
+		
+			mescrollInit(mescroll) {
+				setTimeout(() => {
 					uni.hideTabBar({})
-				},200)
-				this.wechatNavBtnHeight = wx.getMenuButtonBoundingClientRect().top+1
+				}, 200)
+				this.mescroll = mescroll;
+				this.wechatNavBtnHeight = wx.getMenuButtonBoundingClientRect().top + 1
 			},
-			async downCallback(){
-				this.specialList=[]
+			async downCallback() {
+				this.specialList = []
 				this.page = 1
-				this.$loginIntercept.loginCallback( async()=>{
+				this.$loginIntercept.loginCallback(async () => {
+					this.$tip.loading()
 					this.banner = await this.getBanner()
 					this.brandlist()
 					this.miaoshaList = await this.newGoodslist() //上新
+					this.$tip.loaded()
 					this.mescroll.endDownScroll()
 					this.mescroll.resetUpScroll(); // 重置列表为第一页 (自动执行 page.num=1, 再触发upCallback方法 )
 				})
 			},
-		
-			toDetail(id){
+
+			toDetail(id) {
 				console.log(id)
 				wx.navigateTo({
-					url:'/pages/good/goodDetail?id='+id
+					url: '/pages/good/goodDetail?id=' + id
 				})
 			},
 			// 轮播
-			async getBanner(){
-				let data = await this.$fly.post(this.$api.indexAdlist,{posId:1})
+			async getBanner() {
+				let data = await this.$fly.post(this.$api.indexAdlist, {
+					posId: 1
+				})
 				return data.data.list
 			},
 			// 小分类
-			async getIndexcatlist(){
+			async getIndexcatlist() {
 				let data = await this.$fly.post(this.$api.indexcatlist)
 				return data.data
 			},
 			// 上新
-			async newGoodslist(){
-				let data = await this.$fly.post(this.$api.goodslist,{goodsNav:3,page:1,pageSize:10})
+			async newGoodslist() {
+				let data = await this.$fly.post(this.$api.goodslist, {
+					goodsNav: 3,
+					page: 1,
+					pageSize: 10
+				})
 				return data.data.list
 			},
-		
+
 			// 品牌列表
-			async brandlist(){
-				 if(this.page == 1){
-					 
-					}else{
-						this.$tip.loading();
-					}
-				this.$fly.post(this.$api.brandlist,{
-					page:this.page,
-					pageSize:this.pageSize,
-				}).then((res)=>{
+			async brandlist() {
+				if (this.page == 1) {
+
+				} else {
+					this.$tip.loading();
+				}
+				this.$fly.post(this.$api.brandlist, {
+					page: this.page,
+					pageSize: this.pageSize,
+				}).then((res) => {
 					this.timeOutLoaded();
 					var list = res.data.list;
 					this.loadMoreStatusDeal(res.data.list)
 					if (list.length > 0) {
-						console.log(1213123)
 						this.specialList = this.specialList.concat(list)
 					}
 				})
 			},
-			
-			toSearch(){
+
+			toSearch() {
 				wx.navigateTo({
-					url:'/pages/search/search'
+					url: '/pages/search/search'
 				})
 			},
-			swiperChange(e){
+			swiperChange(e) {
 				this.current = e.detail.current
 			},
-			share(){
+			share() {
 				// 分享
-				
+
 			},
-			onShareAppMessage(){
+			onShareAppMessage() {
 				return {
-				 title: '童心优选',
+					title: '童心优选',
 					path: '/pages/index/index'
 				}
 			},
-			toBrandDetail (){	
+			toBrandDetail() {
 				wx.navigateTo({
-					url:'/pages/search/search'
+					url: '/pages/search/search'
 				})
 			},
-			nav(url){
+			nav(url) {
+				if(url=='no'){
+					return this.$tip.toast('正在建设中!')
+				}
 				wx.navigateTo({
-					url:url
+					url: url
 				})
 			},
 			scrollTop() {
 				this.$refs['backTop'].backTop()
 			},
-			reachBottomCallBack(){
+			reachBottomCallBack() {
 				this.brandlist();
 			},
-			
-			
+
+
 		},
-		
+
 	}
 </script>
 
 <style lang="scss" scoped>
-	.special{
+	.special {
 		padding-top: 50rpx;
-		margin-bottom:40rpx;
-		.title{
+		margin-bottom: 40rpx;
+
+		.title {
 			text-align: center;
-			font-size:36rpx;
-			font-weight:bold;
-			color:rgba(51,51,51,1);
+			font-size: 36rpx;
+			font-weight: bold;
+			color: rgba(51, 51, 51, 1);
 			margin-bottom: 40rpx;
-			image{
+
+			image {
 				width: 42rpx;
 				height: 40rpx;
 				margin-right: 18rpx;
 				vertical-align: text-top;
 			}
 		}
-		.content{
-			padding:0 30rpx;
+
+		.content {
+			padding: 0 30rpx;
 			margin-bottom: 30rpx;
-			.banner{
+
+			.banner {
 				height: 330rpx;
 				margin-bottom: 20rpx;
 			}
-			.special-good:after{
+
+			.special-good:after {
 				content: '';
 				width: 218rpx;
 			}
-			.special-good{
+
+			.special-good {
 				display: flex;
 				justify-content: space-between;
 			}
-			
+
 		}
 	}
-	.miaosha{
-		background:linear-gradient(to bottom, #fbe1e7 0%,#fff 50%,#fff 100%);
+
+	.miaosha {
+		background: linear-gradient(to bottom, #fbe1e7 0%, #fff 50%, #fff 100%);
 		padding-top: 45rpx;
-		.title{
+
+		.title {
 			text-align: center;
-			font-size:36rpx;
-			font-weight:bold;
-			color:rgba(51,51,51,1);
+			font-size: 36rpx;
+			font-weight: bold;
+			color: rgba(51, 51, 51, 1);
 			margin-bottom: 40rpx;
-			image{
+
+			image {
 				width: 42rpx;
 				height: 40rpx;
 				margin-right: 18rpx;
 				vertical-align: text-top;
 			}
 		}
-		.miaosha-good{
-			padding-left:30rpx;
-			
+
+		.miaosha-good {
+			padding-left: 30rpx;
+			.miaosha-item{
+				display: inline-block;
+			}
 		}
 	}
-	
+
 	.nav {
 		display: flex;
 		// margin: 24rpx;
@@ -358,11 +416,13 @@
 
 		z-index: 1;
 		height: 388rpx;
-		.dot-container{
+
+		.dot-container {
 			position: absolute;
 			left: 85px;
 			bottom: 30rpx;
 		}
+
 		swiper {
 			width: 100%;
 			height: 100%;
@@ -377,6 +437,7 @@
 		position: relative;
 		padding: 0 !important;
 		height: 131rpx;
+
 		.bg {
 			position: absolute;
 			left: 0;
@@ -385,19 +446,21 @@
 			height: 131rpx;
 			z-index: 1;
 		}
-		.icons-box{
+
+		.icons-box {
 			display: flex;
 			flex-direction: row;
 			flex-wrap: wrap;
 			justify-content: space-between;
 			position: absolute;
-			left:0;
-			top:-30rpx;
+			left: 0;
+			top: -30rpx;
 			// align-items: center;
 			width: 100%;
 			// height: 165rpx;
 			box-sizing: border-box;
 			padding: 0 15rpx;
+
 			.icon-item {
 				width: 25%;
 				display: flex;
@@ -405,18 +468,18 @@
 				align-items: center;
 				z-index: 2;
 				// margin-top: -34rpx;
-			
+
 				.icon-img {
 					img {
 						width: 100%;
 						height: 100%;
 					}
-			
+
 					width:100rpx;
 					height:100rpx;
 					padding: 0 0 6rpx;
 				}
-			
+
 				.icon-title {
 					font-size: 26rpx;
 					font-weight: 500;
@@ -424,10 +487,10 @@
 				}
 			}
 		}
-	
+
 		padding-bottom: 15px;
 
-		
+
 	}
 
 	.container {
@@ -462,21 +525,23 @@
 			background-color: #fff;
 			color: #666666;
 			// border:2rpx solid #FF0000;
-			border-radius: 28rpx;
+			border-radius: 31rpx;
 
 			.search-icon {
 				width: 31rpx;
 				height: 31rpx;
 				flex-grow: 0;
 				padding: 0 10rpx 0 20rpx;
-				img{
+
+				img {
 					width: 31rpx;
 					height: 31rpx;
-					display:block;
+					display: block;
 				}
-				
+
 			}
-			text{
+
+			text {
 				// margin-left:37rpx
 			}
 

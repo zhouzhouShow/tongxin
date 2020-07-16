@@ -1,7 +1,7 @@
 <template>
 	<view class="item flex-align-center">
 		<checkbox @click.stop="clickCheckBox" class="c-checkbox" color="#17B948" :checked="item.checked" v-if="type=='cart'" />
-		<image class="g-img" :src="item.goods_images[0]"
+		<image class="g-img" :src="item.goods_images[0] || item.goods_img[0]"
 		 mode=""></image>
 		<view class="g-info">
 			<p class="g-name clamp-two">{{item.goods_title || item.goods_name}}</p>
@@ -125,7 +125,7 @@
 
 			.discount {
 				margin-top: 10rpx;
-				width: 80rpx;
+				width: 70rpx;
 				height: 30rpx;
 				line-height: 30rpx;
 				text-align: center;

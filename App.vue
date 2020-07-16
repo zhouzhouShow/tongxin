@@ -1,5 +1,5 @@
 <script>
-	import {wechatGetSystemInfo, checkVersion, updataApp} from './utils/tools'
+	import {updataApp} from 'utils/tools'
 	import shareConfig from 'utils/share.js'
 	export default {
 		methods:{
@@ -10,6 +10,37 @@
 			    }) 
 			    callback()
 			},
+			updataApp() { //版本更新
+				if (uni.canIUse('getUpdateManager')) {
+					const updateManager = uni.getUpdateManager()
+					updateManager.onCheckForUpdate(function(res) {
+						if (res.hasUpdate) { // 请求完新版本信息的回调
+							updateManager.onUpdateReady(function() {
+								uni.showModal({
+									title: '更新提示',
+									content: '新版本已经准备好，是否重启应用？',
+									success: function(res) {
+										if (res.confirm) { // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+											updateManager.applyUpdate()
+										}
+									}
+								})
+							})
+							updateManager.onUpdateFailed(function() {
+								uni.showModal({ // 新的版本下载失败
+									title: '已经有新版本了哟~',
+									content: '新版本已经上线啦~，请您删除当前小程序，重新搜索打开哟~',
+								})
+							})
+						}
+					})
+				} else {
+					uni.showModal({ // 如果希望用户在最新版本的客户端上体验您的小程序，可以这样子提示
+						title: '提示',
+						content: '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
+					})
+				}
+			},
 			login(code,refreeid) {
 			  return new Promise((resolve, reject) => {
 			    this.$fly.post(this.$api.login, {
@@ -19,7 +50,6 @@
 			      wx.setStorageSync('token', res.data.token);
 			      resolve(res.data.token);
 						this.$user.getUserInfo();
-						console.log(this.$loginIntercept)
 						this.$loginIntercept.loginSuccess(true)
 			    })
 			  })
@@ -46,7 +76,7 @@
 			},
 		},
 		 async onLaunch(option) {
-			console.log(option)
+			// console.log(option)
 			setTimeout(()=>{
 				uni.hideTabBar({})
 			},200)
@@ -57,26 +87,15 @@
 			}else{
 				await this.appInit();
 			}
-			this.$loginIntercept.loginCallback(()=>{
-				this.$user.getUserInfo().then(res => {
-					console.log(res)
-				  var data = res.data;
-					if(data.avatar){
-						this.$store.commit('loginSuccess',true)
-					}else{
-						this.$store.commit('loginSuccess',false)
-					}
-				//  console.log(res)
-				})
-			})
+		
 		},
-		async onShow(e){
+		onShow(e){
 			console.log(e)
-			updataApp(); //检查版本更新
+			this.updataApp(); //检查版本更新
 			setTimeout(()=>{
 				uni.hideTabBar({})
 			},200)
-			if (e.query.scene || e.query.q || (e.query.id && (e.scene==1007||e.scene==1008))) {
+			if (e.query.scene || e.query.h || (e.query.id && (e.scene==1007||e.scene==1008))) {
 			   shareConfig.sharePage(e.query).then((res)=>{
 			     console.log(res)
 			     let data = Object.assign(res)
@@ -103,19 +122,28 @@
 			   });
 			     
 			}
-			let mtoken = wx.getStorageSync('token') || ''
-			console.log(123213123231)
-			
+			this.$loginIntercept.loginCallback(()=>{
+				this.$user.getUserInfo().then(res => {
+				  var data = res.data;
+					console.log(data)
+					if(data.is_agent == 1){
+						this.$store.commit('setAgent',true)
+					}else{
+						this.$store.commit('setAgent',false)
+					}
+					if(data.avatar){
+						this.$store.commit('loginSuccess',true)
+					}else{
+						this.$store.commit('loginSuccess',false)
+					}
+				//  console.log(res)
+				})
+			})
 			
 		},
 		created() {
 		  uni.hideTabBar({});
 		
-		},
-		onShow: function() {
-			console.log('App Show')
-			uni.hideTabBar({});
-			
 		},
 		onHide: function() {
 			uni.hideTabBar({});
@@ -125,6 +153,9 @@
 </script>
 
 <style>
+	*{
+		/* font-family:PingFang SC; */
+	}
 	@import './common/iconfont.css';
 	/*每个页面公共css */
 	.flex-align-center{
@@ -142,6 +173,7 @@
 	}
 	image{
 		display: inline-block;
+		vertical-align: middle;
 	}
 	page{
 		width: 100%;

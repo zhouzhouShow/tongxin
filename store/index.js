@@ -6,6 +6,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
 	state: {
 		hasLogin: false,
+		is_agent:false, //是否代理
 		userInfo: {},
 		set: {},
 		moreSet: {},
@@ -20,6 +21,9 @@ const store = new Vuex.Store({
 			uni.removeStorage({
 				key: 'userInfo'
 			})
+		},
+		setAgent(state,value){
+			state.is_agent = value
 		},
 		setSet(state, {
 			avatar = '',

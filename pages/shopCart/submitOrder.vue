@@ -26,7 +26,7 @@
 					<text class="label">配送方式</text>
 					<text>普通配送</text>
 					<text class="e-money">{{payOrderData.freight == 0 ?'包邮' : '快递 ￥'+payOrderData.freight}}</text>
-					<image class="arrow" src="../../static/images/seeding/icon_arrow-right-grey.png" mode=""></image>
+					<!-- <image class="arrow" src="../../static/images/seeding/icon_arrow-right-grey.png" mode=""></image> -->
 				</view>
 				<view class="tips1">工作日/节假日均可送货</view>
 				<view class="expressage flex-align-center" @click="chooseCoupon">

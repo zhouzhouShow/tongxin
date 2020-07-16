@@ -1,9 +1,9 @@
 <template>
 	<view class="item" v-if="item">
 		<view class="img-box">
-			<image class="good-img" :src="item.goods_images[0]" mode=""></image>
+			<image class="good-img" :src="item.goods_images[0]" mode="aspectFill"></image>
 			<view class="getMoney">
-				<view class="position" v-if="item.commission > 0">
+				<view class="position" v-if="item.commission > 0 && is_agent">
 					<image class="bg" src="../../static/images/index/kz_bg.png" mode=""></image>
 					<view class="tip-text" >
 						<text>可赚</text>
@@ -28,6 +28,12 @@
 			return {
 
 			};
+		},
+		computed:{
+			is_agent(){//是否代理
+			
+				return this.$store.state.is_agent || false 
+			},
 		}
 	}
 </script>

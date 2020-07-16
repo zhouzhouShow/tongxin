@@ -1,6 +1,6 @@
 <template>
 	<view class="member">
-		<view class="info" style="background: url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200714/68e88b7e46ad3c7ac6d97c460c88df4b.png) no-repeat;background-size: 100% 100%;">
+		<view class="info" style="background: url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200716/78726feeb59a5765b60b2cb638254d3d.png) no-repeat;background-size: 100% 100%;">
 			<view class="list">
 				<view class="item">
 					<text class="num">{{numberInfo.todayVisitNum}}</text>
@@ -115,7 +115,7 @@
 				this.$fly.post(this.$api.getMyMemberList,{
 					page:this.page,
 					pageSize:this.pageSize,
-					ordertype:this.sortType,
+					orderType:this.sortType,
 					nickname:this.searchText
 				}).then(res=>{
 					this.list = this.list.concat(res.data.list)
@@ -235,7 +235,7 @@
 			.icon {
 				position: absolute;
 				left: 50rpx;
-				bottom: 30rpx;
+				bottom: 39rpx;
 				width: 30rpx;
 				height: 30rpx;
 

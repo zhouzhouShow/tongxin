@@ -1,14 +1,14 @@
 <template>
 	<view class="item" v-if="item">
 		<view class="img-box">
-			<image class="good-img" :src="item.goods_images[0]" mode=""></image>
+			<image class="good-img" :src="item.goods_images[0]" mode="aspectFill"></image>
 			<!-- <view class="time">距结束02:02:02</view> -->
 		</view>
 		<view class="price-box">
 			<text class="n-price">¥{{item.price_last}}</text>
 			<text class="o-price">¥{{item.price_market}}</text>
 		</view>
-		<view class="getNum" v-if="item.commission > 0">
+		<view class="getNum" v-if="item.commission > 0 && is_agent">
 			<image src="../../static/images/index/zhuan.png"></image>
 			¥{{item.commission}}
 		</view>
@@ -22,6 +22,11 @@
 			return {
 
 			};
+		},
+		computed:{
+			is_agent(){//是否代理
+				return this.$store.state.is_agent || false
+			},
 		}
 	}
 </script>

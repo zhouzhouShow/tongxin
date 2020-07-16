@@ -213,7 +213,7 @@
 
 	.nav {
 		position: sticky;
-		top: 90rpx;
+		top: 80rpx;
 	}
 
 	.order-list {

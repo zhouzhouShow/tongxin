@@ -17,12 +17,7 @@
 		},
 		data() {
 		
-			// {
-			// 	"path": "/pages/seeding/seeding",
-			// 	"imgDefault": "/static/images/shopper-footer.png",
-			// 	"imgAc": "/static/images/shopper-active-footer.png",
-			// 	"title": "种草"
-			// },
+			
 			return {
 				tabList: [{
 						"path": "/pages/index/index",
@@ -30,6 +25,12 @@
 						"imgAc": "/static/images/index-active-footer.png",
 						"title": "首页"
 					}	,
+					{
+						"path": "/pages/seeding/seeding",
+						"imgDefault": "/static/images/shopper-footer.png",
+						"imgAc": "/static/images/shopper-active-footer.png",
+						"title": "种草"
+					},
 					{
 						"path": "/pages/shopCart/shopCart",
 						"imgDefault": "/static/images/shopcart-footer.png",
@@ -83,12 +84,12 @@
 			justify-content: center;
 			flex-direction: column;
 			font-size: 20rpx;
-			color: #C0C4CC;
+			color: #999;
 			position: relative;
 
 			image {
-				width: 54rpx;
-				height: 50rpx;
+				width: 48rpx;
+				height: 46rpx;
 				margin-bottom: 2rpx;
 			}
 

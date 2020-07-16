@@ -66,7 +66,7 @@
     height:64rpx;
     background-color: #F0F1F2;
     // border:2rpx solid #FF0000;
-    border-radius:28rpx;
+    border-radius:31rpx;
     .search-icon{
       width:31rpx;
       height:31rpx;

@@ -1,6 +1,6 @@
 <template>
 	<view class="seeding">
-		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" :down="downOption" :up="{use:false,toTop:{src:''}}">
+		<mescroll-uni ref="mescrollRef" @init="mescrollInit" @down="downCallback" :down="downOption" :up="{use:false,toTop:{src:''}}">
 			<view @click="handleToUserPage(0)" class="seeding_user" style="background: url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200715/91ed7eb28826a27f108dfc6dd787646f.png	);">
 				<view class="avatar">
 					<image :src="userInfo.avatar" mode="scaleToFill"></image>
@@ -28,9 +28,10 @@
 						<image src="../../static/images/seeding/icon_nav-active.png" mode="scaleToFill"></image>
 					</view>
 				</view>
-				<view @click="showSearch" :class="['search',isSearch?'show':'hide']">
-					<image src="../../static/images/seeding/icon_search.png" mode="scaleToFill"></image>
-					<input :focus="isSearch" @blur.stop="searchBlur" type="text" v-model="searchText" placeholder="输入要搜索的内容" />
+				<!-- :class="['search',isSearch?'show':'hide']" -->
+				<view  :class="['search',isSearch?'show':'hide']">
+					<image @click="showSearch"  src="../../static/images/seeding/icon_search.png" mode="scaleToFill"></image>
+					<input v-if="isSearch" :focus="isSearch" @blur.stop="searchBlur" @confirm="keywordSearch" type="text" v-model="searchText" placeholder="输入要搜索的内容" />
 					<view @click="keywordSearch" class="text">
 						<text>搜索</text>
 					</view>
@@ -42,7 +43,7 @@
 				 @handleToUserPage="handleToUserPage" @handleLike="handleLike"></SeedingItem>
 				<uni-load-more :status="loadingType"></uni-load-more>
 			</view>
-		</mescroll-body>
+		</mescroll-uni>
 		<view @click="handleToCreate" class="seeding_create">
 			<image src="../../static/images/seeding/icon_create.png" mode=""></image>
 		</view>
@@ -83,7 +84,8 @@
 				targetIndex: 0,
 				list: [],
 				page: 0,
-				pageSize: 10
+				pageSize: 10,
+				mescroll:null
 			};
 		},
 	
@@ -148,7 +150,7 @@
 				var data = res.target.dataset
 				return {
 					// title: `${this.userInfo.nickname}给你分享种草精选`,
-					path: '/pages/seeding/productDetail?id=' + data.id,
+					path: '/pages/index/index?h=7&id=' + data.id,
 					success(res) {
 						// 转发成功
 						this.handleShare(data.id)
@@ -160,16 +162,10 @@
 					}
 				}
 			}
-			//通过右上角菜单触发
-			return {
-				// title: '开普勒小程序',
-				path: "/pages/seeding/seeding",
-				// imageUrl: '/images/aikepler-logo.jpeg'
-			};
 		},
 		methods: {
-			mescrollInit() {
-		
+			mescrollInit(mescroll) {
+				this.mescroll = mescroll
 			},
 			async downCallback() {
 				this.page = 1
@@ -253,11 +249,16 @@
 				})
 			},
 			showSearch() {
+				console.log('显示按钮')
 				this.isSearch = true
 			},
 			searchBlur() {
+				console.log(this.searchText)
 				if (!this.searchText) {
+					console.log('隐藏按钮')
 					this.isSearch = false
+				}else{
+					this.isSearch = true
 				}
 			},
 			keywordSearch() {

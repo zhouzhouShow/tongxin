@@ -73,9 +73,17 @@
 				this.getGood();
 			},
 		},
-		onShareAppMessage() {
+		onShareAppMessage(res) {
+			this.$help.isBtnShare = true
+			if (res.from === 'button') {
+				// console.log(res.target);
+			}
 			return {
-				title:'晴妈推荐'
+				title:'晴妈推荐',
+				path: '/pages/index/index?h=2',
+				success: function() {
+					console.log('分享成功')
+				}
 			}
 		}
 	}

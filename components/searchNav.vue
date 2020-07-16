@@ -105,7 +105,7 @@
 			box-sizing: border-box;
 
 			.header-item-text {
-				font-size: 30rpx;
+				font-size: 28rpx;
 				font-weight: 500;
 				color: #999;
 				text-align: center;

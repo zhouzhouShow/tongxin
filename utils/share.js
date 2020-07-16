@@ -11,7 +11,6 @@ const shareConfig = {
 		{
 			h: 0,
 			path: '/pages/good/goodDetail',
-			isCode: true,
 		},
 		//首页分享  //参数 navId
 		{
@@ -51,19 +50,48 @@ const shareConfig = {
 	],
 	sharePage(query) {
 		return new Promise((resolve, reject) => {
-			let data = this.parsingQuery(query);
-			let str = data.path;
-			data.url = data.path + '?' + this.parseParam(data.query);
-			if (data.path != '/pages/index/index') {
-				wx.setStorageSync('routerData', data)
+		  let data
+			// console.log(query,'我的')
+		  if(query.q){ //扫码进入
+		    // data = this.parsingQuery(query);
+		    // data.isScanCode = true //是否扫码进入
+		    // console.log('二维码的:',data)
+		    // if (data.path != '/pages/index/index') {
+		    //   wx.setStorageSync('routerData', data)
+		    // }
+		  }else if(query.h){ //分享进入
+		    data = {...this.config[query.h],id:query.id};
+		    data.isScanCode = false //是否扫码进入
+		    console.log('分享的:',data)
+		    if (data.path != '/pages/index/index') {
+		      wx.setStorageSync('routerData', data)
+		    }
+		  }else if(decodeURIComponent(query.scene).includes('user_refreeid')){ //推广进来
+				// console.log('分销的:',data)
+				// let str = decodeURIComponent(query.scene)
+				// let id = str.substr(str.indexOf('=')+1)
+				// data = {...this.config[1],refreeid:id};
+				// data.isDistribution = true //是否分销进入
+				// console.log(data)
+				// if (data.path != '/pages/index/index') {
+				//   wx.setStorageSync('routerData', data)
+				// }
+				// data = this.parsingQuery(query);
+				// data.isScanCode = true //是否扫码进入
+				// console.log('二维码的:',data)
+				// if (data.path != '/pages/index/index') {
+				//   wx.setStorageSync('routerData', data)
+				// }
 			}
-			resolve(data)
-		})
+		    resolve(data)
+		  }
+		)
 	},
 	//参数处理
 	parsingQuery(query) {
 		var initData = {},
 			returnData = {};
+			console.log(query)
 		initData = query.scene ? this.QrCodeParameter(query) : (query.q ? this.ErcodeParameter(query) : query);
 		var data = this.config[initData.p];
 		returnData = data;
@@ -105,26 +133,14 @@ const shareConfig = {
 
 	//首页的跳转处理
 	shareLinkTo() {
-		if (uni.getStorageSync("routerData") && this.isGetPageQuery) {
-			var data = uni.getStorageSync("routerData");
-			if (data.isCode) {
-				utils.code2goods(data.query.id).then(res => {
-					wx.navigateTo({
-						url: data.path + '?id=' + res.goods_id
-					});
-				})
-			} else if(data.isTab) {
-				uni.switchTab({
-					url: data.url
-				})
-			}else{
-				wx.navigateTo({
-					url: data.url
-				});
+		return new Promise((resolve,reject)=>{
+			if (uni.getStorageSync("routerData") && this.isGetPageQuery) {
+				var data = uni.getStorageSync("routerData");
+				console.log(data)
+				resolve(data)
 			}
-			this.isGetPageQuery = false;
-			uni.removeStorageSync('routerData');
-		}
+		})
+		
 	}
 
 }

@@ -42,10 +42,10 @@
 			<div class="setBg">
 				<view class="brand-box">
 					<view class="b-item" v-for="(item,index) in orderGoodsList" :key="index">
-						<view class="brand-info flex-align-center">
+						<view class="brand-info flex-align-center" @click="toBrandDetail(item.brandinfo.id)">
 							<image class="b-img" :src="item.brandinfo.brand_logo[0]" mode=""></image>
 							<text class="brand-name">{{item.brandinfo.brand_name}}</text>
-							<text class="icon-arrow iconfont iconyoujiantou"></text>
+							<text class="iconfont icon-arrow  iconyoujiantou"></text>
 						</view>
 						<view class="b-good">
 							<block v-for="(itemC,indexC) in item.goodlist" :key="indexC">
@@ -105,7 +105,7 @@
 				<span class="redBg" v-if="orderDetail.final_flag == 1" @click.stop="toPay(orderDetail.id)">立即付款</span>
 				<span class="" v-if="orderDetail.final_flag == 2" @click.stop="goIndex">返回</span>
 				<!-- <span v-if="orderDetail.final_flag == 2 && orderDetail.ship_status != 3 " @click.stop="changeStatus(orderDetail.id,4)">申请退款</span> -->
-				<span v-if="orderDetail.final_flag == 4 ||orderDetail.final_flag == 5" @click="changeStatus(orderDetail.id,1)">删除订单</span>
+				<span v-if="orderDetail.final_flag == 4 || orderDetail.final_flag == 5" @click="changeStatus(orderDetail.id,1)">删除订单</span>
 				<span v-if="orderDetail.final_flag == 3" @click.stop="getLogistics">查看物流</span>
 				<span class="redBg" v-if="orderDetail.final_flag == 3 && orderDetail.receipt == 1" @click.stop="changeStatus(orderDetail.id,3)">确认收货</span>
 				<span class="redBg" v-if="orderDetail.final_flag == 4 || orderDetail.final_flag == 5"  @click.stop="addCart(orderGoodsList)">加入购物车</span>
@@ -163,6 +163,11 @@
 			}
 		},
 		methods: {
+			toBrandDetail(id){
+				wx.navigateTo({
+					url:'/pages/index/brandDetail?id='+id
+				})
+			},
 			handleToRefund(info){
 				wx.navigateTo({
 					url:'../refund/applyRefund?info='+info

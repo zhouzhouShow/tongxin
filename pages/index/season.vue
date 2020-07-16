@@ -95,11 +95,20 @@
 				this.timeOutLoaded();
 			},
 		},
-		onShareAppMessage() {
+		onShareAppMessage(res) {
+			this.$help.isBtnShare = true
+			if (res.from === 'button') {
+				// console.log(res.target);
+			}
 			return {
-				title: '秋冬上新'
+				title:'秋冬上新',
+				path: '/pages/index/index?h=5',
+				success: function() {
+					console.log('分享成功')
+				}
 			}
 		}
+	
 	}
 </script>
 

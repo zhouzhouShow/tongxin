@@ -11,7 +11,7 @@
 				</view>
 				<view v-for="(item,index) in detail.goods_images" :key="index">
 					<swiper-item class="good-swiper-item">
-						<img  @click.stop="previewImage(index)" :src="item" class="slide-image" />
+						<img  @click.stop="previewImage(index)" :src="item" mode="aspectFill" class="slide-image" />
 					</swiper-item>
 				</view>
 			</swiper>
@@ -25,17 +25,17 @@
 				<text>¥</text>
 				<text >{{detail.price_last}}</text>
 				<text >¥{{detail.price_market}}</text>
-				<image class="zhuan-icon" src="../../static/images/index/zhuan.png" mode=""></image>
-				<text class="zhuan">¥{{detail.commission}}</text>
+				<image v-if="is_agent" class="zhuan-icon"  :src="detail.islimit?'../../static/images/index/zhuan_icon2.png':'../../static/images/index/zhuan.png'" mode=""></image>
+				<text v-if="is_agent"  class="zhuan" :style="{color:detail.islimit?'#FBDF98':'#FFB44F'}">¥{{detail.commission}}</text>
 			</view>
 			<view class="sec-kill-con ">
 				<block v-if="detail.islimit && detail.islimit">
 					<view class="sec-kill-text " style="line-height: 1;margin-bottom: 10rpx;"><text class="title-tips">距结束</text></view>
 					<view class="flex-box">
 						<view class="sec-kill-time"><text>{{formateDeadline.days}}</text></view>
-						<view class="sec-kill-text"><text>:</text></view>
+						<view class="sec-kill-text" ><text style="color: #000;">:</text></view>
 						<view class="sec-kill-time"><text>{{formateDeadline.hours}}</text></view>
-						<view class="sec-kill-text"><text>:</text></view>
+						<view class="sec-kill-text" ><text style="color: #000;">:</text></view>
 						<view class="sec-kill-time"><text>{{formateDeadline.minutes}}</text></view>
 					</view>
 				</block>
@@ -166,7 +166,7 @@
 			<div class="buy-pop-box" :class="showPopChoice?'showPop':'hidePop'">
 				<div class="choose-good-box">
 					<div class="img-box">
-						<image :src="chooseImg" mode=""></image>
+						<image :src="chooseImg" mode="aspectFill"></image>
 					</div>
 					<div class="info-box">
 							<p class="price"><span class="p-icon">¥</span>{{detail.price_last}}
@@ -183,7 +183,7 @@
 					<div class="color-list" v-if="colorArr.length">
 						<div class="color-item" v-for="(value,index) in colorArr" :class="{ 'color_active' : index == colorChooseIndex}"
 						 @click.stop="curColorKeyFun('color',index)" :key="index">
-						 <image class="color-img" :src="value.img" mode=""></image>
+						 <image class="color-img" :src="value.img" mode="aspectFill"></image>
 							<span>{{value.item}}</span>
 							<!-- <span class="nums" v-if="value.choiceNum">{{value.choiceNum}}</span> -->
 						</div>
@@ -300,7 +300,7 @@
 			}
 			return {
 				title: this.detail.goods_title,
-				path: '/pages/index/index?good=' + this.good_id,
+				path: '/pages/index/index?h=0&id=' + this.id,
 				imageUrl: this.detail.goods_images[0],
 				success: function() {
 					console.log('分享成功')
@@ -349,6 +349,9 @@
 			this.grassmanList  = await this.grassman()
 		},
 		computed:{
+			is_agent(){//是否代理
+				return this.$store.state.is_agent || false
+			},
 			formateDeadline() {
 				let leftTime = this.deadline*1000; //计算剩余的毫秒数
 				// console.log(leftTime)
@@ -738,11 +741,13 @@
 					font-weight:400;
 					color:rgba(51,51,51,1);
 					margin-bottom: 18rpx;
+					line-height: 1;
 				}
 				.price{
 					font-size:30rpx;
 					font-weight:500;
 					color:rgba(242,39,50,1);
+					line-height: 1;
 				}
 			}
 		}
@@ -788,7 +793,7 @@
 		}
 		.r-text{
 			margin-left:auto;
-			margin-right: 20rpx;
+			// margin-right: 20rpx;
 			font-size:28rpx;
 			font-family:PingFang SC;
 			font-weight:400;
@@ -824,7 +829,7 @@
 		}
 		.r-text{
 			margin-left:auto;
-			margin-right: 20rpx;
+			// margin-right: 20rpx;
 			font-size:28rpx;
 			font-family:PingFang SC;
 			font-weight:400;
@@ -961,6 +966,7 @@
 			text:nth-child(3) {
 				margin-left: 30rpx;
 				font-size: 30rpx;
+				font-weight: 400;
 				text-decoration: line-through;
 			}
 			.zhuan-icon{
@@ -1047,7 +1053,7 @@
 		right: 0;
 		height: 98rpx;
 		z-index: 100;
-		padding-left:42rpx;
+		padding-left:20rpx;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -1058,7 +1064,6 @@
 		.kefu,
 		.collect {
 			font-size: 20rpx;
-			font-weight: bold;
 			color: #999999;
 			padding: 0 30rpx;
 			position: relative;

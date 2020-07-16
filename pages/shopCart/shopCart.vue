@@ -23,7 +23,7 @@
 			</view>
 		</view>
 		<view class="fixed-bottom">
-			<label class="radio">
+			<label class="radio flex-align-center">
 				<checkbox color="#17B948" :checked="allPickChecked"  @click.stop="allPickClick" />
 				<text>全选</text>
 			</label>
@@ -79,7 +79,7 @@
 		},
 		methods:{
 			toDetail(id){
-				uni.navigateTo({
+				wx.navigateTo({
 					url:"/pages/good/goodDetail?id="+id
 				})
 			},

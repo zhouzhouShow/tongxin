@@ -163,7 +163,7 @@ export default {
         .post(this.$api.goodslist, {
           brandId: this.brandid,
           cateId:this.catid,
-          ordertype:this.ordertype,
+          orderType:this.ordertype,
           page:this.page,
           pageSize:this.pageSize
         })
@@ -261,7 +261,7 @@ export default {
       box-sizing: border-box;
       // padding: 30rpx 0 0rpx;
       .header-item-text {
-        font-size: 30rpx;
+        font-size: 28rpx;
         font-weight: 500;
         color: #333333;
         text-align: center;

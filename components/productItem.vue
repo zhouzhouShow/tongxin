@@ -221,7 +221,8 @@
 						color: rgba(102, 102, 102, 1);
 
 						text:nth-child(1) {
-							margin-right: 30rpx;
+							margin-right: auto;
+							// margin-right: 30rpx;
 						}
 					}
 				}

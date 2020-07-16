@@ -1,6 +1,6 @@
 <template>
 	<view class="store_data">
-		<view class="visitors" style="background: url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200714/66749b59c21f4c9f0ef21b627675d7e9.png) no-repeat;background-size: 100% 100%;">
+		<view class="visitors" style="background: url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200714/68e88b7e46ad3c7ac6d97c460c88df4b.png) no-repeat;background-size: 100% 100%;">
 			<view class="list">
 				<view class="item">
 					<text class="num">{{storeData.todayVisitNum || 0}}</text>

@@ -111,9 +111,17 @@
 				this.getGood();
 			},
 		},
-		onShareAppMessage() {
+		onShareAppMessage(res) {
+			this.$help.isBtnShare = true
+			if (res.from === 'button') {
+				// console.log(res.target);
+			}
 			return {
-				title: '爆款好物'
+				title:'爆款好物',
+				path: '/pages/index/index?h=3',
+				success: function() {
+					console.log('分享成功')
+				}
 			}
 		}
 	}

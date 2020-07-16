@@ -108,7 +108,7 @@
 					pageSize: pageSize,
 					cateId:this.filter.cateId || '', //分类
 					goodsNav:0, ////0 全部  1 晴妈推荐 2 爆款好物 3 上新
-					ordertype: this.ordertype, ////1 销量倒序2 价格顺序 3 价格倒序 4 设置的排序 5 时间倒序 6 销量顺序 7 有货  8 人气
+					orderType: this.ordertype, ////1 销量倒序2 价格顺序 3 价格倒序 4 设置的排序 5 时间倒序 6 销量顺序 7 有货  8 人气
 					brandId:this.filter.brandId || '', //品牌
 					gender:this.filter.gender || '', //0 不限  1男 2女
 					priceMin:this.filter.priceMin || '',
@@ -140,7 +140,7 @@
 					page: page,
 					pageSize: pageSize,
 					nav_id: this.nav_id, //0搜索商品 1搜索分类
-					ordertype: this.ordertype, //1 时间 3.销量  4 价格顺序 5价格倒序   
+					orderType: this.ordertype, //1 时间 3.销量  4 价格顺序 5价格倒序   
 					catid: this.catid,
 				}).then(res => {
 					if (res.status == 1) {

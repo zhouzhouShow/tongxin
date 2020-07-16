@@ -66,11 +66,20 @@
 				})
 			},
 		},
-		onShareAppMessage() {
+		onShareAppMessage(res) {
+			this.$help.isBtnShare = true
+			if (res.from === 'button') {
+				// console.log(res.target);
+			}
 			return {
-				title: '限时抢购'
+				title:'限时抢购',
+				path: '/pages/index/index?h=4',
+				success: function() {
+					console.log('分享成功')
+				}
 			}
 		}
+		
 	}
 </script>
 

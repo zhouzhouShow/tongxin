@@ -1,7 +1,7 @@
 <template>
 	<view class="income">
 		<view class="header_nav">
-			<view @click="changeHeaderNav(nav.ids)" v-for="(nav,num) in headerNav" :key="num" class="item">
+			<view :class="nav.ids==headerNavIndex?'active':''" @click="changeHeaderNav(nav.ids)" v-for="(nav,num) in headerNav" :key="num"  class="item">
 				<text>{{nav.name}}</text>
 				<image v-if="nav.ids==headerNavIndex" src="../../static/images/center/icon_nav-active.png" mode="scaleToFill"></image>
 			</view>
@@ -166,7 +166,7 @@
 		view {
 			box-sizing: border-box;
 		}
-
+		
 		.header_nav {
 			width: 750rpx;
 			height: 90rpx;
@@ -175,7 +175,7 @@
 			align-items: center;
 			padding: 0 30rpx;
 			background-color: #fff;
-
+		
 			.item {
 				display: flex;
 				flex-direction: column;
@@ -185,17 +185,23 @@
 
 				text {
 					height: 32rpx;
-					font-size: 32rpx;
 					line-height: 32rpx;
 					font-family: PingFang SC;
-					font-weight: bold;
-					color: rgba(51, 51, 51, 1)
+					color: rgba(51, 51, 51, 1);
+					font-size:28rpx;
+					font-weight:400;
 				}
 
 				image {
 					width: 32rpx;
 					height: 14rpx;
 					margin-top: 7rpx;
+				}
+			}
+			.active{
+				text{
+					font-size:32rpx;
+					font-weight:bold;
 				}
 			}
 		}

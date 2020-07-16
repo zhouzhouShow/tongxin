@@ -9,6 +9,7 @@ import api from './api/api.js'
 import utils from './utils/index.js'
 import help from './utils/help.js'
 import user from './utils/userInfo.js'
+import share from './utils/share.js'
 import uniPopup from './components/uni-popup/uni-popup.vue'
 import loginIntercept from './utils/loginIntercept.js'
 import './utils/eventChannel.js'
@@ -30,7 +31,7 @@ Vue.prototype.$tip = tip;
 Vue.prototype.$user = user
 Vue.prototype.$utils = utils;
 Vue.prototype.$loginIntercept = loginIntercept
-// Vue.prototype.$share = shareConfig;
+Vue.prototype.$share = share;
 // Vue.prototype.$intercept = logicIntercept;
 
 const app = new Vue({

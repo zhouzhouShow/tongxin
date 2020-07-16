@@ -103,7 +103,9 @@
 			}
 		}, {
 			"path": "pages/seeding/shoppingCarRelate",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "商品选择"
+			}
 		}, {
 			"path": "pages/seeding/boughtRelate",
 			"style": {}
@@ -137,7 +139,9 @@
 			}
 		}, {
 			"path": "pages/center/inviteMember",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "我邀请的会员"
+			}
 		}, {
 			"path": "pages/center/storeData",
 			"style": {}
