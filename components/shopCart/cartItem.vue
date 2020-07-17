@@ -2,7 +2,7 @@
 	<view class="item flex-align-center">
 		<checkbox @click.stop="clickCheckBox" class="c-checkbox" color="#17B948" :checked="item.checked" v-if="type=='cart'" />
 		<image class="g-img" :src="item.goods_images[0] || item.goods_img[0]"
-		 mode=""></image>
+		 mode="aspectFill"></image>
 		<view class="g-info">
 			<p class="g-name clamp-two">{{item.goods_title || item.goods_name}}</p>
 			<div class="flex flex-align-center resBox">
@@ -43,7 +43,7 @@
 		},
 		filters:{
 			split(str){
-				return  str.replace('_',' : ');
+				return  str.replace('_',' ; ');
 			},
 		},
 		data() {
@@ -72,7 +72,7 @@
 	.item {
 		padding-bottom: 30rpx;
 		.c-checkbox{
-			margin-right: 20rpx;
+			margin-right: 10rpx;
 		}
 		.g-img {
 			width: 219rpx;
@@ -87,10 +87,10 @@
 			justify-content: flex-start;
 			text-align: left;
 			height: 230rpx;
-
+			font-family:PingFang SC;
 			.g-name {
 				font-size: 28rpx;
-				font-weight: 500;
+				font-weight: 400;
 				color: rgba(51, 51, 51, 1);
 			}
 			.resBox{
@@ -113,7 +113,7 @@
 					line-height: 36rpx;
 					margin-top: 18rpx;
 					// padding:0 13rpx;
-					width: 194rpx;
+					width: 168rpx;
 					height: 46rpx;
 					line-height: 46rpx;
 					background: rgba(248, 248, 248, 1);

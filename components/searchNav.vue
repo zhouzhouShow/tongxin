@@ -12,8 +12,8 @@
 			<div class="header-item-text" :class="activeIndex==4?'item-active':''">价格</div>
 			<div :class="activeIndex?'active-line':''"></div>
 			<div class="order-arrows">
-				<div class="up-arrow" :class="activeIndex==4&&!priceOrder?'up-arrow-active':''"></div>
-				<div class="down-arrow" :class="activeIndex==4&&priceOrder?'down-arrow-active':''"></div>
+				<div class="iconfont iconarrow2 rowbox " style="margin-bottom: 10rpx;" :class="activeIndex==4&&!priceOrder?'active':''"></div>
+				<div class="iconfont iconarrow rowbox" :class="activeIndex==4&&priceOrder?'active':''"></div>
 			</div>
 		</div>
 		<div class="header-item" @click="changeIndex(6)">
@@ -121,46 +121,19 @@
 			.item-active {
 				color: #F22631;
 			}
-
+			.rowbox{
+				width: 17rpx;
+				height: 9rpx;
+			}
 			.order-arrows {
 				position: absolute;
-				top: 0;
-				right: 33rpx;
-				margin-top: 32rpx;
-				color: #eee;
-
-				.up-arrow {
-					width: 6px;
-					height: 6px;
-					border-top: 1px solid #999;
-					border-right: 1px solid #999;
-					transform: rotate(-45deg);
-					// border-width: 10rpx;
-					// border-style: solid;
-					// border-color: transparent transparent #eee transparent;
-					margin-bottom: -1rpx;
-				}
-
-				.down-arrow {
-					width: 6px;
-					height: 6px;
-					border-top: 1px solid #999;
-					border-right: 1px solid #999;
-					transform: rotate(135deg);
-					// border-width: 10rpx;
-					// border-style: solid;
-					// border-color:#eee transparent transparent transparent;
-					// transform: rotate(180deg); /*顺时针旋转90°*/
-				}
-
-				.up-arrow-active {
-					border-color: #F22631;
-					color: #F22631;
-				}
-
-				.down-arrow-active {
-					border-color: #F22631;
-					color: #F22631;
+				top: 17rpx;
+				right: 42rpx;
+				// margin-top: 17rpx;
+				color: #666666;
+				font-size: 30rpx;
+				.active{
+					color: #F22732 !important;
 				}
 			}
 		}

@@ -24,13 +24,14 @@
 						"imgDefault": "/static/images/index-footer.png",
 						"imgAc": "/static/images/index-active-footer.png",
 						"title": "首页"
-					}	,
-					{
-						"path": "/pages/seeding/seeding",
-						"imgDefault": "/static/images/shopper-footer.png",
-						"imgAc": "/static/images/shopper-active-footer.png",
-						"title": "种草"
-					},
+					}
+						,
+					// {
+					// 	"path": "/pages/seeding/seeding",
+					// 	"imgDefault": "/static/images/shopper-footer.png",
+					// 	"imgAc": "/static/images/shopper-active-footer.png",
+					// 	"title": "种草"
+					// },
 					{
 						"path": "/pages/shopCart/shopCart",
 						"imgDefault": "/static/images/shopcart-footer.png",
@@ -72,7 +73,7 @@
 		align-items: center;
 		justify-content: space-around;
 		background: #fff;
-		border-top: 1px solid #ddd;
+		border-top: 1rpx solid #eee;
 		z-index: 210;
 		box-sizing: border-box;
 

@@ -7,7 +7,7 @@
 			</view>
 		</view>
 		<view class="info">
-			<view class="info_box" style="background: url(../../static/images/center/income_top_bg.png) no-repeat;background-size: 100% 100%;">
+			<view class="info_box" style="background: url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200717/a50effd87b2aa982e85773c669cc6aac.png) no-repeat;background-size: 100% 100%;">
 				<view class="title">
 					<text>{{headerNav[headerNavIndex-1].name}}收入（元）</text>
 				</view>

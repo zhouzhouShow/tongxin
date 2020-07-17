@@ -107,9 +107,9 @@
 			      }
 			      if(data.path !="/pages/index/index"){
 			        console.log('是否',data)
-			        this.toPage(()=>{
+			        // this.toPage(()=>{
 			             this.$share.isGetPageQuery = true;
-			          }) 
+			          // }) 
 			        }
 							if(e.query.scene && decodeURIComponent(e.query.scene).includes('user_refreeid')){ //分销,下级进入
 								let str = decodeURIComponent(e.query.scene)
@@ -153,9 +153,7 @@
 </script>
 
 <style>
-	*{
-		/* font-family:PingFang SC; */
-	}
+
 	@import './common/iconfont.css';
 	/*每个页面公共css */
 	.flex-align-center{
@@ -227,6 +225,7 @@
 	/* 选中后的 对勾样式 （白色对勾 可根据UI需求自己修改） */
 	checkbox .wx-checkbox-input.wx-checkbox-input-checked::before {
 		border-radius: 50%;
+		box-sizing: border-box;
 		/* 圆角 */
 		width: 40rpx;
 		/* 选中后对勾大小，不要超过背景的尺寸 */

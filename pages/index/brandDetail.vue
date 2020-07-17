@@ -6,7 +6,7 @@
           interval="2000" duration="500" circular=true indicator-dots="false">
           <div v-for="(item,index) in brand_detail.brand_banner" :key="index">
             <swiper-item>
-              <img  style="display:block;" :src="item">
+              <img  style="display:block;" :src="item" mode="aspectFill">
             </swiper-item>
           </div>
         </swiper>
@@ -15,19 +15,20 @@
     <div class="header-bar">
       <div class="header-item" @click="changeIndex(0)">
         <div class="header-item-text" :class="activeIndex == 0?'item-active':''">有货</div>
+				
       </div>
       <div class="header-item" @click="changeIndex(1)">
         <div class="header-item-text" :class="activeIndex == 1?'item-active':''">价格</div>
 				<div class="order-arrows">
-				   <div class="up-arrow" :class="activeIndex==1&&!priceOrder?'up-arrow-active':''"></div>
-				  <div class="down-arrow" :class="activeIndex==1&&priceOrder?'down-arrow-active':''"></div>
+				   <div class="iconfont iconarrow2 rowbox " style="margin-bottom: 10rpx;" :class="activeIndex==1&&!priceOrder?'active':''"></div>
+				  <div class="iconfont iconarrow rowbox " :class="activeIndex==1&&priceOrder?'active':''"></div>
 				</div>
       </div>
       <div class="header-item" @click="changeIndex(2)">
         <div class="header-item-text" :class="activeIndex == 2?'item-active':''">销量</div>
         <div class="order-arrows">
-           <div class="up-arrow" :class="activeIndex==2&&!xiaolOrder?'up-arrow-active':''"></div>
-          <div class="down-arrow" :class="activeIndex==2&&xiaolOrder?'down-arrow-active':''"></div>
+           <div class="iconfont iconarrow2 rowbox " style="margin-bottom: 10rpx;" :class="activeIndex==2&&!xiaolOrder?'active':''"></div>
+          <div class="iconfont iconarrow rowbox " :class="activeIndex==2&&xiaolOrder?'active':''"></div>
         </div>
       </div>
     </div>
@@ -64,10 +65,10 @@ export default {
     return {
       brandid: "",
       catid: "",
-      ordertype: 7, //1 时间 3.销量  4 价格顺序 5价格倒序 6 更新 7 商品排序倒序 8商品排序升序
+      ordertype: 0, //1 时间 3.销量  4 价格顺序 5价格倒序 6 更新 7 商品排序倒序 8商品排序升序
       brand_detail: {},
       brand_goods: [],
-      activeIndex: 0, //0人气 1销售 2价格
+      activeIndex: -1, //0有货 1价格 2销售
       priceOrder: true, //false是默认顺序即升序 true是降序
 			xiaolOrder:false,
       page: 1,
@@ -95,7 +96,7 @@ export default {
       this.page=1,
       this.pageSize=10,
       this.ordertype = 6
-      this.activeIndex = 0
+      this.activeIndex = -1
       this.priceOrder = true
       this.brand_goods = []
     },
@@ -163,7 +164,7 @@ export default {
         .post(this.$api.goodslist, {
           brandId: this.brandid,
           cateId:this.catid,
-          orderType:this.ordertype,
+          orderType:this.ordertype ? this.ordertype :'',
           page:this.page,
           pageSize:this.pageSize
         })
@@ -233,9 +234,9 @@ export default {
       .brand-name {
         margin-top: 10rpx;
         text-align: center;
-        font-size: 22rpx;
+        font-size: 24rpx;
         font-family: PingFang-SC-Regular;
-        font-weight: bold;
+        font-weight:400;
         color: rgba(96, 96, 96, 1);
         white-space: nowrap;
         overflow: hidden;
@@ -250,6 +251,16 @@ export default {
     width: 100%;
 		height: 90rpx;
 		background: #fff;
+		.header-item:after {
+			position: absolute;
+			left: 0;
+			top: 50%;
+			width: 2rpx;
+			height: 30rpx;
+			content: '';
+			background: #eee;
+			margin-top: -15rpx;
+		}
     .header-item {
       position: relative;
       display: flex;
@@ -262,7 +273,7 @@ export default {
       // padding: 30rpx 0 0rpx;
       .header-item-text {
         font-size: 28rpx;
-        font-weight: 500;
+        font-weight: 400;
         color: #333333;
         text-align: center;
         padding-bottom: 15rpx;
@@ -275,44 +286,21 @@ export default {
       .item-active {
         color: #F22732;
       }
-      .order-arrows{
-      position: absolute;
-      top:0;
-      right: 75rpx;
-      margin-top: 36rpx;
-      color: #eee;
-      .up-arrow{
-          width: 6px;
-          height: 6px;
-          border-top: 1px solid #999;
-          border-right: 1px solid #999;
-          transform: rotate(-45deg);
-        // border-width: 10rpx;
-        // border-style: solid;
-        // border-color: transparent transparent #eee transparent;
-         margin-bottom: -1rpx;
+			.rowbox{
+				width: 17rpx;
+				height: 9rpx;
+			}
+      .order-arrows {
+      	position: absolute;
+      	top: -5rpx;
+      	right: 70rpx;
+      	// margin-top: 17rpx;
+      	color: #666666;
+      	font-size: 30rpx;
+      	.active{
+      		color: #F22732 !important;
+      	}
       }
-      .down-arrow{
-           width: 6px;
-          height: 6px;
-          border-top: 1px solid #999;
-          border-right: 1px solid #999;
-          transform: rotate(135deg);
-        // border-width: 10rpx;
-        // border-style: solid;
-        // border-color:#eee transparent transparent transparent;
-        // transform: rotate(180deg); /*顺时针旋转90°*/
-      }
-      .up-arrow-active{
-        border-color: #F22732;
-        color: #F22732;
-      }
-      .down-arrow-active{
-        border-color:#F22732;
-        color: #F22732;
-
-      }
-    }
     }
   }
 	

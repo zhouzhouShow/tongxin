@@ -563,6 +563,7 @@
 			justify-content: center;
 			align-items: center;
 			.bg{
+				border-radius:8rpx;
 				width: 200rpx;
 				height: 200rpx;
 				display: flex;

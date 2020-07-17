@@ -222,10 +222,10 @@
 					height: 332rpx;
 					padding: 0 30rpx;
 					margin-bottom: 20rpx;
-
+					font-weight:400;
 					.address-item-top {
 						height: 218rpx;
-						font-weight: 500;
+						font-weight: 400;
 						overflow: hidden;
 
 						>div:nth-child(1) {
@@ -248,7 +248,7 @@
 						justify-content: space-between;
 						color: #666666;
 						font-size: 30rpx;
-						font-weight: 500;
+						font-weight: 400;
 						>div {
 							display: flex;
 							align-items: center;
@@ -290,7 +290,7 @@
 					color: white;
 					border-radius: 44rpx;
 					font-size: 32rpx;
-					font-weight: 500;
+					font-weight: 400;
 					line-height: 88rpx;
 					text-align: center;
 				}

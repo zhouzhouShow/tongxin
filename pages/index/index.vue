@@ -3,7 +3,7 @@
 		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" :down="downOption" :up="{use:false,toTop:{src:''}}">
 			<view class="header-box" :style="{paddingTop:wechatNavBtnHeight+'px'}">
 				<view class="header">
-					<image class="logo-icon" src="@/static/images/icon/logo-icon.png" mode=""></image>
+					<image class="logo-icon" src="@/static/images/icon/logo.png" mode=""></image>
 					<navigator url="/pages/search/search">
 						<view class="search-input-container">
 							<view class="search-icon">
@@ -14,16 +14,16 @@
 					</navigator>
 				</view>
 				<view class="nav flex-align-center">
-					<image class="nav-icon" src="/static/images/icon/logo-text.png"></image>
+					<!-- <image class="nav-icon" src="/static/images/icon/logo-text.png"></image> -->
 					<view class="nav-box flex-align-center">
-						<text @click="nav(item.link)" class="item" v-for="(item,index) in navList" :key="index">{{item.title}}</text>
+						<text @click="nav(item.link)"  class="item" :class="index==0?'blodS' : ''" v-for="(item,index) in navList" :key="index">{{item.title}}</text>
 					</view>
 				</view>
 				<view class="swiper-display-area">
 					<swiper @change="swiperChange" v-if="banner.length>0" interval="3000" autoplay=true duration="500" circular=true>
 						<view v-for="(item,index) in banner" :key="index" @click="nav(item.ad_link)">
 							<swiper-item>
-								<img style="width:100%;height:388rpx;display:block;"   :src="item.image">
+								<img style="width:100%;height:388rpx;display:block;"  mode="aspectFill"  :src="item.image">
 							</swiper-item>
 						</view>
 					</swiper>
@@ -47,7 +47,7 @@
 				</view>
 			</view>
 			<view class="miaosha">
-				<view class="title">
+				<view class="title flex-center">
 					<image src="../../static/images/index/index_icon_1.png" mode=""></image>
 					<text class="text">新品秒杀版</text>
 				</view>
@@ -63,12 +63,12 @@
 
 			</view>
 			<view class="special">
-				<view class="title">
+				<view class="title flex-center">
 					<image src="../../static/images/index/index_icon_2.png" mode=""></image>
 					<text class="text">必逛专题</text>
 				</view>
 				<view class="content" v-for="(item ,index) in specialList" :key="index">
-					<image class="banner" :src="item.brand_banner[0]"></image>
+					<image class="banner" mode="aspectFill" :src="item.brand_banner[0]"></image>
 					<view class="special-good">
 						<view v-for="(gItem ,gIndex) in item.goodlist" :key="gIndex" @click="toDetail(gItem.goods_id)">
 							<brandGoodItem :item="gItem"></brandGoodItem>
@@ -108,6 +108,9 @@
 				wechatNavBtnHeight: 0, //胶囊按钮距离顶部位置
 				pageSize: 6,
 				navList: [{
+					title: '首页',
+					link: '',
+				},{
 					title: '童婴会场',
 					link: '/pages/index/session?title=童婴会场&goodsAge=1',
 				}, {
@@ -136,7 +139,7 @@
 				}, {
 					img: require("@/static/images/icon/nav-item-4.png"),
 					title: '新品上架',
-					link: 'no'
+					link: '/pages/index/season'
 				}],
 				miaoshaList: [],
 				specialList: [],
@@ -151,37 +154,41 @@
 			// this.mescroll.setBounce(true)
 		},
 		onShow() {
-			let extConfig = wx.getExtConfigSync? wx.getExtConfigSync(): {}
-			console.log(extConfig)
+			// let extConfig = wx.getExtConfigSync? wx.getExtConfigSync(): {}
+			// console.log(extConfig)
 			setTimeout(() => {
 				uni.hideTabBar({})
-			}, 200)
-			this.$nextTick(() => {
-				this.$share.shareLinkTo().then((data) => {
-					if (data.id) {
-						data.path += ('?id=' + data.id)
-					}
-					if (data.isTab) {
-						uni.switchTab({
-							url: data.path
+			}, 100)
+		
+			// this.$nextTick(() => {
+					setTimeout(()=>{
+						this.$share.shareLinkTo().then((data) => {
+							console.log(data)
+							if (data.id) {
+								data.path += ('?id=' + data.id)
+							}
+							if (data.isTab) {
+								uni.switchTab({
+									url: data.path
+								})
+							} else {
+								console.log(data.path)
+								setTimeout(()=>{
+									wx.navigateTo({
+										url: data.path
+									});
+								},500)
+							}
+							this.isGetPageQuery = false;
+							uni.removeStorageSync('routerData');
 						})
-					} else {
-						console.log(data.path)
-						setTimeout(()=>{
-							wx.navigateTo({
-								url: data.path
-							});
-						},500)
-					}
-					this.isGetPageQuery = false;
-					uni.removeStorageSync('routerData');
-				})
-			})
+					},1000)
+			// })
 		},
 		onShareAppMessage() {
 			this.$help.isBtnShare = true
 			return {
-				title:'童心优创',
+				title:'童创优选',
 				path: '/pages/index/index?h=1',
 			}
 		},
@@ -390,7 +397,7 @@
 		display: flex;
 		// margin: 24rpx;
 		padding: 24rpx 30rpx 30rpx;
-		height: 65rpx;
+		// height: 65rpx;
 
 		.nav-icon {
 			width: 130rpx;
@@ -401,11 +408,15 @@
 		.nav-box {
 			flex: 1;
 			justify-content: space-between;
-
+			
 			.item {
 				font-size: 28rpx;
 				font-weight: 400;
 				color: #fff;
+			}
+			.blodS{
+				font-size:32rpx;
+				font-weight:bold;
 			}
 		}
 	}
@@ -454,7 +465,7 @@
 			justify-content: space-between;
 			position: absolute;
 			left: 0;
-			top: -30rpx;
+			top: -35rpx;
 			// align-items: center;
 			width: 100%;
 			// height: 165rpx;
@@ -506,19 +517,19 @@
 		display: flex;
 		align-items: center;
 
-		padding: 0 216rpx 0 30rpx;
+		padding: 0 216rpx 0 20rpx;
 
 		.logo-icon {
-			width: 135rpx;
-			height: 50rpx;
-			margin-right: 30rpx;
+			width: 210rpx;
+			height: 62rpx;
+			margin-right: 18rpx;
 		}
 
 		.search-input-container {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
-			width: 340rpx;
+			width: 295rpx;
 			height: 62rpx;
 			font-size: 26rpx;
 			font-weight: 400;

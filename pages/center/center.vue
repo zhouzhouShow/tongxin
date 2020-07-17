@@ -136,7 +136,7 @@
 				</view>
 			</view>
 		</view>
-		<comfooter :tabIdx="3"></comfooter>
+		<comfooter :tabIdx="2"></comfooter>
 	</view>
 </template>
 
@@ -205,8 +205,11 @@
 						iv:e.target.iv,
 						encryptedData:e.target.encryptedData
 			    }).then(res => {
-						this.$store.commit('loginSuccess',true)
-						this.$tip.toast('授权成功!')
+						this.getCenterIndex(()=>{
+							this.$store.commit('loginSuccess',true)
+							this.$tip.toast('授权成功!')
+						})
+						
 			    })
 			  }
 			},
@@ -218,13 +221,16 @@
 					url: url
 				})
 			},
-			getCenterIndex() {
+			getCenterIndex(callback) {
 				this.$fly.post(this.$api.getCenterIndex).then(res => {
 					this.userInfo = res.data
 					if(res.data.is_agent == 1){
 						this.$store.commit('setAgent',true)
 					}else{
 						this.$store.commit('setAgent',false)
+					}
+					if(callback){
+						callback()
 					}
 					if (this.userInfo.is_agent) {
 						this.getMyAssets()
@@ -306,7 +312,7 @@
 		background-color: #F3F3F3;
 		min-height: 100%;
 		overflow: hidden;
-		padding-bottom: 100rpx;
+		// padding-bottom: 100rpx;
 
 		view {
 			box-sizing: border-box;
@@ -426,7 +432,9 @@
 				}
 			}
 		}
-
+		.service{
+			padding-bottom: 100rpx;
+		}
 		.order,
 		.income,
 		.store,
@@ -443,6 +451,7 @@
 				align-items: center;
 				padding: 20rpx 0 30rpx 0;
 				background-color: #fff;
+				border-radius:  0 0 10rpx 10rpx;
 				.contact{
 					box-shadow: none;
 					background: transparent;

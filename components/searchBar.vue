@@ -58,6 +58,7 @@
   // margin:12rpx 0 0;
 	background: #fff;
 	border-bottom:1rpx solid #EEEEEE;
+	box-sizing: border-box;
   .search-input-container{
     display: flex;
     flex-direction: row;

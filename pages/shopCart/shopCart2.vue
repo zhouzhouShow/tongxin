@@ -23,7 +23,7 @@
 			</view>
 		</view>
 		<view class="fixed-bottom">
-			<label class="radio">
+			<label class="radio flex-align-center">
 				<checkbox color="#17B948" :checked="allPickChecked"  @click.stop="allPickClick" />
 				<text>全选</text>
 			</label>
@@ -36,7 +36,7 @@
 				结算
 			</view>
 		</view>
-		<comfooter :tabIdx="2" :centerAngle="payAngle"></comfooter>
+		<comfooter :tabIdx="1" :centerAngle="payAngle"></comfooter>
 	</view>
 </template>
 
@@ -79,7 +79,7 @@
 		},
 		methods:{
 			toDetail(id){
-				uni.navigateTo({
+				wx.navigateTo({
 					url:"/pages/good/goodDetail?id="+id
 				})
 			},
@@ -93,6 +93,9 @@
 						deleteIndexList.push(indexs)
 					}
 				})
+				if(cartids.length==0){
+					return this.$tip.toast('请选中商品!')
+				}
 				// console.log(deleteIndexList)
 				let cartIdStr = cartids.join(',')
 				await this.$fly.post(this.$api.delCart,{ids:cartIdStr}).then( async(res)=>{
@@ -530,7 +533,7 @@
 <style lang="scss" scoped>
 
 	.good-list {
-		padding: 16rpx 20rpx 210rpx;
+		padding: 20rpx 20rpx 210rpx;
 		
 		.good-brand-item {
 			background: #fff;
@@ -541,7 +544,7 @@
 				// padding: 0 20rpx;
 				margin-bottom: 30rpx;
 				.brand-info {
-					margin-left: 10rpx;
+					margin-left: 2rpx;
 					font-size: 32rpx;
 					font-weight: 500;
 					color: rgba(51, 51, 51, 1);

@@ -54,7 +54,7 @@
 				<text>{{detail.likenum}}</text>
 			</view>
 		</view>
-		<view class="good-area text-column-box" style="padding:40rpx 0">
+		<view class="good-area text-column-box" style="padding:40rpx 0;display: none;">
 			<view class="tips-box">
 				温馨提示：新疆，西藏地区不发货
 			</view>
@@ -89,7 +89,7 @@
 				<text class="text">{{(colorChooseIndex ===-1 && sizeChooseIndex ===-1) ? '请选择颜色尺码' :(colorArr[colorChooseIndex].item +sizeArr[sizeChooseIndex].item) }} </text>
 				<text class="iconfont iconyoujiantou" ></text>
 			</view>
-			<view class="setMargin row-box">
+			<view class="setMargin row-box" style="display: none;">
 				<text class="label">参数</text>
 				<text class="text">品牌 适用年龄</text>
 				<text class="iconfont iconyoujiantou" ></text>
@@ -291,6 +291,7 @@
 				btnShowType:1,//1:点击颜色规格  2:点击加入购物车 3:点击立即购买
 				shareImg:'',//分享图片
 				userIsAgent:false,//是否为代理
+				userId:''
 			};
 		},
 		onShareAppMessage(res) {
@@ -300,7 +301,7 @@
 			}
 			return {
 				title: this.detail.goods_title,
-				path: '/pages/index/index?h=0&id=' + this.id,
+				path: '/pages/index/index?h=0&id=' + this.id+'&p='+this.userId,
 				imageUrl: this.detail.goods_images[0],
 				success: function() {
 					console.log('分享成功')
@@ -344,6 +345,7 @@
 			this.$tip.loaded()
 			if(this.showItem.share ){ //是代理
 			 this.shareImg = await this.shareWXCode()
+			
 			}
 			this.recommendList =  await this.recommondGoodslist()
 			this.grassmanList  = await this.grassman()
@@ -381,7 +383,8 @@
 				this.$utils.saveImgToPhotosAlbum(img)
 			},
 		 async shareWXCode(){
-				let data = await this.$fly.post(this.$api.shareWXCode)
+			 // this.$user.getInfo('id')
+				let data = await this.$fly.post(this.$api.shareWXCode,{id:this.id,url:'pages/index/index'})
 				return data.data.imgUrl
 			},
 			 shareImgFunc(){
@@ -678,7 +681,7 @@
 		}
 	}
 	.text-column-box{
-		padding: 40rpx 30rpx;
+		padding: 30rpx 30rpx;
 		background: #fff;
 		margin-bottom: 20rpx;
 	}
@@ -761,7 +764,7 @@
 		// </view>
 	}
 	.seeding{
-		padding:20rpx 30rpx;
+		padding:22rpx 30rpx;
 		background: #fff;
 		margin-bottom: 20rpx;
 		.seeding-img{
@@ -806,8 +809,8 @@
 		margin-bottom: 20rpx;
 		background: #fff;
 		.b-img{
-			width: 120rpx;
-			height: 120rpx;
+			width: 80rpx;
+			height: 80rpx;
 			margin-right: 20rpx;
 		}
 		.name-box{
@@ -898,7 +901,7 @@
 	}
 	.good-name-box{
 		display: flex;
-		padding: 40rpx 30rpx;
+		padding: 30rpx 30rpx 40rpx;
 		background: #fff;
 		margin-bottom: 20rpx;
 		.good-name{
@@ -909,8 +912,8 @@
 		}
 		.like-box{
 			display: flex;
-			align-items: center;
 			margin-left:48rpx;
+			margin-top:8rpx;
 			.like{
 				width: 34rpx;
 				height: 34rpx;
@@ -1301,8 +1304,11 @@
 					div.size-color {
 						border: 1px solid rgba(238, 238, 238, 1);
 						border-radius: 8rpx;
+						width: 140rpx;
 						span{
 							background: #fff;
+							height: 56rpx;
+							line-height: 56rpx;
 						}
 					}
 					.color_active{
@@ -1326,6 +1332,7 @@
 								height: 200rpx;
 								background:rgba(230,231,233,1);
 								margin-bottom: 8rpx;
+								border-radius:8rpx;
 						}
 						span{
 							width: 100%;
@@ -1464,7 +1471,7 @@
 			}
 			.add-cart{
 				border-radius:40px 0px 0px 40px;
-				background:linear-gradient(90deg,rgba(251,172,60,1) 0%,rgba(247,114,16,1) 100%);
+				background:linear-gradient(90deg, rgba(247,114,16,1)0%,rgba(251,172,60,1) 100%);
 			}
 			.buy-now{
 				border-radius:0px 40rpx 40rpx 0px;

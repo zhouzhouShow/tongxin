@@ -15,8 +15,12 @@
 			</view>
 		</view>
 		<viwe class="list-nav">
+			<view class="scroll">
 			<!-- <view class="item"></view> -->
-			<image class="img1" v-for="(item,index) in list" :key="index"  :src="item.goods_images[0]" mode=""></image>
+				<scroll-view scroll-x="true" style="white-space:nowrap">
+					<image class="img1" v-for="(item,index) in navList" :key="index"  :src="item.goods_images[0]" mode="aspectFill"></image>
+				</scroll-view>
+			</view>
 			<view class="more" @click="showMore">
 				<text>查看更多</text>
 				<image class="icon" src="../../static/images/icon/getMore.png" mode=""></image>
@@ -48,6 +52,7 @@
 	import loadMore from '@/components/uni-load-more/uni-load-more.vue'
 	import loadMoreData from '@/mixins/loadmore.js'
 	export default {
+		
 		mixins: [loadMoreData],
 		components: {
 			product,
@@ -61,12 +66,14 @@
 					share: true,
 					backTop: true,
 				},
+				page:2,
 				list: [],
-
+				navList:[],
 			};
 		},
 		onLoad(){
 			this.getGood()
+			this.navListFun()
 		},
 		methods: {
 			showMore(){
@@ -74,6 +81,21 @@
 			},
 			share(e) {
 
+			},
+			async navListFun(){
+				this.$tip.loading()
+					let params = {
+						page: 1,
+						pageSize: 10,
+						goodsNav:3,
+					}
+					await this.$fly.post(this.$api.goodslist,params).then(res=>{
+						let list = res.data.list
+						if(list.length>0){
+							this.navList = this.navList.concat(list)
+						}
+					})
+					this.timeOutLoaded();
 			},
 			reachBottomCallBack(){
 				this.getGood();
@@ -153,7 +175,12 @@
 			padding: 10rpx 0 10rpx 20rpx;
 			display: flex;
 			margin-bottom: 45rpx;
+			.scroll{
+				flex: 1;
+				overflow: hidden;
+			}
 			.img1,.img2{
+				display: inline-block;
 				width: 320rpx;
 				height: 320rpx;
 				margin-right: 10rpx;

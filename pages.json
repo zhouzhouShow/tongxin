@@ -4,7 +4,7 @@
 			"path": "pages/index/index",
 			"style": {
 				"navigationStyle": "custom",
-				"navigationBarTitleText": "童心优选"
+				"navigationBarTitleText": "童创优选"
 			}
 		}, {
 			"path": "pages/center/center",
@@ -175,7 +175,9 @@
 			}
 		}, {
 			"path": "pages/center/refund/refundResult",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "退货/售后申请"
+			}
 		}, {
 			"path": "pages/center/refund/refundOrder",
 			"style": {
@@ -212,12 +214,12 @@
 				"selectedIconPath": "static/images/index-active-footer.png",
 				"text": "首页"
 			},
-			{
-				"pagePath": "pages/seeding/seeding",
-				"iconPath": "static/images/shopper-footer.png",
-				"selectedIconPath": "static/images/shopper-active-footer.png",
-				"text": "种草"
-			},
+			// {
+			// 	"pagePath": "pages/seeding/seeding",
+			// 	"iconPath": "static/images/shopper-footer.png",
+			// 	"selectedIconPath": "static/images/shopper-active-footer.png",
+			// 	"text": "种草"
+			// },
 			{
 				"pagePath": "pages/shopCart/shopCart",
 				"iconPath": "static/images/shopcart-footer.png",

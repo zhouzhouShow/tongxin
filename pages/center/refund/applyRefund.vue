@@ -9,7 +9,7 @@
 					<text>申请数量</text>
 				</view>
 				<view class="control">
-					<uni-number-box @change="changeApplyNumber" :min="1" :max="getMax"></uni-number-box>
+					<uni-number-box errorMsg="数量已达上限!" @change="changeApplyNumber" :min="1" :max="getMax"></uni-number-box>
 				</view>
 			</view>
 			<view class="apply_reason">
@@ -218,7 +218,7 @@
 					this.mark = ''
 					this.images = []
 					this.submitImagesUrl = []
-					wx.navigateTo({
+					wx.redirectTo({
 						url:'./refundResult'
 					})
 				}).catch(err=>{

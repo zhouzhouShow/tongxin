@@ -134,7 +134,7 @@
 			};
 		},
 		 async onLoad(option){
-			 console.log(123123)
+	
 			this.$tip.loading();
 			this.shopCarIds = option.cart_ids;
 			this.addressId = option.address_id;
@@ -214,7 +214,7 @@
 						console.log(result)
 						if (result.data.is_finish == 1) {
 							uni.redirectTo({
-								url: "/pages/shopAndOrder/settlement/orderDetail?order_id=" + result.data.order_id
+								url: "/pages/center/order/orderDetail?order_id=" + result.data.order_id
 							});
 						} else {
 							var payMentResult = await this.$fly.post(this.$api.getJsApiData, {
@@ -228,9 +228,8 @@
 								signType: 'MD5',
 								paySign: payMentResult.data.paySign,
 								success: (res) => {
-									// 推送订阅消息
 									uni.redirectTo({
-										url: "/pages/center/order/orderDetail?order_id=" + result.data.order_id
+										url: "/pages/shopCart/payResult?order_id=" + result.data.order_id + '&status=1'
 									});
 								},
 								fail: (res) => {
@@ -240,20 +239,21 @@
 						}
 					} else {
 						uni.redirectTo({
-							url: "/pages/shopAndOrder/settlement/payResult?order_id=" + result.data.order_id + '&status=' + result.status
+							url: "/pages/shopCart/payResult?order_id=" + result.data.order_id + '&status=' + result.status
 						});
 					}
 				
-					this.$store.dispatch('getCartNum')
 			
 			
 			
 			},
 			async payOrder() {
+				let id = wx.getStorageSync('refreeid') || ''
 				return await this.$fly.post(this.$api.orderBegin, {
 					cart_ids: this.shopCarIds,
 					address_id: this.addressId,
 					remarks: this.desc,
+					refreeid:id
 					// coupon_id: this.couponId || ''
 				});
 

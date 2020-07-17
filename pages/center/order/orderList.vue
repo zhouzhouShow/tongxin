@@ -209,15 +209,17 @@
 	.search {
 		position: sticky;
 		top: 0;
+		z-index: 999;
 	}
 
 	.nav {
 		position: sticky;
-		top: 80rpx;
+		top: 88rpx;
+		z-index: 999;
 	}
 
 	.order-list {
-		padding: 20rpx 20rpx 20rpx;
+		padding: 16rpx 20rpx 20rpx;
 
 	}
 </style>

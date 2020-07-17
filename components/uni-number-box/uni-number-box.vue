@@ -37,6 +37,10 @@
 				type: Boolean,
 				default: false
 			},
+			errorMsg:{
+				type:String,
+				default:'库存不足'
+			}
 			
 		},
 		data() {
@@ -73,12 +77,18 @@
 				} else if (type === 'add') {
 					value += step
 				}
-				if(value > this.max){
-					this.$tip.toast('库存不足!')
-				}
-				if (value < this.min || value > this.max) {
+				
+				if(value > this.max && type === 'add'){
+					this.$tip.toast(this.errorMsg)
 					return
 				}
+				if(value < this.min){
+					// this.$tip.toast('已经到最低了!')
+					return
+				}
+				// if (value < this.min || value > this.max) {
+				// 	return
+				// }
 				this.inputValue = value / scale;
 				if (this.isFor) { //循环的,根据下标改数据
 					console.log(this.inputValue,this.value)

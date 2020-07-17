@@ -6,7 +6,7 @@
 		<!-- </view> -->
 		<view class="classify-list">
 			<view class="item" @click="changeNav(item.id)" v-for="(item,index) in navList " :key="index">
-				<image :src="item.img" mode=""></image>
+				<image :src="item.img" mode="aspectFill"></image>
 				<view class="text">{{item.title}}</view>
 			</view>
 		
@@ -21,7 +21,7 @@
 			<view class="list">
 				<block v-for="(item,index) in list" :key="index">
 					<view class="item" @click="toDetail(item.goods_id)">
-						<image class="i-img" :src="item.goods_images[0]" mode=""></image>
+						<image class="i-img" :src="item.goods_images[0]" mode="aspectFill"></image>
 						<view class="info flex-align-center">
 							<text class="name clamp">{{item.goods_title}}</text>
 							<text class="n-price">
@@ -95,7 +95,7 @@
 				let params = {
 					page: this.page,
 					pageSize: this.pageSize,
-					goodsNav: 1,
+					goodsNav: 2,
 					goodsAge:this.cNavId
 				}
 				await this.$fly.post(this.$api.goodslist, params).then(res => {

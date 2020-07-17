@@ -10,7 +10,7 @@
 					<image @click.stop="previewImage(n)" :src="s.url" mode="aspectFill"></image>
 				</swiper-item>
 			</swiper>
-			<view class="dots" style="background: url(../../static/images/seeding/swiper_point.png) no-repeat;background-size: 100% 100%;">
+			<view class="dots" style="background: url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200717/7c03ba2b5f42bc732fe31c15863dc40a.png) no-repeat;background-size: 100% 100%;">
 				<text>{{current + 1}}</text>
 				<text>/</text>
 				<text>{{info.length}}</text>

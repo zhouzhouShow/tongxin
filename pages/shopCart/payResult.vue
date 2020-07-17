@@ -66,7 +66,7 @@
       },
       checkOrder() {
         uni.redirectTo({
-          url: "/pages/shopAndOrder/settlement/orderDetail?order_id="+this.orderId
+          url: "/pages/center/order/orderDetail?order_id="+this.orderId
         });
       }
     },

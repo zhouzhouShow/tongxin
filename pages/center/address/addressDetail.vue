@@ -235,6 +235,7 @@ import mpvueCityPicker from '@/components/mpvue-citypicker/mpvueCityPicker.vue';
         width: rpx(180);
         flex-grow: 0;
         flex-shrink: 0;
+				color: #333;
       }
       .inputContent {
         flex-grow: 1;
@@ -259,9 +260,9 @@ import mpvueCityPicker from '@/components/mpvue-citypicker/mpvueCityPicker.vue';
 
     }
     .switchBox {
-      margin-top: rpx(20);
+      margin-top: rpx(30);
       padding: rpx(12) rpx(30);
-      border-top: 1px solid #D3D3D3;
+      border-top: 1rpx solid #eee;
       .inputContentSwitch {
         // justify-content: flex-end;
       }

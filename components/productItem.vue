@@ -1,5 +1,5 @@
 <template>
-	<view class="c_product_item">
+	<view class="c_product_item" v-if="info">
 		<view class="cover">
 			<image :src="info.goods_img[0]" mode="aspectFill"></image>
 		</view>
@@ -12,7 +12,7 @@
 			<view>
 				<view class="spec">
 					<view class="left">
-						<text>{{info.spec_item_title}}</text>
+						<text>{{info.spec_item_title | split}}</text>
 					</view>
 					<view v-if="showRefundBtn" class="right">
 						<button @click="handleToRefund" type="default">退货</button>
@@ -70,6 +70,13 @@
 			return {
 
 			};
+		},
+		filters:{
+			split(str){
+				if(str){
+					return str.replace('_',' ; ');
+				}
+			},
 		},
 		methods:{
 			handleToRefund(){
@@ -166,15 +173,16 @@
 				align-items: center;
 
 				text {
-					height: 24rpx;
+					width: 70rpx;
+					height: 30rpx;
 					font-size: 24rpx;
+					text-align: center;
 					font-family: PingFang SC;
 					font-weight: 400;
 					color: rgba(255, 255, 255, 1);
-					line-height: 26rpx;
+					line-height: 30rpx;
 					background: rgba(255, 180, 79, 1);
 					border-radius: 4rpx;
-					padding: 6rpx 7rpx;
 				}
 			}
 

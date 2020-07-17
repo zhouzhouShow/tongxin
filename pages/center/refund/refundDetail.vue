@@ -97,7 +97,7 @@
 						<text>退款金额</text>
 					</view>
 					<view class="red right">
-						<text>¥ {{getRefundTotal(orderDetail)}}</text>
+						<text>¥ {{orderDetail.allPrice}}</text>
 					</view>
 				</view>
 				<view class="text">
@@ -177,17 +177,28 @@
 		},
 		computed:{
 			getTime(){
-				let nowTime = new Date().getTime()
-				let createTime = this.orderDetail.create_time/1000
-				let roundClock = 86400000
-				let gap = roundClock - (nowTime - createTime)
-				return this.$utils.formatTime(gap,'hh时mm分')
+				if(this.orderDetail.create_time){
+					let nowTime = new Date().getTime()
+					let createTime = this.orderDetail.create_time*1000
+					let roundClock = 86400000
+					let gap = roundClock-(nowTime-createTime) 
+					console.log(gap)
+					let h = parseInt(gap/1000/(60*60))
+					let f = parseInt(gap /1000/60% 60)
+					return `${h}小时${f}分钟`
+					// return this.$utils.formatTime(gap*1000,'hh时mm分')
+				}
+				
 			},
 			getRefundTotal(item){
 				return function(item){
 					console.log(item)
-					let goods = item.products_list[0].goodlist[0]
-					return (goods.goods_num*goods.goods_price).toFixed(2)
+					if(item.products_list[0]){
+						let goods = item.products_list[0].goodlist[0]
+						return (goods.goods_num*goods.goods_price).toFixed(2)
+					}
+					return 0
+				
 				}
 			}
 		},
@@ -239,6 +250,8 @@
 					return_id:this.id
 				}).then(res=>{
 					if(res.code){
+						this.hidePopup()
+						this.$tip.toast('填写成功!')
 						this.getRefundOrderInfo()
 					}
 				})
@@ -252,6 +265,10 @@
 				}).then(res => {
 					uni.hideLoading()
 					res.data.voucher = res.data.voucher.split(',')
+					let allPirce = 0
+					let goods =  res.data.products_list[0].goodlist[0]
+					allPirce = (goods.goods_num*goods.goods_price).toFixed(2)
+					res.data.allPrice = allPirce
 					this.orderDetail = res.data
 				}).catch(err => {
 					uni.hideLoading()

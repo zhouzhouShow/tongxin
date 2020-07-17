@@ -53,7 +53,7 @@
 				let params = {
 					page: this.page,
 					pageSize: this.pageSize,
-					goodsNav:2,
+					goodsNav:1,
 				}
 				await this.$fly.post(this.$api.goodslist,params).then(res=>{
 					let list = res.data.list

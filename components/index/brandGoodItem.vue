@@ -117,7 +117,8 @@
 			color: rgba(242, 39, 50, 1);
 			line-height: 36rpx;
 			margin-bottom: 10rpx;
-
+			font-family:DINPro;
+	
 			.n-price {
 				font-size: 30rpx;
 			}
@@ -125,6 +126,7 @@
 			.o-price {
 				font-size: 26rpx;
 				color: #999999;
+				font-weight:400;
 				text-decoration: line-through;
 			}
 		}

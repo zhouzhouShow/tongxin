@@ -203,7 +203,7 @@ export default {
   onLoad(option){
     this.getHotSearch();
 		this.goodsList = []
-		this.type = option.type
+		this.type = option.type || ''
 		// if(this.type==0){ //挑款
 		// 	this.getNewProcudt()
 		// }else{ //份货
@@ -254,7 +254,7 @@ page{
       height:64rpx;
       line-height: 64rpx;
       text-align: center;
-      border:1px solid #D2D2D2;
+      border:1rpx solid #D2D2D2;
       border-radius:32rpx;
       color:#333333;
       font-size: 26rpx;

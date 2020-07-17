@@ -1,6 +1,6 @@
 <template>
 	<view class="seeding">
-		<mescroll-uni ref="mescrollRef" @init="mescrollInit" @down="downCallback" :down="downOption" :up="{use:false,toTop:{src:''}}">
+		<mescroll-body ref="mescrollRef" @init="mescrollInit" @down="downCallback" :down="downOption" :up="{use:false,toTop:{src:''}}">
 			<view @click="handleToUserPage(0)" class="seeding_user" style="background: url(https://txyxx.oss-cn-shenzhen.aliyuncs.com/uploads/20200715/91ed7eb28826a27f108dfc6dd787646f.png	);">
 				<view class="avatar">
 					<image :src="userInfo.avatar" mode="scaleToFill"></image>
@@ -43,11 +43,12 @@
 				 @handleToUserPage="handleToUserPage" @handleLike="handleLike"></SeedingItem>
 				<uni-load-more :status="loadingType"></uni-load-more>
 			</view>
-		</mescroll-uni>
+		</mescroll-body>
+	
+		<comfooter :tabIdx="1"></comfooter>
 		<view @click="handleToCreate" class="seeding_create">
 			<image src="../../static/images/seeding/icon_create.png" mode=""></image>
 		</view>
-		<comfooter :tabIdx="1"></comfooter>
 	</view>
 </template>
 
@@ -64,12 +65,7 @@
 			uniLoadMore,
 			comfooter,
 		},
-		onShareAppMessage: function() {
-			return {
-				title: "商品名称",
-				path: `/pages/seeding/seeding?id=${123456}`
-			}
-		},
+
 		data() {
 			return {
 				loadingType: '1',
@@ -145,6 +141,7 @@
 			uni.$off('hasCreate')
 		},
 		onShareAppMessage(res) {
+			this.$help.isBtnShare = true
 			if (res.from === 'button') {
 				// 通过按钮触发
 				var data = res.target.dataset

@@ -107,7 +107,7 @@
 				<!-- <span v-if="orderDetail.final_flag == 2 && orderDetail.ship_status != 3 " @click.stop="changeStatus(orderDetail.id,4)">申请退款</span> -->
 				<span v-if="orderDetail.final_flag == 4 || orderDetail.final_flag == 5" @click="changeStatus(orderDetail.id,1)">删除订单</span>
 				<span v-if="orderDetail.final_flag == 3" @click.stop="getLogistics">查看物流</span>
-				<span class="redBg" v-if="orderDetail.final_flag == 3 && orderDetail.receipt == 1" @click.stop="changeStatus(orderDetail.id,3)">确认收货</span>
+				<span class="redBg" v-if="orderDetail.final_flag == 3" @click.stop="changeStatus(orderDetail.id,3)">确认收货</span>
 				<span class="redBg" v-if="orderDetail.final_flag == 4 || orderDetail.final_flag == 5"  @click.stop="addCart(orderGoodsList)">加入购物车</span>
 			</block>
 			<!-- <span @click.stop="goIndex">返回</span> -->
@@ -170,7 +170,7 @@
 			},
 			handleToRefund(info){
 				wx.navigateTo({
-					url:'../refund/applyRefund?info='+info
+					url:'../refund/applyRefund?info='+JSON.stringify(info)
 				})
 			},
 			ellipsis(index) {
@@ -455,7 +455,7 @@
 				>div:nth-child(2) {
 					display: flex;
 					height: 100%;
-					width: 33.33%;
+					width: 30.33%;
 					flex-shrink: 0;
 					align-items: center;
 					justify-content: flex-start;
@@ -633,7 +633,7 @@
 
 			.total-price {
 				font-size: 30rpx;
-				font-weight: 500;
+				font-weight: 400;
 				padding: 0 30rpx 30rpx;
 				.gray{
 					color: #999999;
@@ -659,7 +659,7 @@
 				flex-direction: column;
 				justify-content: space-between;
 				flex-shrink: 0;
-				border-top: rpx(20) solid #F3F3F3;
+				margin-top: 20rpx;
 				padding:0 30rpx 30rpx;
 
 				>span {

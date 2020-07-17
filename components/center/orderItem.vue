@@ -26,12 +26,13 @@
 		<view class="brand-box">
 			<view class="b-item" v-for="(el,num) in detail.products_list" :key="el.id">
 				<view class="brand-info flex-align-center">
-					<image class="b-img" :src="el.brandinfo.brand_logo[0]" mode="scaleToFill"></image>
+					<image class="b-img" :src="el.brandinfo.brand_logo[0]" mode="aspectFill"></image>
 					<text class="brand-name">{{el.brandinfo.brand_name}}</text>
 					<text class="icon-arrow iconfont iconyoujiantou"></text>
 				</view>
 				<view v-for="(e,n) in el.goodlist" :key="n" class="b-good">
-					<productItem @handleToRefund="handleToRefund" :showRefundBtn="detail.final_flag==4?true:false" :info="e"></productItem>
+					<!-- && (e.return_goods_num !=e.goods_num) -->
+					<productItem @handleToRefund="handleToRefund" :showRefundBtn="(detail.final_flag==4?true:false)  " :info="e"></productItem>
 				</view>
 			</view>
 		</view>
@@ -105,6 +106,7 @@
 				width: 80rpx;
 				height: 80rpx;
 				margin-right: 20rpx;
+				border-radius: 50%;
 			}
 
 			.u-name {
@@ -125,7 +127,7 @@
 			.b-item {
 				.brand-info {
 					margin-left: 10rpx;
-					margin-bottom: 10rpx;
+					margin-bottom: 30rpx;
 					font-size: 32rpx;
 					font-weight: 500;
 					color: rgba(51, 51, 51, 1);
