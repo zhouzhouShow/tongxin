@@ -337,6 +337,10 @@
 					this.timer = null
 				}
 			}, 1000)
+			this.$user.getInfo('id').then( (res)=>{
+				console.log(res)
+				this.userId = res	
+			})
 			// 获取用户是不是代理
 			this.$user.getInfo('is_agent').then( (res)=>{
 				console.log(res)
