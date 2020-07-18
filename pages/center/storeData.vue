@@ -71,13 +71,13 @@
 			<view class="list">
 				<view v-for="item in list" :key="item.id" class="item">
 					<view class="nickname">
-						{{item.nickname}}
+						{{item.userinfo.nickname}}
 					</view>
 					<view class="time">
-						<text>{{$utils.formatTime(item.createtime*1000,'yyyy-MM-dd')}}</text>
+						<text>{{$utils.formatTime(item.create_time*1000,'yyyy-MM-dd')}}</text>
 					</view>
 					<view class="total">
-						<text>{{item.buy_money}}</text>
+						<text>{{item.money}}</text>
 					</view>
 				</view>
 				<view class="loadmore">
@@ -98,7 +98,7 @@
 		data() {
 			return {
 				loadingType: 1,
-				page:0,
+				page:1,
 				pageSize:15,
 				storeData:{},
 				list:[]
@@ -129,7 +129,6 @@
 					page:this.page,
 					pageSize:this.pageSize
 				}).then(res=>{
-					this.list = this.list.concat(res.data.list)
 					this.list = this.list.concat(res.data.list)
 					if(res.data.list.length<this.pageSize){
 						this.loadingType = 3

@@ -144,10 +144,14 @@
 			}
 		}, {
 			"path": "pages/center/storeData",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "店铺数据"
+			}
 		}, {
 			"path": "pages/center/order/storeOrder",
-			"style": {}
+			"style": {
+				"navigationBarTitleText": "店铺订单"
+			}
 		}, {
 			"path": "pages/index/session",
 			"style": {

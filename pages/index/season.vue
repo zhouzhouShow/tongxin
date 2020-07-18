@@ -18,7 +18,7 @@
 			<view class="scroll">
 			<!-- <view class="item"></view> -->
 				<scroll-view scroll-x="true" style="white-space:nowrap">
-					<image class="img1" v-for="(item,index) in navList" :key="index"  :src="item.goods_images[0]" mode="aspectFill"></image>
+					<image @click.stop="toDetail(item.goods_id)" class="img1" v-for="(item,index) in navList" :key="index"  :src="item.goods_images[0]" mode="aspectFill"></image>
 				</scroll-view>
 			</view>
 			<view class="more" @click="showMore">
@@ -81,6 +81,11 @@
 			},
 			share(e) {
 
+			},
+			toDetail(id){
+				wx.navigateTo({
+					url:'/pages/good/goodDetail?id='+id
+				})
 			},
 			async navListFun(){
 				this.$tip.loading()

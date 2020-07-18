@@ -8,7 +8,7 @@
 			<text class="n-price">¥{{item.price_last}}</text>
 			<text class="o-price">¥{{item.price_market}}</text>
 		</view>
-		<view class="getNum" v-if="item.commission > 0 && is_agent">
+		<view class="getNum" v-if="is_agent">
 			<image src="../../static/images/index/zhuan.png"></image>
 			¥{{item.commission}}
 		</view>

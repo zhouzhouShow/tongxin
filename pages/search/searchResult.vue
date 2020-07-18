@@ -79,7 +79,7 @@
 				data.relateIds.push(e.goods_id)
 				data.relateList.push({goods_id:e.goods_id,image:e.goods_images[0],name:e.goods_title,price:e.price_last})
 				uni.$emit('getRelateInfo',data)
-				uni.navigateBack({
+				wx.navigateBack({
 					delta:2
 				})
 			},

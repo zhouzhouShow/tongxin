@@ -10,6 +10,7 @@
 			    }) 
 			    callback()
 			},
+			
 			updataApp() { //版本更新
 				if (uni.canIUse('getUpdateManager')) {
 					const updateManager = uni.getUpdateManager()

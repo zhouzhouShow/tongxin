@@ -44,7 +44,7 @@
 					case 2:
 						this.priceOrder = true;
 						this.activeIndex = index
-						this.ordertype = 6
+						this.ordertype = 1
 						this.getDataList()
 						break;
 					case 4:

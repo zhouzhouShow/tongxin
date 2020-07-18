@@ -25,7 +25,7 @@
 						<view class="info flex-align-center">
 							<text class="name clamp">{{item.goods_title}}</text>
 							<text class="n-price">
-								<text class="p-icon">¥</text>{{item.price_sale}}
+								<text class="p-icon">¥</text>{{item.price_last}}
 							</text>
 						</view>
 					</view>

@@ -9,7 +9,7 @@
 							<view class="search-icon">
 								<img src="@/static/images/icon/search.png">
 							</view>
-							<text>在童心优选中选择</text>
+							<text>在童创优选中选择</text>
 						</view>
 					</navigator>
 				</view>
@@ -294,7 +294,7 @@
 			},
 			onShareAppMessage() {
 				return {
-					title: '童心优选',
+					title: '童创优选',
 					path: '/pages/index/index'
 				}
 			},

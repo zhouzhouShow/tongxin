@@ -31,7 +31,7 @@
 				<view class="tips1">工作日/节假日均可送货</view>
 				<view class="expressage flex-align-center" @click="chooseCoupon">
 					<text class="label">优惠券</text>
-					<text>{{(payOrderData.coupon.length<=0|| !payOrderData.coupon) ? '无优惠券可以用' : choosedCoupon.name}}</text>
+					<text>{{(payOrderData.coupon.length<=0|| !payOrderData.coupon) ? '无优惠券可以用' : choosedCoupon ? choosedCoupon.name : '选择优惠券'}}</text>
 					<text class="r-money"  :style="{visibility: !choosedCoupon?'hidden':'inherit'}">- ￥{{choosedCoupon.money}}</text>
 					<image class="arrow" src="../../static/images/seeding/icon_arrow-right-grey.png" mode=""></image>
 				</view>

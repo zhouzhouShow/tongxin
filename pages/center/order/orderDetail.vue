@@ -66,7 +66,7 @@
 					</p>
 					<p v-if="orderDetail.redpack && orderDetail.redpack>0">
 						<span>优惠券抵扣</span>
-						<span>¥{{orderDetail.redpack}}</span>
+						<span style="color:#F22732">-¥{{orderDetail.redpack}}</span>
 					</p>
 
 				</div>
@@ -76,7 +76,7 @@
 						<span class="flex flex-align-center gray">订单金额
 						<!-- <img class="icon" src="@/static/images/icon/arrow_down.png" alt=""> -->
 						</span>
-						<span>¥{{orderDetail.redpack>0 && orderDetail.redpack ? (orderDetail.price_sum - orderDetail.redpack) : orderDetail.price_sum}}</span>
+						<span>¥{{orderDetail.redpack>0 && orderDetail.redpack ? ((orderDetail.price_sum)*100 - (orderDetail.redpack)*100)/100: orderDetail.price_sum}}</span>
 					</p>
 			</div>
 			</div>
@@ -324,7 +324,7 @@
 					this.initialization = true;
 					this.getOrderLog()
 					if(status == 1){
-						uni.navigateBack({})
+						wx.navigateBack({})
 					}
 					this.$tip.toast(res.msg);
 				})
