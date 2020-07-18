@@ -92,7 +92,7 @@
 			return {
 				searchText: "",
 				loadingType: 1,
-				page: 0,
+				page: 1,
 				pageSize: 10,
 				navList: [{
 						ids: 0,
@@ -189,7 +189,7 @@
 				})
 			},
 			search() {
-				this.page = 0
+				this.page = 1
 				this.list = []
 				this.loadingType = 1
 				this.getRefundList()
@@ -197,7 +197,7 @@
 			changeNav(ids) {
 				if (this.nowNavIndex == ids) return
 				this.nowNavIndex = ids
-				this.page = 0
+				this.page = 1
 				this.list = []
 				this.loadingType = 1
 				this.getRefundList()

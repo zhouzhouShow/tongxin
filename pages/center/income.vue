@@ -31,7 +31,7 @@
 			<view v-for="item in list" :key="item.id" class="item">
 				<view class="icon">
 					<image v-if="item.type=='commission'" src="../../static/images/center/icon_income.png" mode="scaleToFill"></image>
-					<image v-else-if="item.type=='widthdraw'" src="../../static/images/center/icon_cash.png" mode="scaleToFill"></image>
+					<image v-else-if="item.type=='withdraw'" src="../../static/images/center/icon_cash.png" mode="scaleToFill"></image>
 					<image v-else-if="item.type=='custom_refund'" src="../../static/images/center/icon_refund.png" mode="scaleToFill"></image>
 				</view>
 				<view class="detail">
@@ -96,7 +96,7 @@
 						name: '收入'
 					},
 					{
-						ids: 'widthdraw',
+						ids: 'withdraw',
 						name: '提现'
 					},
 					{
@@ -105,7 +105,7 @@
 					},
 				],
 				listNavIndex: '',
-				page:0,
+				page:1,
 				pageSize:15,
 				total:0,
 				list: [],
@@ -143,14 +143,14 @@
 			changeHeaderNav(ids) {
 				if (this.headerNavIndex == ids) return
 				this.headerNavIndex = ids
-				this.page = 0
+				this.page = 1
 				this.list = []
 				this.getMyIncomeLog()
 			},
 			changeListNav(ids) {
 				if (this.listNavIndex == ids) return
 				this.listNavIndex = ids
-				this.page = 0
+				this.page = 1
 				this.list = []
 				this.getMyIncomeLog()
 			}

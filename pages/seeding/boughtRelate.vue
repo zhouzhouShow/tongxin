@@ -31,7 +31,7 @@
 		data() {
 			return {
 				loadingType: '1',
-				page: 0,
+				page: 1,
 				pageSize: 10,
 				productList: [],
 				selectIds: [],

@@ -76,7 +76,7 @@
 				],
 				nowNavIndex: 0,
 				status: ['全部','待付款','待发货', '待收货', '已收货', '已取消'],
-				page:0,
+				page:1,
 				pageSize:15,
 				list: []
 			};
@@ -113,7 +113,7 @@
 			changeNav(ids) {
 				if(this.nowNavIndex==ids) return
 				this.nowNavIndex = ids
-				this.page = 0
+				this.page = 1
 				this.list = []
 				this.getMySubOrder()
 			}

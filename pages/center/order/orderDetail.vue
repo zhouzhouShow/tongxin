@@ -140,7 +140,7 @@
 					img: ""
 				},
 				loadMore: 1,
-				page: 0,
+				page: 1,
 				pageSize: 6,
 				orderGoodsList: [],
 				bottomButton: [],

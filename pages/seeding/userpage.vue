@@ -75,7 +75,7 @@
 						text: '喜欢'
 					}
 				],
-				page: 0,
+				page: 1,
 				pageSize: 10,
 				nowIndex: 0,
 				seedingList: [],
@@ -215,7 +215,7 @@
 			changeNav(idx) {
 				if (idx == this.nowIndex) return
 				this.nowIndex = idx
-				this.page = 0
+				this.page = 1
 				this.loadingType = 1
 				if (this.nowIndex == 0) {
 					this.seedingList = []

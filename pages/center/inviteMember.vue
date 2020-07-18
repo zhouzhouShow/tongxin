@@ -85,7 +85,7 @@
 				loadingType: 1,
 				searchText: '',
 				sortType: 1,
-				page:0,
+				page:1,
 				pageSize:15,
 				numberInfo:{},
 				list:[]
@@ -127,7 +127,7 @@
 				})
 			},
 			handleSearch() {
-				this.page = 0
+				this.page = 1
 				this.list = []
 				this.getMyMemberList()
 			},
@@ -149,7 +149,7 @@
 						this.sortType = 1
 						break;
 				}
-				this.page = 0
+				this.page = 1
 				this.list = []
 				this.getMyMemberList()
 			},
@@ -171,7 +171,7 @@
 						this.sortType = 3
 						break;
 				}
-				this.page = 0
+				this.page = 1
 				this.list = []
 				this.getMyMemberList()
 			},

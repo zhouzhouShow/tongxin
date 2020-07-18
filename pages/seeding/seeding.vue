@@ -79,7 +79,7 @@
 				nowIndex: 0,
 				targetIndex: 0,
 				list: [],
-				page: 0,
+				page: 1,
 				pageSize: 10,
 				mescroll:null
 			};
@@ -259,7 +259,7 @@
 				}
 			},
 			keywordSearch() {
-				this.page = 0
+				this.page = 1
 				this.list = []
 				this.loadingType = 1
 				this.getFeaturedList()

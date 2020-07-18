@@ -66,7 +66,7 @@
 						name: '已完成'
 					},
 				],
-				page: 0,
+				page: 1,
 				pageSize: 10,
 				nowNavIndex: 0,
 				loadMoreType: 1
@@ -76,7 +76,7 @@
 			changeNav(ids) {
 				if (this.nowNavIndex == ids) return
 				this.nowNavIndex = ids
-				this.page = 0
+				this.page = 1
 				this.list = []
 				this.loadMoreType = 1
 				this.getOrderData()
@@ -172,7 +172,7 @@
 					status: status
 				}).then(res => {
 					this.$tip.loaded();
-					this.page = 0;
+					this.page = 1;
 					this.list = []
 					this.getOrderData();
 					this.$tip.toast(res.msg)
@@ -180,7 +180,7 @@
 			},
 			search(e) {
 				this.keyWord = e
-				this.page = 0
+				this.page = 1
 				this.list = []
 				this.loadMoreType = 1
 				this.getOrderData()
