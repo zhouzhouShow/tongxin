@@ -19,7 +19,7 @@
 					</view>
 				</view>
 				<view v-if="info.discount<100" class="discount">
-					<text>{{info.discount/10}}折</text>
+					<text>{{(info.discount).toFixed(2)}}折</text>
 				</view>
 				<view class="price">
 					<view class="left">
@@ -173,7 +173,7 @@
 				align-items: center;
 
 				text {
-					width: 70rpx;
+					width: 80rpx;
 					height: 30rpx;
 					font-size: 24rpx;
 					text-align: center;

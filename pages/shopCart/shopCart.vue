@@ -197,12 +197,12 @@
 				let list = data.list
 				let noDataList = []
 			// 	for (let index = 0; index < list.length; index++) {
-			// 		let forList = JSON.parse(JSON.stringify(list[index]))
+			// 		let forList = JSON.parse(JSON.stringify(list[index].goodlist))
 			// 		forList.filter((item, index2,array) => {
 			// 			if (Number(item.stokcnum) == 0 || Number(item.shelves) != 2) {
 			// 				noDataList.push(forList[index2])
-			// 				if (list[index].length == 1) {
-			// 					list.splice(index, 1) //数组的内容删除了,需要减去下标
+			// 				if (list[index].goodlist.length == 1) {
+			// 					list.goodlist.splice(index, 1) //数组的内容删除了,需要减去下标
 			// 						--index
 			// 				} else {
 			// 					list[index].splice(index2, 1)
@@ -218,7 +218,7 @@
 			// 			}
 			// 		})
 			// 	}
-			
+			// 	console.log(noDataList)
 				this.noNumList = this.noNumList.concat(noDataList)
 				// 获取所有购物车的id,用于全选删除
 				// this.getAllId()

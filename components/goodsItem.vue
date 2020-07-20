@@ -30,7 +30,7 @@
 				</view>
 				<view class="g-info">
 					<p class="g-name">{{item.goods_title}}</p>
-					<p class="discount">{{item.discount}}折</p>
+					<p class="discount">{{(item.discount).toFixed(2)}}折</p>
 					<p class="pirce-box">
 						<span class="n-price">
 							<span class="p-icon">¥</span>{{item.price_last}}
@@ -222,7 +222,7 @@
 			}
 			.discount {
 				margin-top: 10rpx;
-				width: 70rpx;
+				width: 80rpx;
 				height: 30rpx;
 				line-height: 30rpx;
 				text-align: center;

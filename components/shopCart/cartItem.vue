@@ -12,7 +12,7 @@
 				</p>
 				<p v-if="reFoundBtn" class="reFoundBtn" @click="handleToRefund">退货</p>
 			</div>
-			<p class="discount" v-if="item.discount">{{item.discount/10}}折</p>
+			<p class="discount" v-if="item.discount">{{(item.discount).toFixed(2)}}折</p>
 			<p class="pirce-box flex-align-center">
 				<span class="n-price">
 					<span class="p-icon">¥</span>{{item.goods_price}}
@@ -125,7 +125,7 @@
 
 			.discount {
 				margin-top: 10rpx;
-				width: 70rpx;
+				width: 80rpx;
 				height: 30rpx;
 				line-height: 30rpx;
 				text-align: center;

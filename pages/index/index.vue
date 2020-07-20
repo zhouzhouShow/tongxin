@@ -121,7 +121,7 @@
 					link: '/pages/index/session?title=男童会场&goodsAge=2',
 				}, {
 					title: '秋冬上新',
-					link: '/pages/index/season',
+					link: '/pages/index/season?type=4',
 				}],
 				banner: [],
 				listItem: [{
@@ -139,7 +139,7 @@
 				}, {
 					img: require("@/static/images/icon/nav-item-4.png"),
 					title: '新品上架',
-					link: '/pages/index/season'
+					link: '/pages/index/season?type=3'
 				}],
 				miaoshaList: [],
 				specialList: [],
@@ -166,6 +166,9 @@
 							console.log(data)
 							if (data.id) {
 								data.path += ('?id=' + data.id)
+							}
+							if(data.h==5){ //上新,秋冬,
+								data.path+='?type='+data.type
 							}
 							if (data.isTab) {
 								uni.switchTab({

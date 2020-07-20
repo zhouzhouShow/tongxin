@@ -239,6 +239,7 @@
         margin:20rpx 0 0;
         font-size: rpx(26);
         color: #3F3F3F;
+				line-height: 1;
         white-space: nowrap;
         text-overflow: ellipsis;
         text-align: left;
@@ -251,11 +252,11 @@
 				display: flex;
 				justify-content: space-between;
 				align-items: center;
-				padding: 20rpx 0rpx 0 0;
+				padding: 10rpx 0rpx 0 0;
 			  .good-desc-part1 {
 			    display: flex;
 			    align-items: center;
-			
+					line-height: 1;
 					font-weight:500;
 					color:#999999;
 					.p-box{

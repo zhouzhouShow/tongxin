@@ -151,12 +151,19 @@
 				<button class="kefu-button" open-type="contact"></button>
 			</div>
 			<div class="operation flex-center">
-				<div  class="buy-btn" @click.stop="showPopFun(2)">
-					加入购物车
-				</div>
-				<div class="add-shopcart isCanNotbuy"  @click.stop="showPopFun(1)">
-					立即购买
-				</div>
+				<block v-if="detail.goods_state==2">
+					<div  class="buy-btn" @click.stop="showPopFun(2)">
+						加入购物车
+					</div>
+					<div class="add-shopcart isCanNotbuy"  @click.stop="showPopFun(1)">
+						立即购买
+					</div>
+				</block>
+				<block v-else>
+					<div class="out-cart"  >
+						商品已下架
+					</div>
+				</block>
 			</div>
 		</div>
 		<div class="buy-pop" @touchmove.stop="">
@@ -1119,6 +1126,13 @@
 				background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
 				border-radius:0px 40px 40px 0px;
 			
+			}
+			.out-cart{
+				width:410rpx;
+				height:80rpx;
+				border-radius:40rpx;
+				color: #666;
+				background: #eee;
 			}
 		}
 		

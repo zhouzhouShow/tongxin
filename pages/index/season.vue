@@ -14,9 +14,9 @@
 				</swiper>
 			</view>
 		</view>
-		<viwe class="list-nav">
+<!-- 		<view class="list-nav">
 			<view class="scroll">
-			<!-- <view class="item"></view> -->
+	
 				<scroll-view scroll-x="true" style="white-space:nowrap">
 					<image @click.stop="toDetail(item.goods_id)" class="img1" v-for="(item,index) in navList" :key="index"  :src="item.goods_images[0]" mode="aspectFill"></image>
 				</scroll-view>
@@ -25,7 +25,7 @@
 				<text>查看更多</text>
 				<image class="icon" src="../../static/images/icon/getMore.png" mode=""></image>
 			</view>
-		</viwe>
+		</view> -->
 	
 		<view class="recommend-box">
 			<view class="r-title flex-center">
@@ -66,14 +66,22 @@
 					share: true,
 					backTop: true,
 				},
-				page:2,
+				page:1,
+				pageSize:10,
 				list: [],
 				navList:[],
+				type:3,//新品上架 :3  秋冬上新:4
 			};
 		},
-		onLoad(){
+		onLoad(option){
+			this.type = option.type || 3
+			
+				uni.setNavigationBarTitle({
+					title:this.type==3?'新品上架':'秋冬上新'
+				})
+	
 			this.getGood()
-			this.navListFun()
+			// this.navListFun()
 		},
 		methods: {
 			showMore(){
@@ -91,8 +99,8 @@
 				this.$tip.loading()
 					let params = {
 						page: 1,
-						pageSize: 10,
-						goodsNav:3,
+						pageSize: this.pageSize,
+						goodsNav:this.type,
 					}
 					await this.$fly.post(this.$api.goodslist,params).then(res=>{
 						let list = res.data.list
@@ -110,7 +118,7 @@
 				let params = {
 					page: this.page,
 					pageSize: this.pageSize,
-					goodsNav:3,
+					goodsNav:this.type,
 				}
 				await this.$fly.post(this.$api.goodslist,params).then(res=>{
 					let list = res.data.list
@@ -128,8 +136,8 @@
 				// console.log(res.target);
 			}
 			return {
-				title:'秋冬上新',
-				path: '/pages/index/index?h=5',
+				title:this.type==3?'新品上架':'秋冬上架',
+				path: '/pages/index/index?h=5&type='+this.type,
 				success: function() {
 					console.log('分享成功')
 				}
@@ -217,7 +225,7 @@
 		.recommend-box {
 			padding: 0 20rpx;
 			text-align: center;
-
+			margin-top: 45rpx;
 			.r-title {
 				image {
 					width: 35rpx;
@@ -233,7 +241,7 @@
 					font-size: 40rpx;
 					font-family: PingFang SC;
 					font-weight: bold;
-					color: rgba(223, 70, 78, 1);
+					color: #D09304;
 				}
 
 				margin-bottom: 38rpx;

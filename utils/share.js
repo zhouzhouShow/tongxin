@@ -63,8 +63,11 @@ const shareConfig = {
 				data = { ...this.config[query.h],
 					id: query.id
 				};
-				if(query.p){
+				if(query.p){ //代理分享,携带到下单,绑定关系
 					wx.setStorageSync('refreeid', obj.p)
+				}
+				if(query.h==5){
+					data.type = query.type
 				}
 				data.isScanCode = false //是否扫码进入
 				console.log('分享的:', data)
