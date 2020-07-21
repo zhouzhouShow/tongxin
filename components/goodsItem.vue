@@ -30,7 +30,7 @@
 				</view>
 				<view class="g-info">
 					<p class="g-name">{{item.goods_title}}</p>
-					<p class="discount">{{(item.discount).toFixed(2)}}折</p>
+					<p class="discount">{{Number(item.discount).toFixed(2)}}折</p>
 					<p class="pirce-box">
 						<span class="n-price">
 							<span class="p-icon">¥</span>{{item.price_last}}

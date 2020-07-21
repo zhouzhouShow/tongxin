@@ -19,7 +19,7 @@
 					</view>
 				</view>
 				<view v-if="info.discount<100" class="discount">
-					<text>{{(info.discount).toFixed(2)}}折</text>
+					<text>{{Number(info.discount).toFixed(2)}}折</text>
 				</view>
 				<view class="price">
 					<view class="left">

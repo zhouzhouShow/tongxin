@@ -489,6 +489,7 @@
 				}else if (type === 'color'){
 					this.colorChooseIndex = index
 				}
+				this.chooseImg = this.colorArr[this.colorChooseIndex].img
 				// 获取库存
 				this.getSkuAndStock(this.colorArr[this.colorChooseIndex].id+'_'+this.sizeArr[this.sizeChooseIndex].id)
 			},
