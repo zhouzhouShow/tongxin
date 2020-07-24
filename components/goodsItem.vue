@@ -201,8 +201,8 @@
 			text-align: left;
 
 			.g-name {
-				font-size: 30rpx;
-				font-weight: 500;
+				font-size: 28rpx;
+				font-weight: 400;
 				color: rgba(51, 51, 51, 1);
 			}
 

@@ -237,7 +237,8 @@
       justify-content: center;
       .good-title {
         margin:20rpx 0 0;
-        font-size: rpx(26);
+        font-size: rpx(24);
+				font-weight:400;
         color: #3F3F3F;
 				line-height: 1;
         white-space: nowrap;

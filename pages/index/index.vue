@@ -49,7 +49,7 @@
 			<view class="miaosha">
 				<view class="title flex-center">
 					<image src="../../static/images/index/index_icon_1.png" mode=""></image>
-					<text class="text">新品秒杀版</text>
+					<text class="text">新品推荐</text>
 				</view>
 				<view class="miaosha-good">
 					<scroll-view scroll-x="true" style="white-space:nowrap">
