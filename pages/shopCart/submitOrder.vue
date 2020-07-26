@@ -184,14 +184,14 @@
 			sureChooseCoupon() {
 				this.couponId = null
 				this.choosedCoupon = null
-				this.popup = false
+				this.$refs['popup'].close()
 			},
 			couponChange(e) {
 				let coupon = JSON.parse(e.detail.value)
 				this.couponId = coupon.id
 				this.choosedCoupon = coupon
 				setTimeout(() => {
-					this.popup = false
+					this.$refs['popup'].close()
 				}, 200)
 			},
 			async confirmPay() {
@@ -280,6 +280,9 @@
 				});;
 			},
 			chooseCoupon() {
+				if(this.payOrderData.coupon.length<=0){
+					return 
+				}
 				this.$refs['popup'].open()
 			},
 			showAll() {

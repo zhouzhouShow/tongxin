@@ -50,16 +50,18 @@
         <load-more :status="loadMore"></load-more>
       </div>
     </div>
+		<fixedIcon @share="share" ref="backTop" :showItem='showItem'></fixedIcon>
   </div>
 </template>
 
 <script>
+import fixedIcon from '@/components/fixedIcon.vue'
 import loadMore from '@/components/uni-load-more/uni-load-more.vue'  //1上拉加载更多 2正在加载 3我们是有底线的
 import product from "@/components/product";
 
 export default {
   components: {
-    product,loadMore
+    product,loadMore,fixedIcon
   },
   data() {
     return {
@@ -74,6 +76,12 @@ export default {
       page: 1,
       pageSize: 10,
       loadMore:1,
+			BrandTitle:'',
+			showItem: {
+				share:true,
+				cart:true
+			},
+			
     };
   },
   onLoad(option) {
@@ -85,10 +93,15 @@ export default {
   onShow() {
    
   },
-	
+	onShareAppMessage() {
+		console.log('/pages/index/index?h=6&id='+this.brandid)
+		return {
+			title: this.BrandTitle || '',
+			path: '/pages/index/index?h=6&id='+this.brandid
+		}
+	},
   onReachBottom(){
-    if(this.loadMore==3 ||this.loadMore==2) return
-   
+    if(this.loadMore==3 || this.loadMore==2) return
     this.getBrandDetailGoods();
   },
   methods: {
@@ -147,6 +160,7 @@ export default {
         .then(res => {
           if (res.code == 1) {
             this.brand_detail = res.data;
+						this.BrandTitle = this.brand_detail.brand_name || ''
             if(res.data.catlist[0]){
               this.catid = res.data.catlist[0].cat_id;
               this.getBrandDetailGoods();

@@ -31,8 +31,8 @@
 			trigger(type){
 				switch (type){
 					case 'cart':
-						uni.switchTab({
-							url:'/pages/shopCart/shopCart'
+						wx.navigateTo({
+							url:'/pages/shopCart/shopCart2'
 						})
 						break;
 					case 'share':

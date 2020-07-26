@@ -27,12 +27,14 @@
 			"style": {
 				"navigationBarTitleText": "购物车"
 			}
-		}, {
-			"path": "pages/seeding/seeding",
-			"style": {
-				"navigationBarTitleText": "种草"
-			}
-		}, {
+		},
+		// {
+		// 	"path": "pages/seeding/seeding",
+		// 	"style": {
+		// 		"navigationBarTitleText": "种草"
+		// 	}
+		// },
+		{
 			"path": "pages/search/search",
 			"style": {
 				"navigationBarTitleText": "商品搜索"
@@ -96,12 +98,14 @@
 			"style": {
 				"navigationBarTitleText": "个人主页"
 			}
-		}, {
-			"path": "pages/seeding/release",
-			"style": {
-				"navigationBarTitleText": "发布"
-			}
-		}, {
+		}, 
+		// {
+		// 	"path": "pages/seeding/release",
+		// 	"style": {
+		// 		"navigationBarTitleText": "发布"
+		// 	}
+		// }, 
+		{
 			"path": "pages/seeding/shoppingCarRelate",
 			"style": {
 				"navigationBarTitleText": "商品选择"

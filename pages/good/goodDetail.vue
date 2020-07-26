@@ -80,7 +80,7 @@
 		<view class="support text-column-box">
 			<view class="row-box">
 				<text class="label">支持</text>
-				<text class="text">支持7天无理由退货</text>
+				<text class="text">支持7天无理由退换货</text>
 			</view>
 		</view>
 		<view class="color-box text-column-box">
@@ -306,6 +306,7 @@
 			if (res.from === 'button') {
 				// console.log(res.target);
 			}
+			console.log('/pages/index/index?h=0&id=' + this.id+'&p='+this.userId)
 			return {
 				title: this.detail.goods_title,
 				path: '/pages/index/index?h=0&id=' + this.id+'&p='+this.userId,
@@ -317,7 +318,7 @@
 		},
 		async onLoad(option){
 			this.id = option.id
-			uni.hideShareMenu({})
+			// uni.hideShareMenu({})
 			this.$tip.loading()
 			let data = await this.getDetail()
 			this.detail = data.data
@@ -354,10 +355,9 @@
 				this.showItem.share = res==0 ? false : true		
 			})
 			this.$tip.loaded()
-			if(this.showItem.share ){ //是代理
-			 this.shareImg = await this.shareWXCode()
+			// if(this.showItem.share ){ //是代理
 			
-			}
+			// }
 			this.recommendList =  await this.recommondGoodslist()
 			this.grassmanList  = await this.grassman()
 		},
@@ -388,7 +388,13 @@
 		},
 	
 		methods:{
-			saveImg(){
+			async saveImg(){
+				let userImg = await this.$user.getInfo('avatar')
+				console.log(userImg)
+				if(!userImg){
+					return this.$tip.toast('生成失败,请去授权!')
+				}
+				this.shareImg = await this.shareWXCode()
 				let img = this.shareImg
 				this.sharePop = false
 				this.$utils.saveImgToPhotosAlbum(img)

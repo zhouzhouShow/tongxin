@@ -64,7 +64,7 @@ const shareConfig = {
 					id: query.id
 				};
 				if(query.p){ //代理分享,携带到下单,绑定关系
-					wx.setStorageSync('refreeid', obj.p)
+					wx.setStorageSync('refreeid', query.p)
 				}
 				if(query.h==5){
 					data.type = query.type
@@ -94,6 +94,16 @@ const shareConfig = {
 				if (data.path != '/pages/index/index') {
 					wx.setStorageSync('routerData', data)
 				}
+			}else if(decodeURIComponent(query.scene).includes('h=8')){
+				let obj = this.strSplice(decodeURIComponent(query.scene))
+				console.log(obj)
+				data = { ...this.config[obj.h],
+					id: obj.type
+				};
+				if (obj.type) {
+					wx.setStorageSync('storeType', obj.type)
+				}
+				wx.setStorageSync('routerData', data)
 			}
 			resolve(data)
 		})

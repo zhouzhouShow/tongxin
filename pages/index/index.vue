@@ -68,7 +68,7 @@
 					<text class="text">必逛专题</text>
 				</view>
 				<view class="content" v-for="(item ,index) in specialList" :key="index">
-					<image class="banner" mode="aspectFill" :src="item.brand_banner[0]"></image>
+					<image class="banner" mode="aspectFill" :src="item.brand_banner[0]" @click.stop="toBrand(item.id)"></image>
 					<view class="special-good">
 						<view v-for="(gItem ,gIndex) in item.goodlist" :key="gIndex" @click="toDetail(gItem.goods_id)">
 							<brandGoodItem :item="gItem"></brandGoodItem>
@@ -144,7 +144,8 @@
 				miaoshaList: [],
 				specialList: [],
 				showItem: {
-					backTop: false
+					backTop: false,
+					share : true
 				},
 				current: 0,
 				mescroll:null,
@@ -205,7 +206,6 @@
 			this.sTimer = setTimeout(() => {
 				if (e.scrollTop > 200) {
 					this.showItem.backTop = true
-					this.showItem.share = true
 				} else {
 					this.showItem.backTop = false
 				}
@@ -213,7 +213,11 @@
 
 		},
 		methods: {
-		
+			toBrand(id){
+				wx.navigateTo({
+					url:'/pages/index/brandDetail?id='+id
+				})
+			},
 			mescrollInit(mescroll) {
 				setTimeout(() => {
 					uni.hideTabBar({})
