@@ -146,7 +146,7 @@
     overflow: hidden;
     background: #fff;
     position: relative;
-    border:1rpx solid #eee;
+    // border:1rpx solid #eee;
     padding-bottom:20rpx;
     .good-show {
       /*padding-bottom: 100%;*/
@@ -163,7 +163,7 @@
       .good-show-img {
 				border-radius:8rpx;
         height: 325rpx;
-        width: 325rpx;
+        // width: 325rpx;
         vertical-align: middle;
       }
     }

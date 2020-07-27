@@ -254,7 +254,7 @@
 			}
 			.item{
 				width: 345rpx;
-				margin-bottom: 28rpx;
+				margin-bottom: 20rpx;
 				border-radius: 8rpx;
 				.i-img{
 					width:345rpx;

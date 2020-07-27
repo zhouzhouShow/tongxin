@@ -97,7 +97,7 @@
 
 		.good-name {
 			margin-bottom: 20rpx;
-			width: 190rpx;
+			// width: 190rpx;
 			// height: 60rpx;
 			font-size: 24rpx;
 			font-weight: 400;

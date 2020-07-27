@@ -3,7 +3,7 @@
 		<searchBar @sureBtn="search" placeholder="搜索商品" btnText="取消" :itemKeyWord="keyword"></searchBar>
 		<searchNav @changeType="changeType"></searchNav>
 
-		<div class="goods-list-container" style="background:#fff">
+		<div class="goods-list-container" >
 			<div class='goods-item-container' v-for="(item,index) in searchResultList"
 			 :key="index">
 				<product @seedingChooseGood="chooseImg" :type="goodType" :product="item"  />
@@ -249,7 +249,7 @@
 	
 
 	.goods-list-container {
-		background: #fff;
+		background: #f3f3f3;
 		box-sizing: border-box;
 		width: 100%;
 		padding: 15rpx 20rpx 0;
@@ -265,8 +265,7 @@
 
 		.goods-item-container {
 			width: 344rpx;
-			height: 500rpx;
-			margin-bottom: 23rpx;
+			margin-bottom: 20rpx;
 		}
 	}
 </style>

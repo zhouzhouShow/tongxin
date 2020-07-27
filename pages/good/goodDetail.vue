@@ -975,7 +975,7 @@
 		.sec-kill-title {
 			font-size: 32rpx;
 			font-weight: 500;
-	
+			white-space: nowrap;
 			text:first-child {
 				font-size: 30rpx;
 			}

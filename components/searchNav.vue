@@ -127,7 +127,7 @@
 			}
 			.order-arrows {
 				position: absolute;
-				top: 17rpx;
+				top: 20rpx;
 				right: 42rpx;
 				// margin-top: 17rpx;
 				color: #666666;
