@@ -4,7 +4,7 @@
 		<searchNav @changeType="changeType"></searchNav>
 		<div class="good-list">
 			<div v-for="(item,index) in list"  :key="index" @click="toDetail(item.goods_id)">
-				<goodItem itemtype="sessionItem" :item="item"></goodItem>
+				<goodItem :itemHeight="218" itemtype="sessionItem" :item="item"></goodItem>
 			</div>
 			<load-more  :status="loadMore"></load-more>
 		</div>

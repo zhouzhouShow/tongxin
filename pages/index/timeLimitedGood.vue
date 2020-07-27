@@ -7,7 +7,7 @@
 			<!-- </view> -->
 			<view class="recommend-box">
 				<view style="background: #fff;position: relative;z-index: 33;" v-for="(item,index) in list" :key="index" @click="toDetail(item.goods_id)">
-					<goodItem itemtype="timeLimite" :item="item"></goodItem>
+					<goodItem :itemHeight="218" itemtype="timeLimite" :item="item"></goodItem>
 				</view>
 				<load-more :status="loadMore"></load-more>
 			</view>

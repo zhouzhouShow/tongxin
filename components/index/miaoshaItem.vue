@@ -1,7 +1,8 @@
 <template>
 	<view class="item" v-if="item">
 		<view class="img-box">
-			<image class="good-img" :src="item.goods_images[0]" mode="aspectFill"></image>
+			<image v-show="!isShowLoading" :style="{height: height+'rpx'}"   class="good-img" @load="loaded"  :src="item.goods_images[0]" mode="aspectFill"></image>
+			<image v-if="isShowLoading"  class="good-img" src="@/static/images/icon/loading-icon.gif" mode=""></image>
 			<!-- <view class="time">距结束02:02:02</view> -->
 		</view>
 		<view class="price-box">
@@ -17,11 +18,23 @@
 
 <script>
 	export default {
-		props: ['item'],
+		props: ['item','itemHeight'],
 		data() {
 			return {
-
+				isShowLoading:true
 			};
+		},
+		mounted(){
+			this.isShowLoading = true
+			this.height = 0
+		},
+		methods:{
+			loaded(){
+				setTimeout(()=>{
+					this.isShowLoading = false
+					this.height = this.itemHeight
+				},50)
+			},
 		},
 		computed:{
 			is_agent(){//是否代理

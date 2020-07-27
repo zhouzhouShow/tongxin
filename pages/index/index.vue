@@ -54,7 +54,7 @@
 				<view class="miaosha-good">
 					<scroll-view scroll-x="true" style="white-space:nowrap">
 						<view class="miaosha-item" v-if="miaoshaList.length" v-for="(item,index) in miaoshaList" :key="index" @click="toDetail(item.goods_id)">
-							<miaoshaItem :item="item"></miaoshaItem>
+							<miaoshaItem :itemHeight="218" :item="item"></miaoshaItem>
 						</view>
 					</scroll-view>
 

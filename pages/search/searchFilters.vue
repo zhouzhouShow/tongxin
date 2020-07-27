@@ -15,7 +15,7 @@
 				<text>品牌</text>
 				<text  @click="showMore('brand')">{{!getMore1? '更多':'收起'}}<text class="iconfont iconarrow" style="font-size: 35rpx;"></text></text>
 			</view>
-			<view class="f-content2 "   :class="{hide:getMore1,moreBox:brandList.length>6}">
+			<view class="f-content2 moreBox"   :class="{hide:getMore1,moreBox:brandList.length>6}">
 				<!-- <view class="box" id="box1"> -->
 					<text class="label-item" @click="chooseItem(index,'bIndex')" :class="index == bIndex ? 'active' : ''"  v-for="(item,index) in brandList" :key="index">{{item.name}}</text>
 				<!-- </view> -->
@@ -147,6 +147,7 @@
 	}
 	.hide{
 		overflow: inherit !important;
+		height: auto !important;
 	}
 	.fiexd-bottom {
 		position: fixed;

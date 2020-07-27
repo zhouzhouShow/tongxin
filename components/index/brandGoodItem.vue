@@ -1,7 +1,8 @@
 <template>
 	<view class="item" v-if="item">
 		<view class="img-box">
-			<image class="good-img" :src="item.goods_images[0]" mode="aspectFill"></image>
+			<image class="good-img" v-show="!isShowLoading" :style="{height: height+'rpx'}" @load="loaded" :src="item.goods_images[0]" mode="aspectFill"></image>
+			<image v-if="isShowLoading"  class="good-img" src="@/static/images/icon/loading-icon.gif" mode=""></image>
 			<view class="getMoney">
 				<view class="position" v-if="item.commission > 0 && is_agent">
 					<image class="bg" src="../../static/images/index/kz_bg.png" mode=""></image>
@@ -23,11 +24,24 @@
 
 <script>
 	export default {
-		props: ['item'],
+		props: ['item','itemHeight'],
 		data() {
 			return {
-
+				isShowLoading:true,
+				height:0,
 			};
+		},
+		mounted(){
+			this.isShowLoading = true
+			this.height = 0
+		},
+		methods:{
+			loaded(){
+				setTimeout(()=>{
+					this.isShowLoading = false
+					this.height = this.itemHeight
+				},50)
+			},
 		},
 		computed:{
 			is_agent(){//是否代理

@@ -4,8 +4,9 @@
 		<block v-if="itemtype=='timeLimite'">
 			<view class="item2">
 				<view class="g-img-box">
-					<image class="g-img" :src="item.goods_images[0]"
+					<image v-show="!isShowLoading" :style="{height: height+'rpx'}"  @load="loaded" class="g-img"  :src="item.goods_images[0]"
 					 mode=""></image>
+					 <image v-if="isShowLoading"  class="g-img" src="@/static/images/icon/loading-icon.gif" mode=""></image>
 					<view class="time">剩余:{{formateDeadline}}</view>
 				</view>
 				<view class="g-info">
@@ -25,8 +26,9 @@
 		<block v-else-if="itemtype=='sessionItem'">
 			<view class="item" style="margin-bottom: 0;">
 				<view class="g-img-box">
-					<image class="g-img" :src="item.goods_images[0]"
+					<image v-show="!isShowLoading" :style="{height: height+'rpx'}"  @load="loaded" class="g-img" :src="item.goods_images[0]"
 					 mode=""></image>
+					 <image v-if="isShowLoading"  class="g-img" src="@/static/images/icon/loading-icon.gif" mode=""></image>
 				</view>
 				<view class="g-info">
 					<p class="g-name">{{item.goods_title}}</p>
@@ -49,8 +51,9 @@
 		<block v-else>
 			<view class="item">
 				<view class="g-img-box">
-					<image class="g-img" :src="item.goods_images[0]"
+					<image v-show="!isShowLoading" :style="{height: height+'rpx'}"  @load="loaded" class="g-img" :src="item.goods_images[0]"
 					 mode="aspectFill"></image>
+					 <image v-if="isShowLoading"  class="g-img" src="@/static/images/icon/loading-icon.gif" mode=""></image>
 				</view>
 				<view class="g-info">
 					<p class="g-name">{{item.brandinfo.brand_name}}</p>
@@ -78,7 +81,7 @@
 					return {}
 				},
 			},
-
+			itemHeight:0,
 			itemtype: {
 				type: String,
 				default: 'default',
@@ -87,6 +90,10 @@
 				type: Number,
 				default: 0,
 			}
+		},
+		mounted(){
+			this.isShowLoading = true
+			this.height = 0
 		},
 		computed: {
 			formateDeadline() {
@@ -110,7 +117,12 @@
 			}
 		},
 		methods: {
-			
+			loaded(){
+				setTimeout(()=>{
+					this.isShowLoading = false
+					this.height = this.itemHeight
+				},50)
+			},
 			ellipsis() {
 				this.$emit('fhChangeEllipsis', this.myIndex)
 			},

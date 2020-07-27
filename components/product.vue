@@ -4,11 +4,13 @@
        v-if="product.goods_title"
        @click="goProductDetail()">
     <div class="good-show">
-      <img mode="aspectFill" :lazy-load="true" class="good-show-img" v-if="product.goods_images[0]"
+      <img  v-show="!isShowLoading" :style="{height: height+'rpx'}"  @load="loaded"  mode="aspectFill" :lazy-load="true" class="good-show-img" v-if="product.goods_images[0]"
            :src="product.goods_images[0]"/>
-			<img mode="aspectFill"
+<!-- 			<img mode="aspectFill"
 			     src="http://fulanpifa.oss-cn-shenzhen.aliyuncs.com/uploads/20180904/7f8cd2124f0a791b1e6626bce0e299d9.gif"
-			     v-else>
+			     v-else> -->
+			 <image v-if="isShowLoading"  class="good-show-img" src="@/static/images/icon/loading-icon.gif" mode=""></image>
+			
 			<!-- <img v-if="!hasVideo" class="video-icon" mode="aspectFill" :lazy-load="true" src="../static/images/play-btn.png"> -->
      
       <div class="video-icon" v-if="product.video_url">
@@ -67,6 +69,8 @@
         timer: null,
         yuan: 0,
         fen: '00',
+				isShowLoading:true,
+				height:0,
         // isSale:true,
       }
     },
@@ -93,7 +97,17 @@
         return this.$store.state.vipDiscounts
       }
     },
+		mounted(){
+			this.isShowLoading = true
+			this.height = 0
+		},
     methods: {
+			loaded(e){
+				setTimeout(()=>{
+					this.isShowLoading = false
+					this.height = 325
+				},50)
+			},
       checkTime(number) { //将0-9的数字前面加上0，例1变为01
         if (number < 10) {
           number = "0" + number;

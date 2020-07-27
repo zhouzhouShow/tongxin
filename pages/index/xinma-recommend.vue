@@ -10,7 +10,7 @@
 					<image src="../../static/images/icon/heart.png" mode=""></image>
 				</view>
 				<view v-for="(item,index) in list"  :key="index" @click="toDetail(item.goods_id)">
-					<goodItem :item="item"></goodItem>
+					<goodItem :itemHeight="218" :item="item"></goodItem>
 				</view>
 				<load-more v-if="loadMore != 3"  :status="loadMore"></load-more>
 			</view>
