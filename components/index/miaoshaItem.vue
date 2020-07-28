@@ -21,7 +21,8 @@
 		props: ['item','itemHeight'],
 		data() {
 			return {
-				isShowLoading:true
+				isShowLoading:true,
+				height:0,
 			};
 		},
 		mounted(){

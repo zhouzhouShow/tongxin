@@ -234,7 +234,7 @@
 			<popup ref="popup" :show="sharePop" :maskClick="false" type="bottom">
 				<div class="share-pop">
 					<div class="title flex-center">
-						<span @click="shareImgFunc">分享</span>
+						<span>分享</span>
 						<span class="iconfont iconchacha" @click="sharePop=false"></span>
 					</div>
 					<div class="share-type">
@@ -390,7 +390,7 @@
 		methods:{
 			async saveImg(){
 				let userImg = await this.$user.getInfo('avatar')
-				console.log(userImg)
+				// console.log(userImg)
 				if(!userImg){
 					return this.$tip.toast('生成失败,请去授权!')
 				}
@@ -404,23 +404,6 @@
 				let data = await this.$fly.post(this.$api.shareWXCode,{id:this.id,url:'pages/index/index'})
 				return data.data.imgUrl
 			},
-			 shareImgFunc(){
-				uni.share({
-				    provider: "weixin",
-				    scene: "WXSceneSession",
-				    type: 0,
-				    href: "http://uniapp.dcloud.io/",
-				    title: "uni-app分享",
-				    summary: "我正在使用HBuilderX开发uni-app，赶紧跟我一起来体验！",
-				    imageUrl: this.shareImg,
-				    success: function (res) {
-				        console.log("success:" + JSON.stringify(res));
-				    },
-				    fail: function (err) {
-				        console.log("fail:" + JSON.stringify(err));
-				    }
-				})
-			 },
 			// 分享
 			share(){
 				this.sharePop = true
@@ -465,7 +448,7 @@
 						let skuKey = itemC.id+'_'+itemS.id
 						for(let itemK of skulist){
 							if(itemK.sku == skuKey){
-								console.log(itemK.goods_images[0])
+								// console.log(itemK.goods_images[0])
 								itemC.img = itemK.goods_images[0]
 							}
 						}

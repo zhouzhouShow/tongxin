@@ -656,7 +656,7 @@
 
 		.submit {
 			margin-right: 20rpx;
-			margin-left: 30rpx;
+			margin-left: auto;
 			width: 210rpx;
 			height: 80rpx;
 			line-height: 80rpx;

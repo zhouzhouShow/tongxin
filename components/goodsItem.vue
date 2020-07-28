@@ -114,6 +114,8 @@
 				detail: {},
 				timer:null,
 				deadline: this.$props.item.limitgoods.deadline,
+				isShowLoading:true,
+				height:0,
 			}
 		},
 		methods: {
