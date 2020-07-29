@@ -3,7 +3,9 @@
 		<view class="good-list">
 			<view class="good-brand-item" v-if="shopCarList.length" v-for="(item,index) in shopCarList" :key="index">
 				<view class="title-state-box flex-align-center">
-					<checkbox color="#17B948" :checked="item.allChecked" @click.stop="allPick(index)" />
+					<view class="b-all-check">
+						<checkbox color="#17B948" :checked="item.allChecked" @click.stop="allPick(index)" />
+					</view>
 					<view class="brand-info flex-align-center">
 						<image class="b-img" :src="item.brand_logo" mode=""></image>
 						<text class="brand-name">{{item.brand_name}}</text>
@@ -185,6 +187,7 @@
 						});
 						
 						this.allShopTotalPrice += itemsAllPrice
+						// this.allShopTotalPrice = Number(this.allShopTotalPrice).toFixed(2)
 						itemsAllPrice = 0
 						itemsAllNum = 0
 					}
@@ -261,12 +264,12 @@
 				goodObj.allNum = Number(itemsAllNum)
 				// goodObj.onePrice = goodObj.price
 				if (this.allPickChecked) {
-					this.totalPrice = this.allShopTotalPrice;
+					this.totalPrice = Number(this.allShopTotalPrice).toFixed(2);
 				} else {
 					if (goodObj.allChecked) {
-						this.totalPrice = Number(this.totalPrice) + Number(goodObj.allPrice)- allPrice ;
+						this.totalPrice = (Number(this.totalPrice) + Number(goodObj.allPrice)- allPrice ).toFixed(2);
 					} else {
-						this.totalPrice = Number(this.totalPrice) - allPrice;
+						this.totalPrice = (Number(this.totalPrice) - allPrice).toFixed(2);
 					}
 				}
 		
@@ -277,7 +280,7 @@
 				this.$tip.loading();
 				// this.getAllId()
 				// console.time()
-				this.totalPrice = this.allPickChecked ? this.allShopTotalPrice : 0
+				this.totalPrice = this.allPickChecked ? Number(this.allShopTotalPrice).toFixed(2) : 0
 				await this.shopCarList.forEach(items => {
 					items.allChecked = this.allPickChecked;
 					let itemsAllPrice = 0,
@@ -330,7 +333,7 @@
 				}
 			
 				if (this.allPickChecked) {
-					this.totalPrice = this.allShopTotalPrice;
+					this.totalPrice = Number(this.allShopTotalPrice).toFixed(2);
 				} else {
 					this.totalPrice = (Number(this.totalPrice) + Number(goodObj.allPrice) - allPrice).toFixed(2);
 				}
@@ -543,6 +546,10 @@
 			.title-state-box {
 				// padding: 0 20rpx;
 				margin-bottom: 30rpx;
+				.b-all-check{
+					width: 55rpx;
+					height: 55rpx;
+				}
 				.brand-info {
 					margin-left: 2rpx;
 					font-size: 32rpx;

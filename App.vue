@@ -75,8 +75,19 @@
 			  let tiem = await this.login(code,refreeid);
 			},
 		},
+		
+		onLoad() {
+			wx.showShareMenu({
+			  withShareTicket: true,
+			  menus: ['shareAppMessage', 'shareTimeline']
+			})
+		},
 		 async onLaunch(option) {
 			// console.log(option)
+			wx.showShareMenu({
+			  withShareTicket: true,
+			  menus: ['shareAppMessage', 'shareTimeline']
+			})
 			setTimeout(()=>{
 				uni.hideTabBar({})
 			},200)
@@ -90,11 +101,17 @@
 		
 		},
 		onShow(e){
+		
 			console.log(e)
 			this.updataApp(); //检查版本更新
 			setTimeout(()=>{
 				uni.hideTabBar({})
 			},200)
+			// 分享朋友圈的携带代理参数
+			if(e.query.h==0 &&e.query.p && e.query.id){
+				wx.setStorageSync('refreeid', e.query.p)
+			}
+			// 解析其他分享的
 			if (e.query.scene || e.query.h || (e.query.id && (e.scene==1007||e.scene==1008))) {
 			   shareConfig.sharePage(e.query).then((res)=>{
 			     console.log(res)

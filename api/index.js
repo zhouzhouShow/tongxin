@@ -4,7 +4,7 @@ let index = {
 	indexcatlist:'/api/index/indexcatlist', //首页小分类
 	brandlist:'/api/index/brandlist', //首页品牌列表
 	brandindex:'/api/index/brandindex', // 品牌详情
-	
+	getliveinfo : '/api/video/getliveinfo',//获取直播间
 }
 
 export default index

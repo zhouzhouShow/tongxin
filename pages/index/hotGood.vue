@@ -117,7 +117,7 @@
 				// console.log(res.target);
 			}
 			return {
-				title:'爆款好物',
+				title:'爆款推荐',
 				path: '/pages/index/index?h=3',
 				success: function() {
 					console.log('分享成功')

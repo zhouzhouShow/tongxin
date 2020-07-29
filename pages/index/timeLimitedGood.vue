@@ -66,6 +66,12 @@
 				})
 			},
 		},
+		onShareTimeline(){
+			return {
+				title: '限时抢购',
+				query:'h=4',
+			}
+		},
 		onShareAppMessage(res) {
 			this.$help.isBtnShare = true
 			if (res.from === 'button') {

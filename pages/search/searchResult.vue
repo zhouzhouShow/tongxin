@@ -107,7 +107,7 @@
 					page: page,
 					pageSize: pageSize,
 					cateId:this.filter.cateId || '', //分类
-					goodsNav:0, ////0 全部  1 晴妈推荐 2 爆款好物 3 上新
+					goodsNav:0, ////0 全部  1 晴妈推荐 2 爆款推荐 3 上新
 					orderType: this.ordertype, ////1 销量倒序2 价格顺序 3 价格倒序 4 设置的排序 5 时间倒序 6 销量顺序 7 有货  8 人气
 					brandId:this.filter.brandId || '', //品牌
 					gender:this.filter.gender || '', //0 不限  1男 2女

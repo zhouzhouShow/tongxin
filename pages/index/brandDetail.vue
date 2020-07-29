@@ -93,8 +93,15 @@ export default {
   onShow() {
    
   },
+	onShareTimeline(){
+		return {
+			title: this.BrandTitle || '',
+			query:'h=6&id='+this.brandid,
+			imageUrl:this.brand_detail.brand_logo[0],
+		}
+	},
 	onShareAppMessage() {
-		console.log('/pages/index/index?h=6&id='+this.brandid)
+		// console.log('/pages/index/index?h=6&id='+this.brandid)
 		return {
 			title: this.BrandTitle || '',
 			path: '/pages/index/index?h=6&id='+this.brandid

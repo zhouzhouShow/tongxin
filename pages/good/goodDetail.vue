@@ -301,6 +301,13 @@
 				userId:''
 			};
 		},
+		onShareTimeline(){
+			return {
+				title:this.detail.goods_title,
+				query:'h=0&id=' + this.id+'&p='+this.userId,
+				imageUrl:this.detail.goods_images[0],
+			}
+		},
 		onShareAppMessage(res) {
 			this.$help.isBtnShare = true
 			if (res.from === 'button') {

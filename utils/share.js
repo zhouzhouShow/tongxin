@@ -22,7 +22,7 @@ const shareConfig = {
 			h: 2,
 			path: '/pages/index/xinma-recommend',
 		},
-		//爆款好物
+		//爆款推荐
 		{
 			h: 3,
 			path: '/pages/index/hotGood',

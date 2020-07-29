@@ -41,7 +41,7 @@
 					
 					</p>
 					<p class="sold-num flex-align-center">
-						<span>已售: {{item.salenum}}</span>
+						<span>人气: {{item.likenum}}</span>
 							<view class="buy" @clickl.stop="buy">立即抢购</view>
 					</p>
 				</view>

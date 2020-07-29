@@ -104,7 +104,6 @@
 		},
 		data() {
 			return {
-				title: 'Hello',
 				wechatNavBtnHeight: 0, //胶囊按钮距离顶部位置
 				pageSize: 6,
 				navList: [{
@@ -126,11 +125,11 @@
 				banner: [],
 				listItem: [{
 					img: require("@/static/images/icon/nav-item-1.png"),
-					title: '晴妈推荐',
-					link: '/pages/index/xinma-recommend'
+					title: '直播好物',
+					link: '/pagesA/liveVideoList/liveVideoList'
 				}, {
 					img: require("@/static/images/icon/nav-item-2.png"),
-					title: '爆款好物',
+					title: '爆款推荐',
 					link: '/pages/index/hotGood'
 				}, {
 					img: require("@/static/images/icon/nav-item-3.png"),
@@ -188,6 +187,13 @@
 						})
 					},1000)
 			// })
+		},
+		onShareTimeline(){
+			return {
+				title:童创优选,
+				query:'/pages/index/index?h=1',
+				imageUrl:this.detail.goods_images[0],
+			}
 		},
 		onShareAppMessage() {
 			this.$help.isBtnShare = true

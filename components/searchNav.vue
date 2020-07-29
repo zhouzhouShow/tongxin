@@ -106,7 +106,7 @@
 
 			.header-item-text {
 				font-size: 28rpx;
-				font-weight: 500;
+				font-weight: 400;
 				color: #999;
 				text-align: center;
 				position: relative;

@@ -73,6 +73,8 @@
 		padding-bottom: 30rpx;
 		.c-checkbox{
 			margin-right: 10rpx;
+			width: 55rpx;
+			height: 55rpx;
 		}
 		.g-img {
 			width: 219rpx;

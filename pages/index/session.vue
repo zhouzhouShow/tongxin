@@ -36,6 +36,7 @@
 				priceOrder: true, //false是默认顺序即升序 true是降序
 				loadMore: 1,
 				list:[],
+				pageSize:10,
 			};
 		},
 		onLoad(option) {
@@ -44,7 +45,7 @@
 			wx.setNavigationBarTitle({
 				title:option.title
 			})
-			this.getDataList()
+			this.keyWordSearch()
 		},
 		onUnload() {
 			// 接触全局监听
@@ -70,7 +71,7 @@
 					page: this.page,
 					pageSize: this.pageSize,
 					cateId:this.filter.cateId || '', //分类
-					goodsNav:0, ////0 全部  1 晴妈推荐 2 爆款好物 3 上新
+					goodsNav:0, ////0 全部  1 晴妈推荐 2 爆款推荐 3 上新
 					orderType: this.ordertype, ////1 销量倒序2 价格顺序 3 价格倒序 4 设置的排序 5 时间倒序 6 销量顺序 7 有货  8 人气
 					brandId:this.filter.brandId || '', //品牌
 					gender:this.filter.gender || '', //0 不限  1男 2女
@@ -78,6 +79,7 @@
 					priceMax:this.filter.priceMax || '',
 					goodsAge:this.goodsAge //0 无  1婴童  2男童 3女童
 				}
+				console.log(1)
 				this.$fly.post(this.$api.goodslist,params).then(res => {
 					if (res.code == 1) {
 						let list = res.data.list
@@ -85,6 +87,7 @@
 							this.list = []
 						}
 						this.loadMoreStatusDeal(list)
+						console.log(list)
 						if(list.length>0){
 							this.list = this.list.concat(res.data.list);
 						}
@@ -97,9 +100,12 @@
 				this.ordertype = type
 				this.keyWordSearch()
 			},
-			getDataList() {
-					this.keyWordSearch();
-			}
+			// getDataList() {
+			// 		this.keyWordSearch();
+			// }
+			reachBottomCallBack(){
+				this.keyWordSearch();
+			},
 		}
 	}
 </script>
