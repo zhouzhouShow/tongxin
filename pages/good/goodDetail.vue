@@ -89,7 +89,7 @@
 				<text class="text">{{(colorChooseIndex ===-1 && sizeChooseIndex ===-1) ? '请选择颜色尺码' :(colorArr[colorChooseIndex].item +sizeArr[sizeChooseIndex].item) }} </text>
 				<text class="iconfont iconyoujiantou" ></text>
 			</view>
-			<view class="setMargin row-box" style="display: none;">
+			<view class="setMargin row-box"  @click.stop="showParams">
 				<text class="label">参数</text>
 				<text class="text">品牌 适用年龄</text>
 				<text class="iconfont iconyoujiantou" ></text>
@@ -230,6 +230,32 @@
 		
 			
 		</div>
+		<popup ref="popupParams" :show="paramsPop"  type="bottom">
+			<div class="params-pop">
+				<div class="title flex-center">
+					<span>产品参数</span>
+				</div>
+					<div class="content">
+						<div >
+							<span>品牌</span>
+							<span>{{detail.brandinfo.brand_name}}</span>
+						</div>
+						<div >
+							<span>面料</span>
+							<span>{{detail.goods_fabric}}</span>
+						</div>
+						<div >
+							<span>材质成分</span>
+							<span>{{detail.goods_texture}}</span>
+						</div>
+						<div >
+							<span>货号</span>
+							<span>{{detail.goods_code}}</span>
+						</div>
+					</div>
+				<div class="cancel"  @click.stop="hideParams">完成</div>
+			</div>
+		</popup>
 		<!-- <div class="share-pop"> -->
 			<popup ref="popup" :show="sharePop" :maskClick="false" type="bottom">
 				<div class="share-pop">
@@ -298,7 +324,8 @@
 				btnShowType:1,//1:点击颜色规格  2:点击加入购物车 3:点击立即购买
 				shareImg:'',//分享图片
 				userIsAgent:false,//是否为代理
-				userId:''
+				userId:'',
+				paramsPop:false
 			};
 		},
 		onShareTimeline(){
@@ -395,6 +422,13 @@
 		},
 	
 		methods:{
+			showParams(){
+				// this.paramsPop = true
+				this.$refs.popupParams.open()
+			},
+			hideParams(){
+				this.$refs.popupParams.close()
+			},
 			async saveImg(){
 				let userImg = await this.$user.getInfo('avatar')
 				// console.log(userImg)
@@ -607,6 +641,53 @@
 	.good-detail {
 		background: #f3f3f3;
 		padding-bottom: 100rpx;
+	}
+	.params-pop{
+		height: 688rpx;
+		font-weight:400;
+		display:flex;
+		flex-flow: column;
+		.title{
+			font-size:32rpx;
+			font-family:PingFang SC;
+			color:rgba(51,51,51,1);
+			text-align: center;
+			position: relative;
+			line-height: 1;
+			padding: 40rpx 0 30rpx;
+		}
+		.content{
+			font-size:28rpx;
+			font-family:PingFang SC;
+			padding:0 30rpx;
+			div:nth-child(1){
+				border-top: 1rpx solid #eee;
+			}
+			>div{
+				border-bottom: 1rpx solid #eee;
+				padding:30rpx 0;
+				span:nth-child(1){
+					display: inline-block;
+					width: 120rpx;
+					color: #999999;
+					margin-right: 50rpx;
+					line-height: 1;
+				}
+			}
+		}
+		.cancel{
+			width:690rpx;
+			height:80rpx;
+			line-height:80rpx;
+			margin:auto auto 20rpx;
+			text-align: center;
+			background:linear-gradient(90deg,rgba(252,56,67,1) 0%,rgba(246,42,138,1) 100%);
+			border-radius:40rpx;
+			font-size:30rpx;
+			font-family:PingFang SC;
+			font-weight:400;
+			color:#FFFFFF;
+		}
 	}
 	.share-pop{
 		height: 536rpx;
@@ -827,7 +908,7 @@
 			justify-content: center;
 			
 			.name{
-				margin-bottom: 27rpx;
+				// margin-bottom: 27rpx;
 				font-size:32rpx;
 				font-weight:400;
 				color:rgba(51,51,51,1);
