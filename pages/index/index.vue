@@ -189,6 +189,7 @@
 			// })
 		},
 		onShareTimeline(){
+			this.$help.isBtnShare = true
 			return {
 				title:童创优选,
 				query:'/pages/index/index?h=1',

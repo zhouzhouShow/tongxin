@@ -67,6 +67,7 @@
 			},
 		},
 		onShareTimeline(){
+			this.$help.isBtnShare = true
 			return {
 				title: '限时抢购',
 				query:'h=4',
